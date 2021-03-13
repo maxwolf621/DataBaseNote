@@ -1,5 +1,5 @@
-# SQL
-
+# Basic SQL
+###### tags: `DataBase`
 
 DDL
 > To Define Structure of Database, variable's datatype and length
