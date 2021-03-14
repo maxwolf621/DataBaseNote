@@ -173,16 +173,12 @@ For example
 ![](https://i.imgur.com/WdmmXj7.png)
 
 
-
-
-
-
 ## OUTER JOIN
 In an outer join, along with tuples that satisfy the matching criteria, we also include first (left outer join), second (right outer join) or all tuples that do not match the criteria.
 
-if tuples are not satisfied with the matching criteria , they will be set as NULL by default 
+**If tuples are not satisfied with the matching criteria , they will be set as NULL by default**
 
-and do we use it?
+Why we use it?
 because we dont want to miss any of information as merging the two different attribute tables
 
 ```sql=
@@ -191,14 +187,28 @@ FROM TableA [RIGHT|LEFT] [OUTER] [JOIN] TableB
 ON TableA.PK = TableB.FK
 ```
 
-## Left Out Join
-
+## Left Outter Join
 ![](https://i.imgur.com/iaiKGHH.png)
 
 ```sql=
-
+SELECT *
+FROM 老師資料表 AS A LEFT OUTER JOIN 課程資料表 AS B
+ON A.老師編號 = B.老師編號
 ```
 
+if 老師資料表 cant reference the matching records => set NULL by default
+
+![image](https://user-images.githubusercontent.com/68631186/111078928-bff07d00-8532-11eb-9d77-aa6443b9e8f6.png)
+
+if we want to get which teachers dont have a lecture 
+```sql=
+SELECT *
+FROM 老師資料表 AS A LEFT OUTER JOIN 課程資料表 AS B
+ON A.老師編號 = B.老師編號
+WHERE B.老師編號 IS NULL
+```
+
+## Right Outter Join
 
 ## Interaction 
 Section belonging to both R and S
@@ -211,12 +221,41 @@ Section belonging to both R and S
 
 
 
+```sql=
+SELECT *
+FROM 老師資料表 AS A RIGHT OUTER JOIN 課程資料表 AS B
+ON A.老師編號 = B.老師編號
+ORDER BY B.課程代碼
+```
+
+In B.老師編號 we get only two teachers which are T0001 and T0002
+so the 老師編號 from A will be set NULL except T0001 and T0002
+![image](https://user-images.githubusercontent.com/68631186/111079068-52911c00-8533-11eb-8d60-2a2b160d41df.png)
+
+
 ## Division 
 
 Remove table R's data that are same as data in table S  
 ![](https://i.imgur.com/h5XOOMM.png)
 
-Relational Algebra : $R\div S$
+
+
+Relational Algebra : $R\div S
+
+Using nested query to implement division
+
+for example
+```sql=
+/* main */
+SELECT A.ID, Name
+FROM Student AS A, StudentCourse AS B
+WHERE A.ID = B.ID 
+AND B.CourseID = 
+( /* Sub to get specified CourseId from C */
+ SELECT C.CourseID FROM Course AS C
+ WHERE CourseName = 'Data Base'
+)
+```
 
 Algo of division
 1. taking out whole row in table R that is responding to table S
@@ -229,8 +268,6 @@ Algo of division
 > : ![](https://i.imgur.com/UUdCMoR.png)
 
 
-
-
 ![](https://i.imgur.com/1BvYwR2.png)
 
 ![](https://i.imgur.com/2FnLbOi.png)
@@ -239,6 +276,25 @@ Algo of division
 ![](https://i.imgur.com/tSO31sY.png)
 ![](https://i.imgur.com/Aybv42G.png)
 ![](https://i.imgur.com/lkUsJHD.png)
+
+This is how we do using nested query concept to implement division
+![image](https://user-images.githubusercontent.com/68631186/111079672-e49a2400-8535-11eb-88c0-6b81629ccbc6.png)
+Q: To list all students optional Courses
+```sql=
+SLEECT 課名
+FROM 課程檔 AS C
+WHERE NOT EXISTS
+(
+  SELECT *
+  FROM 學生檔 AS A
+  WHERE NOT EXISTS
+  (
+    SELECT *
+    FROM 選課擋 AS B
+    WHERE C.課號 = B.課號 AND A.學號 = B.學號
+  )
+)
+```
 
 
 ## REPLACEMENT WITH OPERATIONS
