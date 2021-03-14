@@ -91,7 +91,9 @@ FROM 學生表 cross join 課程表
 ## Difference 
 
 Remove the common part of R and S
+
 ![](https://i.imgur.com/lVlsJRj.png)
+
 For Example
 ```c
 A = {1,2,4,5}
@@ -121,6 +123,7 @@ Relational Algebra : $R ⨝pS$
 > III : right outer join
 
 Inner Join (Condition Join)
+
 ![](https://i.imgur.com/IglA41f.png)
 
 An inner join, only those tuples that satisfy the matching criteria are included, while the rest are excluded.
@@ -169,6 +172,7 @@ merging table with Attribute from A $=$ Attribute from B
 FROM R,S WHERE (R.c == S.c)
 ```
 For example
+
 ![](https://i.imgur.com/qO74Xdb.png)
 ![](https://i.imgur.com/WdmmXj7.png)
 
@@ -212,6 +216,7 @@ WHERE B.老師編號 IS NULL
 
 ## Interaction 
 Section belonging to both R and S
+
 ![](https://i.imgur.com/gJiMj1e.png)
 
 
@@ -229,13 +234,16 @@ ORDER BY B.課程代碼
 ```
 
 In B.老師編號 we get only two teachers which are T0001 and T0002
+
 so the 老師編號 from A will be set NULL except T0001 and T0002
+
 ![image](https://user-images.githubusercontent.com/68631186/111079068-52911c00-8533-11eb-8d60-2a2b160d41df.png)
 
 
 ## Division 
 
 Remove table R's data that are same as data in table S  
+
 ![](https://i.imgur.com/h5XOOMM.png)
 
 
@@ -278,19 +286,27 @@ Algo of division
 ![](https://i.imgur.com/lkUsJHD.png)
 
 This is how we do using nested query concept to implement division
+
 ![image](https://user-images.githubusercontent.com/68631186/111079672-e49a2400-8535-11eb-88c0-6b81629ccbc6.png)
-Q: To list all students optional Courses
+
+Q: To list all students' optional Courses
 ```sql=
+/* We need student to get what optional Courses they chose */
+
 SLEECT 課名
+/* Informations for Course is in the table 課程檔 */ 
 FROM 課程檔 AS C
 WHERE NOT EXISTS
 (
   SELECT *
+  /* DIVIDED */
   FROM 學生檔 AS A
   WHERE NOT EXISTS
   (
     SELECT *
+    /* DIVIDEND */
     FROM 選課擋 AS B
+    /* CONDITION */
     WHERE C.課號 = B.課號 AND A.學號 = B.學號
   )
 )
