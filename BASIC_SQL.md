@@ -62,45 +62,37 @@ For example
 
 ```sql=
 /* table student */
-CREATE TABLE Student
-(
-    ID CHAR(8),
-    Name CHAR(4) NOT NULL
-    Mobile CHAR(12),
-    Address CHAR(20),
-    PRIMARY KEY(ID),
-    UNIQUE(Mobile),
-)
+CREATE TABLE `Student` (
+  `ID` char(8) NOT NULL,
+  `Name` char(20) DEFAULT NULL,
+  `Mobile` char(12) DEFAULT NULL,
+  `Address` char(20) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `Mobile` (`Mobile`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
 /* table Courses */
-CREATE TABLE Courses
-(
-    CourseID CHAR(8),
-    CourseName CHAR(20) NOT NULL
-    /* Set the default value of  3*/
-    Piont INT DEFAULT 3,
-    Option CHAR(2),
-    PRIMARY KEY(CourseID)
-)
+CREATE TABLE `Course` (
+  `CourseID` char(8) NOT NULL,
+  `CourseName` char(20) DEFAULT NULL,
+  `Piont` int(11) DEFAULT 3,
+  `Option` char(2) DEFAULT NULL,
+  PRIMARY KEY (`CourseID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
 /* table CoursesSelection */
-CREATE TABLE CoursesSelection
-{
-    ID CHAR(8),
-    CourseName CHAR(5),
-    Grade INT NOT NULL,
-    /* DATE OF SELECTING COURSE */
-    DateSlecteCourse DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY
-    FOREIGN KEY(ID) REFERENCE Student(ID)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-    FOREIGN KEY(CourseID) REFERERRR
-}
+CREATE TABLE `StudentCourse` (
+  `ID` char(8) NOT NULL,
+  `CourseID` char(8) NOT NULL,
+  `Grade` int(11) NOT NULL,
+  PRIMARY KEY (`ID`,`CourseID`),
+  KEY `CourseID` (`CourseID`),
+  CONSTRAINT `StudentCourse_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `Student` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `StudentCourse_ibfk_2` FOREIGN KEY (`CourseID`) REFERENCES `Course` (`CourseID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ```
 > With ON UPDATE CASCADE and ON DELETE CASCADE means
 > when data in table Student have been modified (update or delete ..etc) then corresponding data in table CourseSelection will also be modified
-
 
 :::info 
 Order of creating tables
@@ -111,7 +103,7 @@ CourseSelection second
 
 #### To Alter Table
 
-with `ALTER TABLE Name_Of_TableX`, we can
+with `ALTER TABLE Name_Of_TableX`, we can do 
 ```sql=
 ADD Name_OF_Attribute {dataType | Domain} [NULL|NOT NULL]
 MODIFY Name_OF_Attribute{dataType | Domain} [NULL | NOT NULL]
@@ -139,10 +131,11 @@ DROP Email
 
 :::danger
 When executing the `DROP` 
-DO MAKE SURE THERE ARE NO REFERENCE EXISTING (SAME CONCEPT AS CONSTRUCTOR IN CPP or JAVA)
+> DO MAKE SURE THERE ARE NO REFERENCE EXISTING (SAME CONCEPT AS CONSTRUCTOR IN CPP or JAVA)
+
 So the order of DROP is 
-CourseSelection  first,
-Courses, Student after.
+1. CourseSelection  first,
+2. Courses, Student after.
 :::
 
 ## DML
@@ -160,7 +153,9 @@ INSERT INTO Name_OF_Table<attribute>
 VALUES(<attribute> | <SELECT>)
 /* for example */
 INSERT INTO Student
-VALUES('S001','John','1234567','JAPAN','M');
+VALUES
+('001','John','1111','USA'),
+('002','Mai','2222','JAPAN')
 ```
 
 Insert data in the table a to other table b
@@ -178,8 +173,8 @@ UPDATE Name_OF_Table
 SET {AttributeY=valueY, AttributeX=valueX , .... , AttributeN=valueN }
 [WHERE<CONDITION>]
 /* for example */
-UPDATE Stuent
-SET Mobile='1234567'
+UPDATE Student
+SET Mobile='1111'
 WHERE Mobile IS NULL and ID='S002'
 ```
 
@@ -196,20 +191,11 @@ UPDATE CourseSelection
 SET Grade = Grade*1.2
 WHERE Grade<70
 ```
-
-
-
 Delete A student
 ```sql=
 DELETE FROM `Student`
 WHERE Name='John'
 ```
-
-
-### SELECT
-![](https://i.imgur.com/N70G6sQ.png)
-
-
 
 ## DCL
 
