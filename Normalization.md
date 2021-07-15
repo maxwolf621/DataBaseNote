@@ -68,18 +68,23 @@
 - 如員工編號可決定員工姓名 (即: 員工編號->姓名)
 
 
-### 價值性 Trival or Non-Trivial
-- Non-Trivial
-- trivial
+### 價值性 Trivial or Non-Trivial
 
+#### Trivial  
+若功能相依右邊(Non-Key Attribute)之相依因素，為左邊決定因素的部份(partial)集合時，稱此功能相依為沒價值的。  
+例如: `{供應商代號，產品代號}→產品名稱`  
+
+#### Non-trivial
+若功能相依右邊(Non-Key Attribute)之相依因素，不為左邊Composite PK決定因素的部份(Partial)集合時，稱此功能相依為非沒價值的  
+`{產品號,公司號} -> 單價`  
 
 ## Functional Dependency 相依型態
 - 完全功能相依 (Full Functional Dependency)  
 - 部份功能相依 (Partial Functional Dependency)  
-- 遞移相依 (Transitive Dependency)
+- 遞移相依 (Transitive Dependency)  
 
 ## Key Attribute 
-在實務上,鍵值屬性(e.g, Human ID)通常是指主鍵,能構成主鍵或候選鍵的所有屬性。 
+在實務上,鍵值屬性(e.g, Human ID)通常是指主鍵,能構成主鍵或候選鍵的所有屬性  
 反之,則稱為非鍵值屬性(Non-Key Attribute)  
 ![](https://i.imgur.com/yZeLbAD.png)  
 
@@ -91,7 +96,7 @@
     > 例如 (X)->Y 如果把X拿掉則相依性不存在  
 
 ### 部份功能相依(少你沒差)  
-- 若**主鍵是由多個屬性**組成,而**某NON-鍵值屬性是依賴主鍵之部分pk屬性時**,則稱該非鍵值屬性部份相依於主鍵。 
+- 若**主鍵是由多個屬性**組成,而**某NON-鍵值屬性是依賴主鍵之部分pk屬性時**,則稱該非鍵值屬性部份相依於主鍵  
     > ![](https://i.imgur.com/waM6a58.png)  
     > (身份證,學號)->Z 如果把其中一個PK拿掉則相依性還存在   
 ### 遞移相依(熱力學第0定律) 
@@ -100,7 +105,7 @@
     > 身份證->郵遞區號, 郵遞區號->縣市路段, 身份證->縣市路段  
 
 ## Armstrong's Axioms
-利用已知的功能相依性,透過一些性質,推導出
+利用已知的功能相依性,透過一些性質,推導出  
 - Implicit dependencies  
 - Candidate or Primary Key  
 - **Irreducible Functional Dependence**  
@@ -177,27 +182,39 @@ For Example
 
 為符合第一正化我們需要將Table中的`多值屬性`分解成多個`Tuples`以及`複合屬性`拆成`簡單屬性` 
  
-FOR EXAMPLE  
+#### EX1  
 分割日期成Atom Value  
 將複合屬性`月日`分成`月,日`  
-將多值屬性`3.18`分成`3,18`
+將多值屬性`3.18`分成`3,18`  
 ![](https://i.imgur.com/XciaBot.png)  
 
+#### EX2
 ![](https://i.imgur.com/xEoCV2n.png)  
 分割`產品`成Atom Value  
 ![](https://i.imgur.com/KXarqOT.png)  
 
 ## 第二正規化, Second Normal Form
 由於執行First Normal Form後造成資料重複性違反正規化法則,則需要在繼續進行Second Normal Form  
-
 第二正規化需要滿足
 1. 符合1NF  
-2. 每一個Table's Non Key Attribute**皆完全功能相依**Primary Key
- 
-FOR EXAMPLE  
+2. 每一個Table's Non-Key Attribute**皆完全功能相依**Primary Key  
+    > 消除部分相依（Partial Dependency） 部分相依是指在複合主鍵的情況下，有些資料只跟部分主鍵有直接關係，而不是跟每個主鍵都有關聯  
+    > e,g. `(學號,課號)->(成績)`則`(課程)->(成績)`或者`(學號)->(成績)`拿掉其中一個PK則相依性消失  
+
+
+第二正規化(2NF)是指資料表中所有欄位(non-key attribute)的資料都必須和該資料表的PK（or Composite PK）有完全依賴關係，  
+如果在複合主鍵的情況下，Non-Key attribute只和部分主鍵(partial PK)有關，則必須獨立出來成為一個資料表，或歸類到該主鍵的資料表。  
+
+#### EX1
+`(等級,所在城市)`完全功能相依相依於`(分公司代號)`  
+`（銷量）`完全功能相依於`(產品代號,分公司代號)`  
 ![](https://i.imgur.com/SfIomor.png) 
 
-![image](https://user-images.githubusercontent.com/68631186/125705932-04d1d6ca-de7b-4b5d-9de1-54f5a0b11b5f.png)
+#### EX2
+![image](https://user-images.githubusercontent.com/68631186/125705932-04d1d6ca-de7b-4b5d-9de1-54f5a0b11b5f.png)  
+`(姓名,性別）`完全功能相依於`(學號)`  
+`(成績)`完全功能相依於`(學號,課號)`  
+`(課程名稱,學分,授課老師,教師電話)`完全功能相依於`(課號)`  
 ![image](https://user-images.githubusercontent.com/68631186/125705965-e71457bf-d15a-422b-aaae-ea321b914261.png)  
 ![image](https://user-images.githubusercontent.com/68631186/125705982-e5c22d3f-5bb8-4886-a983-590016ba53dd.png)
 ![image](https://user-images.githubusercontent.com/68631186/125706028-89b4613d-0f36-495c-9fae-d24d0bf995a0.png) 
@@ -207,26 +224,46 @@ FOR EXAMPLE
 1. 符合2NF
 2. 每一個Non Key Attribute皆與PK彼此**無遞移相依**  
 
-![image](https://user-images.githubusercontent.com/68631186/125706383-d7179030-e2d1-43c7-aba6-24db6669c34d.png) 
-![image](https://user-images.githubusercontent.com/68631186/125705746-13bea0c7-beb2-46dd-836c-b1bdc811da02.png) 
-![image](https://user-images.githubusercontent.com/68631186/125705782-cbbcf794-c140-417d-8ead-ad9f91707edc.png) 
-![image](https://user-images.githubusercontent.com/68631186/125705821-131c15ca-022f-4215-bfe2-7b9489c56b8c.png) 
+![image](https://user-images.githubusercontent.com/68631186/125706383-d7179030-e2d1-43c7-aba6-24db6669c34d.png)  
 
+`(老師電話)` -> `（授課老師）` -> `(課號)`  
+![image](https://user-images.githubusercontent.com/68631186/125705746-13bea0c7-beb2-46dd-836c-b1bdc811da02.png)  
+![image](https://user-images.githubusercontent.com/68631186/125705782-cbbcf794-c140-417d-8ead-ad9f91707edc.png)  
+![image](https://user-images.githubusercontent.com/68631186/125705821-131c15ca-022f-4215-bfe2-7b9489c56b8c.png)  
 
-- 如果資料表的**PK是由多個欄位組成(Set of PK)則需要利用BNCF正規化在分割**
+如果資料表的**PK是由多個欄位組成(composite key)**  
+以及Composit pks的組合有重疊`(A,B)`跟`(B,D)`![](https://i.imgur.com/osbo8cm.png)  
+則需要利用BNCF正規化在分割  
 
 ## Boyce-Codd Normal Form, **BNCF**
 1. 符合3NF
-2. 每個Determinant都為Candidate Key  
-    - **亦即每個資料表PK只能由一個單一欄位所有或者PK不可以相依於任一Non Key Attribute**  
+2. Every functional dependency X->Y, X should be the super key of the table.y  
     - **不可以有部份相依存在**  
-        > 滿足`(學號,課號)->成績`
-        >> 則`(課程)->成績`或者`(學號)->成績`拿掉其中一個PK則相依性消失  
 
-![](https://i.imgur.com/IC6TNex.png)  
-![](https://i.imgur.com/VYVcpOK.png)  
-![](https://i.imgur.com/TDCEH4Y.png)  
+![](https://i.imgur.com/BYnMYfK.png)
+- 不存在部份功能相依 (符合2NF)  
+- Non-Key Attirbutes不存在遞移相依(符合3NF)  
 
+問題  
+- 新增(Insert)一名新顧問為吳小雄,專長為金融。但由於他目前沒有客戶,所以Client欄為NULL。然而,因為Client是主鍵的一部份,不允許為NULL,因此違反了個體完整性限制 (Entity Integrity Constraint)。  
+- 刪除時會把過多資訊刪掉。因為呂小蓮撤回委託的業務,因此必須刪除(Delete)這筆記錄。然而,如果陳火扁只有呂小蓮這一個客戶,會使得陳火扁的資料一併被刪除,造成資料的遺失。  
+- 修改時需要一起修改許多相關值組。如果黃小州顧問覺得自已的名字與八字不合,因此更改(Update)名字成黃小洲。然而在表格中他有多筆記錄存在,也必須一併更改,若不小心只更改了部份資料,便會造成資料不一致的情況。  
+
+進行BNFC步驟
+1. 選定non-key Attribute 
+2. 決定FK
+![](https://i.imgur.com/natkync.png)
+
+### 是否需要BNFC
+![](https://i.imgur.com/CZKxHCp.png)
+首先確定關聯
+- 符合2nf
+- 符合3nf
+則在推導是否有Implicit Relationship  
+- 利用反身性,則: `{Client, Consultant} -> Consultant`
+- 已知`Consultant -> Problem `
+- 利用遞移性,則: `{Client, Consultant} -> Consultant` 與 `Consultant -> Problem` 可推得`{Client, Consultant} -> Problem`
+此推導存在著部份相依故需要BNFC分割
 
 ## 第四正規化, Fourth Normal Form
 1. 符合BCNF
@@ -236,18 +273,18 @@ FOR EXAMPLE
 1. 符合4NF
 2. 無合併相依
 
-## DeNormalization
-過度分割表格反而導致資料存取效率下降,所以當發生過度正規化時則需要適時地反正規化(e.g. 3NF->2NF, 2NF->1NF)
+## Denormalization必要性
+過度分割表格反而導致資料存取效率下降,所以當發生過度正規化時則需要適時地反正規化(e.g. 3NF->2NF, 2NF->1NF)  
 
-## Normalization與DeNormalization優勢分析
+### Normalization與Denormalization優勢分析
 
-### 資料異動觀點
-> Normalization愈來愈多層時,有利於資料異動(Update,delete,insert ...)  
-> 因為異動時只需要針對較小的表格  
+#### 資料異動觀點
+Normalization愈來愈多層時,有利於資料異動(Update,delete,insert ...)  
+- 因為異動時只需要針對較小的表格  
 
-### 資料查詢
-> Normalization愈來愈多層時,愈不利於資料查詢    
-> 因為資料查詢常常需要**合併**多個資料表  
+#### 資料查詢
+Normalization愈來愈多層時,愈不利於資料查詢    
+- 因此需要Denormalization**合併**多個Tables  
  
 #### 例如
 正規化分割
@@ -255,3 +292,20 @@ FOR EXAMPLE
 
 反正規化合併
 > ![](https://i.imgur.com/yDD2A4f.png)  
+
+
+## ER Model 正規化過程
+
+### ER Model
+![](https://i.imgur.com/hXynYdc.png)  
+
+
+### ER Model -> Relation
+![](https://i.imgur.com/TIkUYjl.png)  
+
+### Relation -> Normalization 
+- 消除Data Redundancy
+- 消除Anomalies
+![](https://i.imgur.com/PTlAaLl.png)  
+
+
