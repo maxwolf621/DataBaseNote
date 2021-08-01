@@ -12,7 +12,7 @@
 ## DDL
 ![](https://i.imgur.com/SGIfZsA.png)
 
-### For DataBase 
+### DataBase 
 
 To Create A Database
 ```sql
@@ -33,7 +33,7 @@ Alter Database Courses
 CHARACTER SET utf8
 ```
 
-### For Table
+### Table
 
 Create A Table
 ```mysql
@@ -41,18 +41,18 @@ Create table tableX
 (Attribute{Datatype|Domain}[NULL|NOTNULL][DEFAULT VALUE][RESTRICTION])
 
 RRIMARY KEY(attributeX) --Cant not be NULL 
-UNIQUE(attirbuteY)      --Can be NULL
+UNIQUE(attirbuteY)      --Can  be NULL
 
 /**
   * attributeX in tableX is  
-  * <strong> dependent on(reference to) </strong>
+  * dependent on(reference to)
   * attributeL in tableJ
   */
 FOREIGN KEY(attributeZ) REFERENCE tableJ(attributeL) [ON DELETE option] [ON UPDATE option]
 ```
-For example
-![](https://i.imgur.com/VfZCdk4.png)
 
+For example  
+![](https://i.imgur.com/VfZCdk4.png)  
 ```mysql
 /**
   * Order of creating tables
@@ -103,7 +103,7 @@ CREATE TABLE `StudentCourse` (
 
 #### To Alter Table
 
-with `ALTER TABLE Name_Of_TableX`, we can do 
+with `ALTER TABLE Name_Of_TableX`, we can do   
 ```mysql 
 /**
   * <li> ADD new Attirbute </li>
@@ -115,48 +115,48 @@ MODIFY Name_OF_Attribute{dataType | Domain} [NULL | NOT NULL]
 DROP Name_OF_Attribute
 ```
 
-For example
-add new attribute to table Student
+For example   
+add new attribute to table Student   
 ```mysql
 ALTER TABLE student 
 ADD Email CHAR(50)
 ADD Sex CHAR(1) Default 'M'
 ``` 
-modify attribute in table Student
+modify attribute in table Student   
 ```mysql
 ALTER TABLE student
 /* Address from CHAR(20) TO CHAR(50) NOT NULL */
 MODIFY Address CHAR(50) NOT NULL
 ```
-Drop the Attribute in table Student
+Drop the Attribute in table Student   
 ```mysql
 ALTER TABLE student
 DROP Email
 ``` 
-When executing the `DROP` DO MAKE SURE THERE ARE NO REFERENCE EXISTING (SAME CONCEPT AS CONSTRUCTOR IN CPP or JAVA)  
-So the order of DROP is   
-1. CourseSelection  first  
-2. Courses, Student after  
+When executing the `DROP` DO MAKE SURE THERE ARE NO REFERENCE EXISTING (SAME CONCEPT AS CONSTRUCTOR IN CPP or JAVA)    
+So the order of DROP is    
+1. CourseSelection  first   
+2. Courses, Student after   
 
 
 ## DML
 
-BASIC COMMAND 
-> - INSERT
-> - UPDATE
-> - DELETE
-> - SELECT
+BASIC COMMAND   
+> - INSERT  
+> - UPDATE  
+> - DELETE  
+> - SELECT  
 
 
-Insert values
-```mysql
-INSERT INTO Name_OF_Table<attribute>
-VALUES(<attribute> | <SELECT>)
-/* for example */
-INSERT INTO Student
-VALUES
-('001','John','1111','USA'),
-('002','Mai','2222','JAPAN')
+Insert values  
+```mysql  
+INSERT INTO Name_OF_Table<attribute>  
+VALUES(<attribute> | <SELECT>)  
+/* for example */   
+INSERT INTO Student  
+VALUES   
+('001','John','1111','USA'),  
+('002','Mai','2222','JAPAN')  
 ```
 
 Insert data in the table a to other table b
