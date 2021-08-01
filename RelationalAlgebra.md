@@ -23,40 +23,36 @@ Two Concepts for Storing and retrieving data (of query language)
 
 
 
-## RESTRICT σ
+## RESTRICT `σ`
 
-σ : the condition
+- `σ` : the condition
 
+For example  
+![](https://i.imgur.com/BOvT5uf.png)  
 
-For example
-![](https://i.imgur.com/BOvT5uf.png)
+![](https://i.imgur.com/ytw1zi0.png)  
 
-![](https://i.imgur.com/ytw1zi0.png)
-
-It can be presented
+It can be presented  
 $$σ_{height<170 \ AND \ weight < 60 (學生資料表)}$$
 
-```sql=
+```mysql
 FROM Student
 WHERE Height < 179 AND Weight < 60
 ```
 
 
 ## Project π
->Def
-> : Create A New Table (projection) with specified attributes from the old one
-> A new Table with Atrribute A and B from table R
-> ![](https://i.imgur.com/7dG9aBv.png)
 
+To Create A New Table (projection) with specified attributes from the old one
 
-> Relation Algebra `πA(R)` 
-> A : Attribute from table R
+> A new Table with Atrribute A and B from table R  
+> ![](https://i.imgur.com/7dG9aBv.png)  
 
+> Relation Algebra `πA(R)`   
+> A : Attribute from table R   
 
-
-### Priority of selection and projection
-It depends on situation
-
+Priority of selection and projection
+- It depends on situation
 
 ## Union
 Merge two tables remove duplicate data 
@@ -68,31 +64,28 @@ Merge two tables remove duplicate data
 
 ## Cartesian Product
 
-It's a set of n attributes from table R merging with m attributes from table S
-![](https://i.imgur.com/4jC4AD6.png)
-> SO we get A merged Table with $n+m = 6$ attributes
-> AND $X \times\ Y = 9$ data
+It's a set of n attributes from table R merging with m attributes from table S  
+![](https://i.imgur.com/4jC4AD6.png)  
+> SO we get A merged Table with $n+m = 6$ attributes  
+> AND $X \times\ Y = 9$ data  
 
-> Relation Algebra : $R \times\ S$
+> Relation Algebra : $R \times\ S$  
 
-#### SQL
-
-```sql=
+```sql
 SELECT *
 FROM 學生表 , 課程表
 /* or */
 SELECT *
 FROM 學生表 cross join 課程表
 ```
+![](https://i.imgur.com/eJKvDpu.png)  
+![](https://i.imgur.com/hQ4LOY1.png)  
 
-![](https://i.imgur.com/eJKvDpu.png)
-![](https://i.imgur.com/hQ4LOY1.png)
+## Difference   
 
-## Difference 
+Remove the common part of R and S   
 
-Remove the common part of R and S
-
-![](https://i.imgur.com/lVlsJRj.png)
+![](https://i.imgur.com/lVlsJRj.png)  
 
 For Example
 ```c
@@ -105,33 +98,33 @@ A - B ={1,2}
 
 
 
-> - $R - S% : get the part belonging to R AND no S
->> ![](https://i.imgur.com/tPm9yMo.png)
-> - $S - R% : get the part belonging to S AND no R
+> - $R - S% : get the part belonging to R AND no S  
+>> ![](https://i.imgur.com/tPm9yMo.png)  
+> - $S - R% : get the part belonging to S AND no R  
 
 
 
-## JOIN
+## JOIN  (WICHTIG)
 
-Join operation is essentially a Cartesian product followed by a selection criterion.
+**Join operation is essentially a Cartesian product followed by a selection criterion.**
 
-Relational Algebra : $R ⨝pS$
+Relational Algebra : $R ⨝pS$    
 
-> ![](https://i.imgur.com/9v3HGUy.png)
-> II : inner join
-> I : left outer join
-> III : right outer join
+> ![](https://i.imgur.com/9v3HGUy.png)  
+> II : inner join  
+> I : left outer join    
+> III : right outer join    
 
 Inner Join (Condition Join)
 
 ![](https://i.imgur.com/IglA41f.png)
 
-An inner join, only those tuples that satisfy the matching criteria are included, while the rest are excluded.
+An inner join, only those tuples that satisfy the matching criteria are included, while the rest are excluded.  
 - Theta join
 - EQUI join
 - Natural join
 
-Outer join:
+An Outer join   
 - Left Outer Join
 - Right Outer Join
 - Full Outer Join
@@ -139,7 +132,10 @@ Outer join:
 ## Inner Join
 
 ### Natural Join
-```sql
+
+```mysql
+NATURAL JOIN B
+/** is equal **/
 From A INNER JOIN B
 ON A.c = B.c 
 ```
