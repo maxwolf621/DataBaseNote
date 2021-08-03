@@ -1,24 +1,46 @@
 [Easy](https://zhuanlan.zhihu.com/p/265354299)
-## Question 39
+## [Average Selling Price]()
 
 
-
+```diff
+Prices table
++------------+------------+------------+--------+
+| product_id | start_date | end_date   | price  |
++------------+------------+------------+--------+
+| 1          | 2019-02-17 | 2019-02-28 | 5      |
+| 1          | 2019-03-01 | 2019-03-22 | 20     |
+| 2          | 2019-02-01 | 2019-02-20 | 15     |
+| 2          | 2019-02-21 | 2019-03-31 | 30     |
++------------+------------+------------+--------+
 - `(product_id, start_date, end_date)` is the primary key for this table.
-- Each row of this table indicates the price of the product_id in the period from start_date to end_date.
 - For each product_id there will be no two overlapping periods. That means there will be no two intersecting periods for the same product_id.
 
+UnitsSold table:
++------------+---------------+-------+
+| product_id | purchase_date | units |
++------------+---------------+-------+
+| 1          | 2019-02-25    | 100   |
+| 1          | 2019-03-01    | 15    |
+| 2          | 2019-02-10    | 200   |
+| 2          | 2019-03-22    | 30    |
++------------+---------------+-------+
 - There is no primary key for this table, it may contain duplicates.
-- Each row of this table indicates the date, units and product_id of each product sold. 
- 
-### Question
-Write an SQL query to find the average selling price for each product.  
-- `average_price` should be rounded to 2 decimal places.  
 
+Result table:
++------------+---------------+
+| product_id | average_price |
++------------+---------------+
+| 1          | 6.96          |
+| 2          | 16.96         |
++------------+---------------+
 - Average selling price = Total Price of Product / Number of products sold.
 - Average selling price for product 1 = ((100 * 5) + (15 * 20)) / 115 = 6.96
 - Average selling price for product 2 = ((200 * 15) + (30 * 30)) / 230 = 16.96
+```
 
-### Solution
+Write an SQL query to find the average selling price for each product.  
+- `average_price` should be rounded to 2 decimal places.  
+
 ```sql
 select UnitsSold.product_id, round(sum(units*price)/sum(units), 2) as average_price
 from UnitsSold inner join Prices
@@ -27,8 +49,36 @@ and UnitsSold.purchase_date between Prices.start_date and Prices.end_date
 group by UnitsSold.product_id
 ```
 
+## [Sales Analysis i](https://code.dennyzhang.com/sales-analysis-i)    
 
-## [Find The Bests Seller](https://code.dennyzhang.com/sales-analysis-i)    
+Write an SQL query that reports the best seller by total sales price, If there is a tie, report them all.  
+```diff
++------------+--------------+------------+
+| product_id | product_name | unit_price |
++------------+--------------+------------+
+| 1          | S8           | 1000       |
+| 2          | G4           | 800        |
+| 3          | iPhone       | 1400       |
++------------+--------------+------------+
+
+Sales table:
++-----------+------------+----------+------------+----------+-------+
+| seller_id | product_id | buyer_id | sale_date  | quantity | price |
++-----------+------------+----------+------------+----------+-------+
+| 1         | 1          | 1        | 2019-01-21 | 2        | 2000  |
+| 1         | 2          | 2        | 2019-02-17 | 1        | 800   |
+| 2         | 2          | 3        | 2019-06-02 | 1        | 800   |
+| 3         | 3          | 4        | 2019-05-13 | 2        | 2800  |
++-----------+------------+----------+------------+----------+-------+
+
+Result table:
++-------------+
+| seller_id   |
++-------------+
+| 1           |
+| 3           |
++-------------+
+```
 
 ```mysql
 SELECT seller_id
@@ -36,21 +86,73 @@ FROM Sales
 GROUP BY seller_id
 HAVING SUM(price) = (SELECT SUM(price)
                     FROM Sales
+                    /** Find the MAX **/
                     GROUP BY seller_id
                     ORDER BY SUM(price) DESC
                     LIMIT 1)
 ```
 
-## https://zhuanlan.zhihu.com/p/259935444
+## [Product Sales Analysis I](https://zhuanlan.zhihu.com/p/259935444)
 
+Write an SQL query that reports all product names of the products in the Sales table along with their selling year and price.
+
+```diff
+Sales table:
++---------+------------+------+----------+-------+
+| sale_id | product_id | year | quantity | price |
++---------+------------+------+----------+-------+ 
+| 1       | 100        | 2008 | 10       | 5000  |
+| 2       | 100        | 2009 | 12       | 5000  |
+| 7       | 200        | 2011 | 15       | 9000  |
++---------+------------+------+----------+-------+
+
+Product table:
++------------+--------------+
+| product_id | product_name |
++------------+--------------+
+| 100        | Nokia        |
+| 200        | Apple        |
+| 300        | Samsung      |
++------------+--------------+
+
+Result table:
++--------------+-------+-------+
+| product_name | year  | price |
++--------------+-------+-------+
+| Nokia        | 2008  | 5000  |
+| Nokia        | 2009  | 5000  |
+| Apple        | 2011  | 9000  |
++--------------+-------+-------+
+```
 
 ## [Second Highest Salary](https://zhuanlan.zhihu.com/p/250015043)
 
 Write a SQL query to get the second highest salary from the Employee Table.    
 
 For example, given the above Employee table, the query should return 200 as the second highest salary.  
-If there is no second highest salary, then the query should return null.
+```diff
++----+--------+
+| Id | Salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+
++---------------------+
+| SecondHighestSalary |
++---------------------+
+| 200                 |
++---------------------+
+- If there is no second highest salary, then the query should return null.
+
+```
+
 ```mysql
+select ifnull((
+       select Salary from Employee
+       group by Salary order by Salary desc limit 1,1), null) as SecondHighestSalary
+
 SELECT
  (SELECT DISTINCT Salary
   FROM Employee
@@ -61,15 +163,10 @@ AS SecondHighestSalary;
 
 ## [Duplicate Emails](https://zhuanlan.zhihu.com/p/251960784)
 
-Write a SQL query to find all duplicate emails in a table named Person.  
-
-For example, your query should return the following for the above table:
-
 ```mysql
 SELECT Email FROM
   /**Create A table showing total ount of each mail**/
- (SELECT Email, COUNT(id) AS num
-  FROM Person
+ (SELECT Email, COUNT(id) AS num FROM Person
   GROUP BY Email) AS tmp
 WHERE num > 1;
 ```
@@ -80,6 +177,7 @@ JOIN Person AS b
 ON a.Email = b.Email
 AND a.Id <> b.Id;
 ```
+
 ## [Customers Who Never Order](https://zhuanlan.zhihu.com/p/251983949)
 
 Write a SQL query to find all customers who never order anything.  
@@ -100,7 +198,6 @@ Write an SQL query to find all dates' id with higher temperature compared to its
    > `SUB_DATE`    
 
 ## [Delete Duplicate Emails](https://zhuanlan.zhihu.com/p/252243481)   
-
 
 Write a SQL query to delete all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id. For example, after running your query, the above Person table should have the following rows:
 
@@ -308,7 +405,42 @@ WHERE player_id IN (SELECT player_id, min(event_date) from Activity As TMP GROUP
 
 Select all employee's name and bonus whose bonus is < 1000.
 
+```diff
+Employee
++-------+--------+-----------+--------+
+| empId |  name  | supervisor| salary |
++-------+--------+-----------+--------+
+|   1   | John   |  3        | 1000   |
+|   2   | Dan    |  3        | 2000   |
+|   3   | Brad   |  null     | 4000   |
+|   4   | Thomas |  3        | 4000   |
++-------+--------+-----------+--------+
+
+Bonus
++-------+-------+
+| empId | bonus |
++-------+-------+
+| 2     | 500   |
+| 4     | 2000  |
++-------+-------+
+
+Result
++-------+-------+
+| name  | bonus |
++-------+-------+
+| John  | null  |
+| Dan   | 500   |
+| Brad  | null  |
++-------+-------+
+```
+
+- using `IFNULL()`
+- using `WHERE ... OR ...`
 ```mysql
+SELECT name, bonus
+FROM EmployeeLEFT JOIN Bonus USING (empId)
+WHERE IFNULL(bonus, 0) < 1000　　
+
 SELECT a.name, 
 b.bonus
 FROM Employee AS a
@@ -317,12 +449,421 @@ ON a.empId = b.empId
 WHERE b.bonus < 1000 OR b.bonus IS NULL;
 ```
 
-## [https://zhuanlan.zhihu.com/p/258700620](Customer Placing the Largest Number of Orders)
+## [Customer Placing the Largest Number of Orders](https://zhuanlan.zhihu.com/p/258700620)
 
+```
+oders table : 
++--------------+-----------------+------------+---------------+--------------+--------+---------+
+| order_number | customer_number | order_date | required_date | shipped_date | status | comment |
+|--------------|-----------------|------------|---------------|--------------|--------|---------|
+| 1            | 1               | 2017-04-09 | 2017-04-13    | 2017-04-12   | Closed |         |
+| 2            | 2               | 2017-04-15 | 2017-04-20    | 2017-04-18   | Closed |         |
+| 3            | 3               | 2017-04-16 | 2017-04-25    | 2017-04-20   | Closed |         |
+| 4            | 3               | 2017-04-18 | 2017-04-28    | 2017-04-25   | Closed |         |
++--------------+-----------------+------------+---------------+--------------+--------+---------+
+
+Sample Output
++-----------------+
+| customer_number |
+|-----------------|
+| 3               |
++-----------------+
+```
 
 ```mysql
+-- +--------------+-----------------+
+-- | cout(*)      | customer_number |
+-- |--------------|-----------------|
+-- | 2            | 3               |
+-- | 1            | 2               |
+-- | 1            | 1               |
+-- +--------------+-----------------+
+
 SELECT customer_number FROM orders
 GROUP BY customer_number
 ORDER BY COUNT(*) DESC
 LIMIT 1;
+
+SELECT customer_number FROM orders 
+GROUP BY customer_number
+HAVING COUNT(customer_number) >= ALL 
+(SELECT COUNT(customer_number) FROM orders GROUP BY customer_number);
 ```
+
+## [Find Customer Referee](https://zhuanlan.zhihu.com/p/258694894)
+
+Write a query to return the list of customers NOT referred by the person with id '2'.
+```
+Given a table customer holding customers information and the referee.
+
++------+------+-----------+
+| id   | name | referee_id|
++------+------+-----------+
+|    1 | Will |      NULL |
+|    2 | Jane |      NULL |
+|    3 | Alex |         2 |
+|    4 | Bill |      NULL |
+|    5 | Zack |         1 |
+|    6 | Mark |         2 |
++------+------+-----------+
+
++------+
+| name |
++------+
+| Will |
+| Jane |
+| Bill |
+| Zack |
++------+
+```
+
+- using `NOT IN`
+- using `IS NULL`
+- using `IFNULL()`
+```mysql
+SELECT name FROM customer 
+WHERE referee_id <> 2 OR referee_id IS NULL;
+
+// nested query via NOT ... IN
+SELECT name FROM customer WHERE
+id NOT IN
+(SELECT id FROM customer WHERE referee_id = 2);
+
+// using INULL
+SELECT name FROM customer
+WHERE IFNULL(referee_id,]( 0) <> 2;
+```
+
+## [Classes More Than 5 Students](https://zhuanlan.zhihu.com/p/258705251)
+
+Please list out all classes which have more than or equal to 5 students.
+
+```
+courses 
++---------+------------+
+| student | class      |
++---------+------------+
+| A       | Math       |
+| B       | English    |
+| C       | Math       |
+| D       | Biology    |
+| E       | Math       |
+| F       | Computer   |
+| G       | Math       |
+| H       | Math       |
+| I       | Math       |
++---------+------------+
+
+Should output:
++---------+
+| class   |
++---------+
+| Math    |
++---------+
+```
+
+```mysql
+SELECT class 
+FROM courses 
+GROUP BY class
+HAVING COUNT(SELECT DISTINCT student) > 4;
+```
+
+## [Friend Requests I: Overall Acceptance Rate](https://zhuanlan.zhihu.com/p/258790804)
+
+## [Consecutive Available Seats](https://zhuanlan.zhihu.com/p/259420594)
+
+
+Query all the consecutive available seats order by the `seat_id` using the following cinema table?
+- The `seat_id` is an auto increment `int`, and free is bool ('1' means free, and '0' means occupied.).
+- Consecutive available seats are more than 2(inclusive) seats consecutively available.
+
+```diff
++---------+------+
+| seat_id | free |
+|---------|------|
+| 1       | 1    |
+| 2       | 0    |
+| 3       | 1    |
+| 4       | 1    |
+| 5       | 1    |
++---------+------+
+ 
++---------+
+| seat_id |
+|---------|
+| 3       |
+| 4       |
+| 5       |
++---------+
+```
+
+```mysql
+SELECT DISTINCT a.seat_id             
+FROM
+    cinema a JOIN cinema b ON
+    ABS(a.seat_id - b.seat_id) = 1 AND
+    /**
+      * a.free = TRUE AND b.free = TRUE
+      */
+    a.free = 1 AND 
+    b.free = 1
+ORDER BY a.seat_id
+
+SELECT DISTINCT c1.seat_id from cinema c1, cinema c2 
+WHERE (c1.seat_id+1=c2.seat_id or c1.seat_id-1=c2.seat_id)
+AND(c1.free=TRUE and c2.free=TRUE)
+ORDER BY a.seat_id;
+```
+
+
+
+## [Friend Requests I: Overall Acceptance Rate](https://zhuanlan.zhihu.com/p/258790804)
+
+
+```diff
+friend_request
+| sender_id | send_to_id |request_date|
+|-----------|------------|------------|
+| 1         | 2          | 2016_06-01 |
+| 1         | 3          | 2016_06-01 |
+| 1         | 4          | 2016_06-01 |
+| 2         | 3          | 2016_06-02 |
+| 3         | 4          | 2016-06-09 |
+
+request_accepted
+| requester_id | accepter_id |accept_date |
+|--------------|-------------|------------|
+| 1            | 2           | 2016_06-03 |
+| 1            | 3           | 2016-06-08 |
+| 2            | 3           | 2016-06-08 |
+| 3            | 4           | 2016-06-09 |
+| 3            | 4           | 2016-06-10 |
+
+|accept_rate|
+|-----------|
+|       0.80|
+```
+
+```mysql
+SELECT
+ROUND(
+    IFNULL(
+        (SELECT COUNT(distinct requester_id, accepter_id)
+         FROM request_accepted)/ 
+        (SELECT COUNT(distinct sender_id, send_to_id)
+         FROM friend_request)
+    ,0)
+,2) accept_rate
+```
+
+
+```mysql
+select coalesce(
+       round(count(distinct requester_id, accepter_id)/
+       count(distinct sender_id, send_to_id),2),
+       0) 
+       as accept_rate
+from friend_request, request_accepted
+
+/** concate **/
+select 
+round(ifnull((select count(distinct(concat(requester_id,',', accepter_id))) 
+from request_accepted) /
+(select count(distinct(concat(sender_id,',', send_to_id))) 
+from friend_request), 0),2) as accept_rate
+```
+
+## [Sales Person](https://zhuanlan.zhihu.com/p/259424830)
+
+Output all the names in the table salesperson, who didn’t have sales to company 'RED'.
+
+```diff
+salesperson
++----------+------+--------+-----------------+-----------+
+| sales_id | name | salary | commission_rate | hire_date |
++----------+------+--------+-----------------+-----------+
+|   1      | John | 100000 |     6           | 4/1/2006  |
+|   2      | Amy  | 120000 |     5           | 5/1/2010  |
+|   3      | Mark | 65000  |     12          | 12/25/2008|
+|   4      | Pam  | 25000  |     25          | 1/1/2005  |
+|   5      | Alex | 50000  |     10          | 2/3/2007  |
++----------+------+--------+-----------------+-----------+
+                                      ^
+company                               |
++---------+--------+------------+     |
+| com_id  |  name  |    city    |     |
++---------+--------+------------+     |
+|   1     |  RED   |   Boston   |     |
+|   2     | ORANGE |   New York |     |
+|   3     | YELLOW |   Boston   |     |
+|   4     | GREEN  |   Austin   |     |
++---------+--------+------------+     |
+                              ^       |
+orders                        |       |
++----------+------------+---------+----------+--------+
+| order_id | order_date | com_id  | sales_id | amount |
++----------+------------+---------+----------+--------+
+| 1        |   1/1/2014 |    3    |    4     | 100000 |
+| 2        |   2/1/2014 |    4    |    5     | 5000   |
+| 3        |   3/1/2014 |    1    |    1     | 50000  |
+| 4        |   4/1/2014 |    1    |    4     | 25000  |
++----------+------------+---------+----------+--------+
+
+Output
++------+
+| name | 
++------+
+| Amy  | 
+| Mark | 
+| Alex |
++------+
+```
+
+```mysql
+SELECT name from salesperson WHERE
+SELECT sales_id From orders WHERE com_id NOT IN (SELECT com_id FROM company WHERE CITY = 'RED')
+GROUP BY sales_id
+
+
+SELECT name FROM salesperson
+WHERE sales_id NOT IN (
+SELECT b.sales_id FROM company AS a
+INNER JOIN orders AS b
+ON a.com_id = b.com_id
+WHERE a.name = 'RED'
+);
+
+SELECT name
+FROM salesperson
+WHERE sales_id NOT IN (SELECT o.sales_id 
+                       FROM orders o LEFT JOIN company c ON o.com_id = c.com_id
+                       WHERE c.name = 'RED'
+                       GROUP BY o.sales_id);
+```
+
+## [Triangle Judgement](https://zhuanlan.zhihu.com/p/259435481)  
+
+
+For the sample data above, your query should return the follow result:
+
+```diff
++----+----+----+
+| x  | y  | z  |
+|----|----|----|
+| 13 | 15 | 30 |
+| 10 | 20 | 15 |
++----+----+----+
+
++----+----+----+----------+
+| x  | y  | z  | triangle |
+|----|----|----|----------|
+| 13 | 15 | 30 | No       |
+| 10 | 20 | 15 | Yes      |
++----+----+----+----------+
+```
+
+
+```mysql
+SELECT *,
+CASE WHEN
+(x + y > z) AND (x + z > y) AND (y + z > x) THEN 'Yes'
+ELSE 'No' END AS triangle
+FROM triangle
+
+select *, 
+    IF(x + y > z AND x + z > y AND y + z > x, 'Yes', 'No') as triangle 
+    FROM triangle;
+```
+
+
+## [Shortest Distance in a Line]
+
+
+Table point holds the x coordinate of some points on x-axis in a plane, which are all integers.
+Write a query to find the shortest distance between two points in these points.
+
+Write a query to find the shortest distance between two points in these points.
+- The shortest distance is '1' obviously, which is from point '-1' to '0'. So the output is as below:
+
+```diff
++-----+
+| x   |
+|-----|
+| -1  |
+| 0   |
+| 2   |
++-----+
+
++---------+
+| shortest|
+|---------|
+| 1       |
++---------+
+```
+
+```mysql
+SELECT MIN(ABS(a.x - b.x)) AS shortest
+FROM point AS a
+JOIN point AS b
+ON a.x <> b.x;
+```
+
+## [Biggest Single Number]()
+
+We cant not use `ORDER BY num DESC LIMIT 1`
+> if there is no such **bigger single number**
+```console
+Input: {"headers": {"number": ["num"]}, "rows": {"number": [[8],[1],[8],[3],[4],[3],[1],[4],[5],[5],[6],[6]]}}
+Output: {"headers":["num"],"values":[]}
+Expected: {"headers":["num"],"values":[[null]]}
+```
+
+```diff
++---+
+|num|
++---+
+| 8 |
+| 8 |
+| 3 |
+| 3 |
+| 1 |
+| 4 |
+| 5 |
+| 6 | 
++---+
+
++---+
+|num|
++---+
+| 6 |
++---+
+```
+
+```mysql
+SELECT MAX(num) AS num FROM
+(
+ SELECT num FROM my_numbers
+ GROUP BY num
+ HAVING COUNT(*) = 1
+) AS x;
+```
+
+
+## [Not Boring Movies](https://zhuanlan.zhihu.com/p/259714269)
+
+Please write a SQL query to output movies with an odd numbered ID and a description that is not 'boring'. Order the result by rating.
+
+
+- via `mod(attribute, integer) = q`
+```mysql
+SELECT * FROM cinema
+WHERE MOD(id, 2) = 1 AND description <> 'boring'
+ORDER BY rating DESC;
+```
+
+
+## [Swap Salary](https://zhuanlan.zhihu.com/p/259763823)
+
+
+- via `set ... case ...`
