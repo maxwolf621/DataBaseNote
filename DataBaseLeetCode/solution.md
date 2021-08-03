@@ -2,7 +2,7 @@
 ## [Average Selling Price]()
 
 
-```diff
+```
 Prices table
 +------------+------------+------------+--------+
 | product_id | start_date | end_date   | price  |
@@ -811,7 +811,7 @@ ON a.x <> b.x;
 
 ## [Biggest Single Number]()
 
-We cant not use `ORDER BY num DESC LIMIT 1`
+Can Not use `ORDER BY num DESC LIMIT 1`
 > if there is no such **bigger single number**
 ```console
 Input: {"headers": {"number": ["num"]}, "rows": {"number": [[8],[1],[8],[3],[4],[3],[1],[4],[5],[5],[6],[6]]}}
@@ -865,5 +865,89 @@ ORDER BY rating DESC;
 
 ## [Swap Salary](https://zhuanlan.zhihu.com/p/259763823)
 
+Swap all f and m values (i.e., change all f values to m and vice versa) with a single update statement and no intermediate temp table.  
 
-- via `set ... case ...`
+**Note that you must write a single update statement, DO NOT write any select statement for this problem. **
+
+- via `case when ... then ... else ... end`
+
+
+## [Actors & Directors Cooperated >= 3 Times](https://zhuanlan.zhihu.com/p/259934531)
+
+Write a SQL query for a report that provides the pairs (actor_id, director_id) where the actor have cooperated with the director at least 3 times.
+
+
+
+## 1068 Product Sales Analysis I [Easy]
+
+## 1069 Product Sales Analysis II [Easy]
+
+## 1075 Project Employees I [Easy]
+## 
+## 1076 Project Employees II [Easy]
+## 
+## 1082 Sales Analysis I [Easy]
+## 
+## 1083 Sales Analysis II [Easy]
+## 
+## 1084 Sales Analysis III [Easy]
+## 
+## 1113. Reported Posts [Easy]
+## 
+## 1141. User Activity for the Past 30 Days I [Easy]
+## 
+## 1142. User Activity for the Past 30 Days II [Easy]
+## 
+## 1148. Article Views I [Easy]
+## 
+## 1173. Immediate Food Delivery I [Easy]
+## 
+## 1179. Reformat Department Table [Easy]
+## 
+## 1211. Queries Quality and Percentage [Easy]
+## 
+## 1241. Number of Comments per Post [Easy]
+## 
+## 1251. Average Selling Price [Easy]
+## 
+## 1280. Students and Examinations [Easy]
+## 
+## 1294. Weather Type in Each Country [Easy]
+## 
+## 1303. Find the Team Size [Easy]
+## 
+## 1322. Ads Performance [Easy]
+## 
+## 1327. List the Products Ordered in a Period [Easy]
+## 
+## 1350. Students With Invalid Departments [Easy]
+## 
+## 1378. Replace Employee ID with The Unique Identifier [Easy]
+## 
+## 1407. Top Travellers [Easy]
+## 
+## 1435. Create a Session Bar Chart [Easy]
+## 
+## 1484. Group Sold Products By The Date [Easy]
+## 
+## 1495. Friendly Movies Streamed Last Month [Easy]
+## 
+## 1511. Customer Order Frequency [Easy]
+## 
+## 1517. Find Users With Valid E-Mails [Easy]
+## 
+## 1527. Patients With a Condition [Easy]
+## 
+## 1543. Fix Product Name Format [Easy]
+## 
+## 1565. Unique Orders and Customers Per Month [Easy]
+## 
+## 1571. Warehouse Manager [Easy]
+## 
+## 1581. Customer Who Visited but Did Not Make Any Transactions [Easy]
+## 
+## 1587. Bank Account Summary II [Easy]
+## 
+## 1607. Sellers With No Sales [Easy]
+## 
+## 1623. All Valid Triplets That Can Represent a Country [Easy]
