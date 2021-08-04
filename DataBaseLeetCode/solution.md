@@ -1,38 +1,42 @@
 [Easy](https://zhuanlan.zhihu.com/p/265354299)
-## [Average Selling Price]()
 
+[`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)     
+[`HAVING`](https://www.yiibai.com/mysql/having.html)     
+[`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)  
 
-```
-Prices table
-+------------+------------+------------+--------+
-| product_id | start_date | end_date   | price  |
-+------------+------------+------------+--------+
-| 1          | 2019-02-17 | 2019-02-28 | 5      |
-| 1          | 2019-03-01 | 2019-03-22 | 20     |
-| 2          | 2019-02-01 | 2019-02-20 | 15     |
-| 2          | 2019-02-21 | 2019-03-31 | 30     |
-+------------+------------+------------+--------+
+## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
+
+```diff
+  Prices table
+  +------------+------------+------------+--------+
+  | product_id | start_date | end_date   | price  |
+  +------------+------------+------------+--------+
+  | 1          | 2019-02-17 | 2019-02-28 | 5      |
+  | 1          | 2019-03-01 | 2019-03-22 | 20     |
+  | 2          | 2019-02-01 | 2019-02-20 | 15     |
+  | 2          | 2019-02-21 | 2019-03-31 | 30     |
+  +------------+------------+------------+--------+
 - `(product_id, start_date, end_date)` is the primary key for this table.
 - For each product_id there will be no two overlapping periods. That means there will be no two intersecting periods for the same product_id.
 
-UnitsSold table:
-+------------+---------------+-------+
-| product_id | purchase_date | units |
-+------------+---------------+-------+
-| 1          | 2019-02-25    | 100   |
-| 1          | 2019-03-01    | 15    |
-| 2          | 2019-02-10    | 200   |
-| 2          | 2019-03-22    | 30    |
-+------------+---------------+-------+
+  UnitsSold table:
+  +------------+---------------+-------+
+  | product_id | purchase_date | units |
+  +------------+---------------+-------+
+  | 1          | 2019-02-25    | 100   |
+  | 1          | 2019-03-01    | 15    |
+  | 2          | 2019-02-10    | 200   |
+  | 2          | 2019-03-22    | 30    |
+  +------------+---------------+-------+
 - There is no primary key for this table, it may contain duplicates.
 
-Result table:
-+------------+---------------+
-| product_id | average_price |
-+------------+---------------+
-| 1          | 6.96          |
-| 2          | 16.96         |
-+------------+---------------+
+  Result table:
+  +------------+---------------+
+  | product_id | average_price |
+  +------------+---------------+
+  | 1          | 6.96          |
+  | 2          | 16.96         |
+  +------------+---------------+
 - Average selling price = Total Price of Product / Number of products sold.
 - Average selling price for product 1 = ((100 * 5) + (15 * 20)) / 115 = 6.96
 - Average selling price for product 2 = ((200 * 15) + (30 * 30)) / 230 = 16.96
@@ -53,31 +57,31 @@ group by UnitsSold.product_id
 
 Write an SQL query that reports the best seller by total sales price, If there is a tie, report them all.  
 ```diff
-+------------+--------------+------------+
-| product_id | product_name | unit_price |
-+------------+--------------+------------+
-| 1          | S8           | 1000       |
-| 2          | G4           | 800        |
-| 3          | iPhone       | 1400       |
-+------------+--------------+------------+
+  +------------+--------------+------------+
+  | product_id | product_name | unit_price |
+  +------------+--------------+------------+
+  | 1          | S8           | 1000       |
+  | 2          | G4           | 800        |
+  | 3          | iPhone       | 1400       |
+  +------------+--------------+------------+
 
-Sales table:
-+-----------+------------+----------+------------+----------+-------+
-| seller_id | product_id | buyer_id | sale_date  | quantity | price |
-+-----------+------------+----------+------------+----------+-------+
-| 1         | 1          | 1        | 2019-01-21 | 2        | 2000  |
-| 1         | 2          | 2        | 2019-02-17 | 1        | 800   |
-| 2         | 2          | 3        | 2019-06-02 | 1        | 800   |
-| 3         | 3          | 4        | 2019-05-13 | 2        | 2800  |
-+-----------+------------+----------+------------+----------+-------+
+  Sales table:
+  +-----------+------------+----------+------------+----------+-------+
+  | seller_id | product_id | buyer_id | sale_date  | quantity | price |
+  +-----------+------------+----------+------------+----------+-------+
+  | 1         | 1          | 1        | 2019-01-21 | 2        | 2000  |
+  | 1         | 2          | 2        | 2019-02-17 | 1        | 800   |
+  | 2         | 2          | 3        | 2019-06-02 | 1        | 800   |
+  | 3         | 3          | 4        | 2019-05-13 | 2        | 2800  |
+  +-----------+------------+----------+------------+----------+-------+
 
-Result table:
-+-------------+
-| seller_id   |
-+-------------+
-| 1           |
-| 3           |
-+-------------+
+  Result table:
+  +-------------+
+  | seller_id   |
+  +-------------+
+  | 1           |
+  | 3           |
+  +-------------+
 ```
 
 ```mysql
@@ -982,7 +986,8 @@ GROUP BY a.project_id;
   | 2           | 2.50          |
   +-------------+---------------+
 
-+ The average experience years for the first project is (3 + 2 + 1) / 3 = 2.00 and for the second project is (3 + 2) / 2 = 2.50
++ The average experience years for the first project is (3 + 2 + 1) / 3 = 2.00 and 
++ for the second project is (3 + 2) / 2 = 2.50
 ```
 
 ```mysql
@@ -992,31 +997,363 @@ on Project.employee_id = Employee.employee_id
 group by project_id
 ```
 
-## 1082 Sales Analysis I [Easy]
+## [Sales Analysis I]
 
 
-## 1083 Sales Analysis II [Easy]
+```diff
+  Product table:
+  +------------+--------------+------------+
+  | product_id | product_name | unit_price |
+  +------------+--------------+------------+
+  | 1          | S8           | 1000       |
+  | 2          | G4           | 800        |
+  | 3          | iPhone       | 1400       |
+  +------------+--------------+------------+
 
+  Sales table:
+  +-----------+------------+----------+------------+----------+-------+
+  | seller_id | product_id | buyer_id | sale_date  | quantity | price |
+  +-----------+------------+----------+------------+----------+-------+
+  | 1         | 1          | 1        | 2019-01-21 | 2        | 2000  |
+  | 1         | 2          | 2        | 2019-02-17 | 1        | 800   |
+  | 2         | 2          | 3        | 2019-06-02 | 1        | 800   |
+  | 3         | 3          | 4        | 2019-05-13 | 2        | 2800  |
+  +-----------+------------+----------+------------+----------+-------+
++ This table has no primary key, it can have repeated rows.
+
+  Result table:
+  +-------------+
+  | seller_id   |
+  +-------------+
+  | 1           |
+  | 3           |
+  +-------------+
++ Both sellers with id 1 and 3 sold products with the most total price of 2800.
+```
+
+```mysql
+WITH tmp AS (
+SELECT seller_id, RANK() OVER(ORDER BY SUM(price) DESC) AS rnk FROM Sales
+GROUP BY seller_id
+)
+
+SELECT seller_id FROM tmp
+WHERE rnk = 1;
+
+select seller_id
+from Sales
+group by seller_id
+HAVING sum(price) = (
+    SELECT sum(price)
+    FROM Sales
+    GPOUP BY seller_id
+    ORDER BY sum(price) desc
+    LIMIT 1
+    )
+```
+
+## Sales Analysis II 
+
+Write an SQL query that reports the buyers who have bought S8 but not iPhone. Note that S8 and iPhone are products present in the Product table.
+
+```diff
+  Result table:
+  +-------------+
+  | buyer_id    |
+  +-------------+
+  | 1           |
+  +-------------+
+- The buyer with id 1 bought an S8 but didn't buy an iPhone. The buyer with id 3 bought both.
+```
+
+```mysql
+WITH
+tmp AS (
+SELECT a.buyer_id, b.product_name FROM Sales AS a
+JOIN Product AS b
+ON a.product_id = b.product_id
+)
+
+SELECT DISTINCT buyer_id FROM tmp
+WHERE buyer_id NOT IN (SELECT buyer_id FROM tmp WHERE product_name = 'iPhone')
+AND buyer_id IN (SELECT buyer_id FROM tmp WHERE product_name = 'S8');
+
+/** nested query with join **/
+select distinct buyer_id
+from Sales inner join Product
+where Sales.product_id = Product.product_id
+    and product_name = 'S8'
+    and buyer_id not in
+    (select distinct buyer_id
+    from Sales inner join Product
+    where Sales.product_id = Product.product_id
+        and product_name = 'iPhone')
+```
 
 ## 1084 Sales Analysis III [Easy]
 
+Write an SQL query that reports the products that were only sold in spring 2019. 
 
-## 1113. Reported Posts [Easy]
-## 
-## 1141. User Activity for the Past 30 Days I [Easy]
-## 
-## 1142. User Activity for the Past 30 Days II [Easy]
-## 
-## 1148. Article Views I [Easy]
-## 
-## 1173. Immediate Food Delivery I [Easy]
-## 
-## 1179. Reformat Department Table [Easy]
-## 
-## 1211. Queries Quality and Percentage [Easy]
-## 
-## 1241. Number of Comments per Post [Easy]
-## 
+That is, between `2019-01-01` and `2019-03-31` inclusive.
+
+```diff
+  Sales table:
+  +---------+------------+------+----------+-------+
+  | sale_id | product_id | year | quantity | price |
+  +---------+------------+------+----------+-------+ 
+  | 1       | 100        | 2008 | 10       | 5000  |
+  | 2       | 100        | 2009 | 12       | 5000  |
+  | 7       | 200        | 2011 | 15       | 9000  |
+  +---------+------------+------+----------+-------+
+
+  Product table:
+  +------------+--------------+
+  | product_id | product_name |
+  +------------+--------------+
+  | 100        | Nokia        |
+  | 200        | Apple        |
+  | 300        | Samsung      |
+  +------------+--------------+
+
+  Result table:
+  +------------+------------+----------+-------+
+  | product_id | first_year | quantity | price |
+  +------------+------------+----------+-------+ 
+  | 100        | 2008       | 10       | 5000  |
+  | 200        | 2011       | 15       | 9000  |
+  +------------+------------+----------+-------+
+```
+
+```mysql
+SELECT DISTINCT a.product_id, b.product_name FROM Sales AS a
+JOIN Product AS b
+ON a.product_id = b.product_id
+WHERE a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date < '2019-01-01')
+AND a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date > '2019-03-31');
+```
+
+## Reported Posts
+
+Write an SQL query that **report**s the number of posts reported yesterday for each report reason. Assume today is `2019-07-05`.
+```diff
+ Actions table:
+  +---------+---------+-------------+--------+--------+
+  | user_id | post_id | action_date | action | extra  |
+  +---------+---------+-------------+--------+--------+
+  | 1       | 1       | 2019-07-01  | view   | null   |
+  | 1       | 1       | 2019-07-01  | like   | null   |
+  | 1       | 1       | 2019-07-01  | share  | null   |
+! | 2       | 4       | 2019-07-04  | view   | null   |
++ | 2       | 4       | 2019-07-04  | report | spam   |
+! | 3       | 4       | 2019-07-04  | view   | null   |
++ | 3       | 4       | 2019-07-04  | report | spam   |
+  | 4       | 3       | 2019-07-02  | view   | null   |
+  | 4       | 3       | 2019-07-02  | report | spam   |
+! | 5       | 2       | 2019-07-04  | view   | null   |
+- | 5       | 2       | 2019-07-04  | report | racism |
+! | 5       | 5       | 2019-07-04  | view   | null   |
+- | 5       | 5       | 2019-07-04  | report | racism |
+  +---------+---------+-------------+--------+--------+
+  Result table:
+  +---------------+--------------+
+  | report_reason | report_count |
+  +---------------+--------------+
+  | spam          | 1            |
+  | racism        | 2            |
+  +---------------+--------------+
+```
+
+
+```mysql
+SELECT extra AS report_reason, COUNT(DISTINCT post_id) AS report_count
+FROM Actions
+WHERE extra IS NOT NULL 
+AND action = 'report'
+AND DATEDIFF("2019-07-05", action_date) = 1
+GROUP BY extra;
+```
+
+## User Activity for the Past 30 Days I 
+
+There is no primary key for this table, it may have duplicate rows. 
+
+The activity_type column is an ENUM of type `('open_session', 'end_session', 'scroll_down', 'send_message')`.
+
+Write an SQL query to find the daily active user count for a period of 30 days ending `2019-07-27` inclusively.  
+A user was active on some day if he/she made at least one activity on that day.
+
+```mysql
+SELECT activity_date AS day, COUNT(DISTINCT user_id) AS active_users FROM (
+SELECT DISTINCT activity_date, user_id FROM Activity
+WHERE activity_date > DATE_SUB("2019-07-27", INTERVAL 30 DAY)
+GROUP BY activity_date, user_id
+HAVING COUNT(DISTINCT activity_type) >= 1
+) AS tmp
+GROUP BY activity_date;
+```
+
+## [User Activity for the Past 30 Days II](https://zhuanlan.zhihu.com/p/260558715)
+
+
+## [Article Views I](https://zhuanlan.zhihu.com/p/260564257)
+
+Write an SQL query to find all the authors that viewed at least one of their own articles, sorted in ascending order by their id.
+
+**Note that equal author_id and viewer_id indicate the same person.**
+
+```diff
+  VIEW TABLE 
+  +------------+-----------+-----------+------------+
+  | article_id | author_id | viewer_id | view_date  |
+  +------------+-----------+-----------+------------+
+  | 1          | 3         | 5         | 2019-08-01 |
+  | 1          | 3         | 6         | 2019-08-02 |
+  | 2          | 7         | 7         | 2019-08-01 |
+  | 2          | 7         | 6         | 2019-08-02 |
+  | 4          | 7         | 1         | 2019-07-22 |
+  | 3          | 4         | 4         | 2019-07-21 |
+  | 3          | 4         | 4         | 2019-07-21 |
+  +------------+-----------+-----------+------------+
+
+  Result
+  +------+
+  | id   |
+  +------+
+  | 4    |
+  | 7    |
+  +------+
+```
+
+
+```mysql
+SELECT DISTINCT author_id AS id FROM Views
+WHERE author_id = viewer_id
+ORDER BY id;
+```
+
+
+## Immediate Food Delivery I
+
+```diff
+  +-------------+-------------+------------+-----------------------------+
+  | delivery_id | customer_id | order_date | customer_pref_delivery_date |
+  +-------------+-------------+------------+-----------------------------+
+  | 1           | 1           | 2019-08-01 | 2019-08-02                  |
+  | 2           | 5           | 2019-08-02 | 2019-08-02                  |
+  | 3           | 1           | 2019-08-11 | 2019-08-11                  |
+  | 4           | 3           | 2019-08-24 | 2019-08-26                  |
+  | 5           | 4           | 2019-08-21 | 2019-08-22                  |
+  | 6           | 2           | 2019-08-11 | 2019-08-13                  |
+  +-------------+-------------+------------+-----------------------------+
+  
+  Result table:
+  +----------------------+
+  | immediate_percentage |
+  +----------------------+
+  | 33.33                |
+  +----------------------+
+- The orders with delivery id 2 and 3 are immediate while the others are scheduled.
+
+```
+
+
+## Reformat Department Table
+
+Write an SQL query to reformat the table such that there is a department id column and a revenue column for each month.
+```
+  Department table:
+  +------+---------+-------+
+  | id   | revenue | month |
+  +------+---------+-------+
+  | 1    | 8000    | Jan   |
+  | 2    | 9000    | Jan   |
+  | 3    | 10000   | Feb   |
+  | 1    | 7000    | Feb   |
+  | 1    | 6000    | Mar   |
+  +------+---------+-------+
+- The month has values in ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].
+
+  Result table:
+  +------+-------------+-------------+-------------+-----+-------------+
+  | id   | Jan_Revenue | Feb_Revenue | Mar_Revenue | ... | Dec_Revenue |
+  +------+-------------+-------------+-------------+-----+-------------+
+  | 1    | 8000        | 7000        | 6000        | ... | null        |
+  | 2    | 9000        | null        | null        | ... | null        |
+  | 3    | null        | 10000       | null        | ... | null        |
+  +------+-------------+-------------+-------------+-----+-------------+
+- Note that the result table has 13 columns (1 for the department id + 12 for the months).
+```
+
+```mysql
+SELECT id,
+SUM(CASE WHEN month = 'Jan' THEN revenue ELSE NULL END) AS Jan_Revenue,
+SUM(CASE WHEN month = 'Feb' THEN revenue ELSE NULL END) AS Feb_Revenue,
+SUM(CASE WHEN month = 'Mar' THEN revenue ELSE NULL END) AS Mar_Revenue,
+SUM(CASE WHEN month = 'Apr' THEN revenue ELSE NULL END) AS Apr_Revenue,
+SUM(CASE WHEN month = 'May' THEN revenue ELSE NULL END) AS May_Revenue,
+SUM(CASE WHEN month = 'Jun' THEN revenue ELSE NULL END) AS Jun_Revenue,
+SUM(CASE WHEN month = 'Jul' THEN revenue ELSE NULL END) AS Jul_Revenue,
+SUM(CASE WHEN month = 'Aug' THEN revenue ELSE NULL END) AS Aug_Revenue,
+SUM(CASE WHEN month = 'Sep' THEN revenue ELSE NULL END) AS Sep_Revenue,
+SUM(CASE WHEN month = 'Oct' THEN revenue ELSE NULL END) AS Oct_Revenue,
+SUM(CASE WHEN month = 'Nov' THEN revenue ELSE NULL END) AS Nov_Revenue,
+SUM(CASE WHEN month = 'Dec' THEN revenue ELSE NULL END) AS Dec_Revenue
+FROM Department
+GROUP BY id;
+```
+
+## [Queries Quality and Percentage](https://zhuanlan.zhihu.com/p/260937964)
+
+
+```mysql
+select query_name, round(avg(rating/position), 2) as quality,
+       round(100*sum(case when rating<3 then 1 else 0 end)/count(1), 2) as poor_query_percentage
+from Queries
+group by query_name
+```
+
+## Number of Comments per Post
+
+```diff
+  Submissions table:
+  +---------+------------+
+  | sub_id  | parent_id  |
+  +---------+------------+
+  | 1       | Null       |
+  | 2       | Null       |
+  | 1       | Null       |
+  | 12      | Null       |
+  | 3       | 1          |
+  | 5       | 2          |
+  | 3       | 1          |
+  | 4       | 1          |
+  | 9       | 1          |
+  | 10      | 2          |
+  | 6       | 7          |
+  +---------+------------+
+
+- We define query quality as: The average of the ratio between query rating and its position.
+- We also define poor_query_percentage as: The percentage of all queries with rating less than 3.
+- Write an SQL query to find each query name, the quality and poor_query_percentage.
+- Both quality and poor_query_percentage should be rounded to 2 decimal places.
+
+  Result Table
+  +---------+--------------------+
+  | post_id | number_of_comments |
+  +---------+--------------------+
+  | 1       | 3                  |
+  | 2       | 2                  |
+  | 12      | 0                  |
+  +---------+--------------------+
+- Dog queries quality is ((5 / 1) + (5 / 2) + (1 / 200)) / 3 = 2.50
+- Dog queries poor_ query_percentage is (1 / 3) * 100 = 33.33
+- Cat queries quality equals ((2 / 5) + (3 / 3) + (4 / 7)) / 3 = 0.66
+- Cat queries poor_ query_percentage is (1 / 3) * 100 = 33.33
+```
+
+
+
+
 ## 1251. Average Selling Price [Easy]
 ## 
 ## 1280. Students and Examinations [Easy]
@@ -1050,13 +1387,13 @@ group by project_id
 ## 1543. Fix Product Name Format [Easy]
 ## 
 ## 1565. Unique Orders and Customers Per Month [Easy]
-## 
+
 ## 1571. Warehouse Manager [Easy]
-## 
+
 ## 1581. Customer Who Visited but Did Not Make Any Transactions [Easy]
-## 
+
 ## 1587. Bank Account Summary II [Easy]
-## 
+
 ## 1607. Sellers With No Sales [Easy]
-## 
+
 ## 1623. All Valid Triplets That Can Represent a Country [Easy]
