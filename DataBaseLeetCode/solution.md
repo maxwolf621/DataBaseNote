@@ -876,22 +876,131 @@ Swap all f and m values (i.e., change all f values to m and vice versa) with a s
 
 Write a SQL query for a report that provides the pairs (actor_id, director_id) where the actor have cooperated with the director at least 3 times.
 
+```mysql
+SELECT actor_id, director_id FROM ActorDirector
+GROUP BY actor_id, director_id
+HAVING COUNT(timestamp) >= 3;
+```
+
+## [Product Sales Analysis I](https://zhuanlan.zhihu.com/p/259935444)
+
+Write an SQL query that reports all product names of the products in the Sales table along with their selling year and price.
+
+```diff
+  +---------+------------+------+----------+-------+
+- | sale_id | product_id | year | quantity | price |
+  +---------+------------+------+----------+-------+ 
+  | 1       | 100        | 2008 | 10       | 5000  |
+  | 2       | 100        | 2009 | 12       | 5000  |
+  | 7       | 200        | 2011 | 15       | 9000  |
+  +---------+------------+------+----------+-------+
+
+Product table:
+  +------------+--------------+
+- | product_id | product_name |
+  +------------+--------------+
+  | 100        | Nokia        |
+  | 200        | Apple        |
+  | 300        | Samsung      |
+  +------------+--------------+
+
+Result table:
+  +--------------+-------+-------+
+  | product_name | year  | price |
+  +--------------+-------+-------+
+  | Nokia        | 2008  | 5000  |
+  | Nokia        | 2009  | 5000  |
+  | Apple        | 2011  | 9000  |
+  +--------------+-------+-------+
+```
+
+```mysql
+--  +---------+------------+------+----------+-------+-------------+
+--  | sale_id | product_id | year | quantity | price | product_name|
+--  +---------+------------+------+----------+-------+-------------+
+--  | 1       | 100        | 2008 | 10       | 5000  | Nokia       |
+--  | 2       | 100        | 2009 | 12       | 5000  | Nokia       |
+--  | 7       | 200        | 2011 | 15       | 9000  | Apple       |
+--  +---------+------------+------+----------+-------+-------------+
+
+SELECT b.product_name, a.year,  a.price
+FROM Sales AS a
+LEFT JOIN Product AS b
+ON a.product_id = b.product_id;
+```
 
 
-## 1068 Product Sales Analysis I [Easy]
+## [Product Sales Analysis II](https://zhuanlan.zhihu.com/p/259937061)
 
-## 1069 Product Sales Analysis II [Easy]
+Write an SQL query that reports the total quantity sold for every product id.
 
-## 1075 Project Employees I [Easy]
-## 
-## 1076 Project Employees II [Easy]
-## 
+```mysql
+SELECT product_id, SUM(quantity) AS total_quantity
+FROM Sales
+GROUP BY product_id;
+```
+## [Project Employees I](https://zhuanlan.zhihu.com/p/259948436)
+
+Write an SQL query that reports the average experience years of all the employees for each project, rounded to 2 digits.
+
+```mysql
+SELECT a.project_id, ROUND(AVG(b.experience_years),2) AS average_years FROM Project AS a
+JOIN Employee AS b
+ON a.employee_id = b.employee_id
+GROUP BY a.project_id;
+```
+
+## [Project Employees II]()
+
+```diff
+  Project table:
+  +-------------+-------------+
+- | project_id  | employee_id |
+  +-------------+-------------+
+  | 1           | 1           |
+  | 1           | 2           |
+  | 1           | 3           |
+  | 2           | 1           |
+  | 2           | 4           |
+  +-------------+-------------+
+
+  Employee table:
+  +-------------+--------+------------------+
+- | employee_id | name   | experience_years |
+  +-------------+--------+------------------+
+  | 1           | Khaled | 3                |
+  | 2           | Ali    | 2                |
+  | 3           | John   | 1                |
+  | 4           | Doe    | 2                |
+  +-------------+--------+------------------+
+
+  Result table:
+  +-------------+---------------+
+- | project_id  | average_years |
+  +-------------+---------------+
+  | 1           | 2.00          |
+  | 2           | 2.50          |
+  +-------------+---------------+
+
++ The average experience years for the first project is (3 + 2 + 1) / 3 = 2.00 and for the second project is (3 + 2) / 2 = 2.50
+```
+
+```mysql
+select project_id, round(avg(experience_years), 2) as average_years
+from Project inner join Employee
+on Project.employee_id = Employee.employee_id
+group by project_id
+```
+
 ## 1082 Sales Analysis I [Easy]
-## 
+
+
 ## 1083 Sales Analysis II [Easy]
-## 
+
+
 ## 1084 Sales Analysis III [Easy]
-## 
+
+
 ## 1113. Reported Posts [Easy]
 ## 
 ## 1141. User Activity for the Past 30 Days I [Easy]
