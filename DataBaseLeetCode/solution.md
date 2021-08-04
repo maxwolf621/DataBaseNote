@@ -1304,6 +1304,37 @@ GROUP BY id;
 
 ## [Queries Quality and Percentage](https://zhuanlan.zhihu.com/p/260937964)
 
+Write an SQL query to find each `query_name`, the `quality` and `poor_query_percentage`. 
+- Both `quality` and `poor_query_percentage` should be rounded to 2 decimal places.
+```diff
+Queries table:
++------------+-------------------+----------+--------+
+| query_name | result            | position | rating |
++------------+-------------------+----------+--------+
+| Dog        | Golden Retriever  | 1        | 5      |
+| Dog        | German Shepherd   | 2        | 5      |
+| Dog        | Mule              | 200      | 1      |
+| Cat        | Shirazi           | 5        | 2      |
+| Cat        | Siamese           | 3        | 3      |
+| Cat        | Sphynx            | 7        | 4      |
++------------+-------------------+----------+--------+
+
+- We define query quality as: The average of the ratio between query rating and its position.
+- We also define poor_query_percentage as: The percentage of all queries with rating less than 3.
+
+
+Result table:
++------------+---------+-----------------------+
+| query_name | quality | poor_query_percentage |
++------------+---------+-----------------------+
+| Dog        | 2.50    | 33.33                 |
+| Cat        | 0.66    | 33.33                 |
++------------+---------+-----------------------+
+- Dog queries quality is ((5 / 1) + (5 / 2) + (1 / 200)) / 3 = 2.50
+- Dog queries poor_ query_percentage is (1 / 3) * 100 = 33.33
+- Cat queries quality equals ((2 / 5) + (3 / 3) + (4 / 7)) / 3 = 0.66
+- Cat queries poor_ query_percentage is (1 / 3) * 100 = 33.33
+```
 
 ```mysql
 select query_name, round(avg(rating/position), 2) as quality,
@@ -1332,10 +1363,6 @@ group by query_name
   | 6       | 7          |
   +---------+------------+
 
-- We define query quality as: The average of the ratio between query rating and its position.
-- We also define poor_query_percentage as: The percentage of all queries with rating less than 3.
-- Write an SQL query to find each query name, the quality and poor_query_percentage.
-- Both quality and poor_query_percentage should be rounded to 2 decimal places.
 
   Result Table
   +---------+--------------------+
@@ -1345,55 +1372,247 @@ group by query_name
   | 2       | 2                  |
   | 12      | 0                  |
   +---------+--------------------+
-- Dog queries quality is ((5 / 1) + (5 / 2) + (1 / 200)) / 3 = 2.50
-- Dog queries poor_ query_percentage is (1 / 3) * 100 = 33.33
-- Cat queries quality equals ((2 / 5) + (3 / 3) + (4 / 7)) / 3 = 0.66
-- Cat queries poor_ query_percentage is (1 / 3) * 100 = 33.33
 ```
 
 
+## 1280. Students and Examinations
+```diff
+  Students table:
+  +------------+--------------+
+  | student_id | student_name |
+  +------------+--------------+
+  | 1          | Alice        |
+  | 2          | Bob          |
+  | 13         | John         |
+  | 6          | Alex         |
+  +------------+--------------+
+  Subjects table:
+  +--------------+
+  | subject_name |
+  +--------------+
+  | Math         |
+  | Physics      |
+  | Programming  |
+  +--------------+
+  Examinations table:
+  +------------+--------------+
+  | student_id | subject_name |
+  +------------+--------------+
+  | 1          | Math         |
+  | 1          | Physics      |
+  | 1          | Programming  |
+  | 2          | Programming  |
+  | 1          | Physics      |
+  | 1          | Math         |
+  | 13         | Math         |
+  | 13         | Programming  |
+  | 13         | Physics      |
+  | 2          | Math         |
+  | 1          | Math         |
+  +------------+--------------+
 
+  Result table:
+  +------------+--------------+--------------+----------------+
+  | student_id | student_name | subject_name | attended_exams |
+  +------------+--------------+--------------+----------------+
+  | 1          | Alice        | Math         | 3              |
+  | 1          | Alice        | Physics      | 2              |
+  | 1          | Alice        | Programming  | 1              |
+  | 2          | Bob          | Math         | 1              |
+  | 2          | Bob          | Physics      | 0              |
+  | 2          | Bob          | Programming  | 1              |
+  | 6          | Alex         | Math         | 0              |
+  | 6          | Alex         | Physics      | 0              |
+  | 6          | Alex         | Programming  | 0              |
+  | 13         | John         | Math         | 1              |
+  | 13         | John         | Physics      | 1              |
+  | 13         | John         | Programming  | 1              |
+  +------------+--------------+--------------+----------------+
+The result table should contain all students and all subjects.
+- Alice attended Math exam 3 times, Physics exam 2 times and Programming exam 1 time.
+- Bob attended Math exam 1 time, Programming exam 1 time and didn't attend the Physics exam.
++ Alex didn't attend any exam.
++ John attended Math exam 1 time, Physics exam 1 time and Programming exam 1 time.
+```
 
-## 1251. Average Selling Price [Easy]
-## 
-## 1280. Students and Examinations [Easy]
-## 
-## 1294. Weather Type in Each Country [Easy]
-## 
-## 1303. Find the Team Size [Easy]
-## 
-## 1322. Ads Performance [Easy]
-## 
-## 1327. List the Products Ordered in a Period [Easy]
-## 
-## 1350. Students With Invalid Departments [Easy]
-## 
-## 1378. Replace Employee ID with The Unique Identifier [Easy]
-## 
-## 1407. Top Travellers [Easy]
-## 
-## 1435. Create a Session Bar Chart [Easy]
-## 
-## 1484. Group Sold Products By The Date [Easy]
-## 
-## 1495. Friendly Movies Streamed Last Month [Easy]
-## 
-## 1511. Customer Order Frequency [Easy]
-## 
-## 1517. Find Users With Valid E-Mails [Easy]
-## 
-## 1527. Patients With a Condition [Easy]
-## 
-## 1543. Fix Product Name Format [Easy]
-## 
-## 1565. Unique Orders and Customers Per Month [Easy]
+[Reformat Department Table]
 
-## 1571. Warehouse Manager [Easy]
+## Weather Type in Each Country 
 
-## 1581. Customer Who Visited but Did Not Make Any Transactions [Easy]
+```diff
+  Countries table:
+  +------------+--------------+
+  | country_id | country_name |
+  +------------+--------------+
+  | 2          | USA          |
+  | 3          | Australia    |
+  | 7          | Peru         |
+  | 5          | China        |
+  | 8          | Morocco      |
+  | 9          | Spain        |
+  +------------+--------------+
+  Weather table:
+  +------------+---------------+------------+
+  | country_id | weather_state | day        |
+  +------------+---------------+------------+
+  | 2          | 15            | 2019-11-01 |
+  | 2          | 12            | 2019-10-28 |
+  | 2          | 12            | 2019-10-27 |
+  | 3          | -2            | 2019-11-10 |
+  | 3          | 0             | 2019-11-11 |
+  | 3          | 3             | 2019-11-12 |
+  | 5          | 16            | 2019-11-07 |
+  | 5          | 18            | 2019-11-09 |
+  | 5          | 21            | 2019-11-23 |
+  | 7          | 25            | 2019-11-28 |
+  | 7          | 22            | 2019-12-01 |
+  | 7          | 20            | 2019-12-02 |
+  | 8          | 25            | 2019-11-05 |
+  | 8          | 27            | 2019-11-15 |
+  | 8          | 31            | 2019-11-25 |
+  | 9          | 7             | 2019-10-23 |
+  | 9          | 3             | 2019-12-23 |
+  +------------+---------------+------------+
+  Result table:
+  +--------------+--------------+
+  | country_name | weather_type |
+  +--------------+--------------+
+  | USA          | Cold         |
+  | Austraila    | Cold         |
+  | Peru         | Hot          |
+  | China        | Warm         |
+  | Morocco      | Hot          |
+  +--------------+--------------+
+- Average weather_state in USA in November is (15) / 1 = 15 so weather type is Cold.
+- Average weather_state in Austraila in November is (-2 + 0 + 3) / 3 = 0.333 so weather type is Cold.
+- Average weather_state in Peru in November is (25) / 1 = 25 so weather type is Hot.
+- Average weather_state in China in November is (16 + 18 + 21) / 3 = 18.333 so weather type is Warm.
+- Average weather_state in Morocco in November is (25 + 27 + 31) / 3 = 27.667 so weather type is Hot.
+- We know nothing about average weather_state in Spain in November so we don't include it in the result table. 
+```
 
-## 1587. Bank Account Summary II [Easy]
+```mysql
+select country_name, case when avg(weather_state) <= 15 then "Cold"
+                          when avg(weather_state) >= 25 then "Hot"
+                          else "Warm" end as weather_type
+from Countries inner join Weather
+on Countries.country_id = Weather.country_id
+where left(day, 7) = '2019-11'
+group by country_name
+```
+## Find the Team Size  
 
-## 1607. Sellers With No Sales [Easy]
+Write an SQL query to find the team size of each of the employees.
+- Return result table in any order.
+```diff
+  Employee Table:
+  +-------------+------------+
+  | employee_id | team_id    |
+  +-------------+------------+
+- |     1       |     8      |
+- |     2       |     8      |
+- |     3       |     8      |
+! |     4       |     7      |
++ |     5       |     9      |
++ |     6       |     9      |
+  +-------------+------------+
+  Result table:
+  +-------------+------------+
+  | employee_id | team_size  |
+  +-------------+------------+
+  |     1       |     3      |
+  |     2       |     3      |
+  |     3       |     3      |
+  |     4       |     1      |
+  |     5       |     2      |
+  |     6       |     2      |
+  +-------------+------------+
+- Employees with Id 1,2,3 are part of a team with team_id = 8.
+- Employees with Id 4 is part of a team with team_id = 7.
+- Employees with Id 5,6 are part of a team with team_id = 9.
+```
+```mysql
+select t1.employee_id, t2.team_size
+from Employee as t1
+inner join (select team_id, count(1) as team_size
+    from Employee
+    group by team_id) as t2
+on t1.team_id = t2.team_id
 
-## 1623. All Valid Triplets That Can Represent a Country [Easy]
+SELECT a.employee_id, b.team_size FROM Employee AS a
+LEFT JOIN (
+SELECT team_id, COUNT(*) AS team_size FROM Employee
+GROUP BY team_id
+) AS b
+ON a.team_id = b.team_id;
+
+SELECT employee_id, COUNT(employee_id)OVER(PARTITION BY team_id) AS team_size
+FROM Employee
+ORDER BY employee_id;
+```
+## Ads Performance
+
+Write an SQL query to find the ctr of each Ad.
+
+Round ctr to 2 decimal points. Order the result table by ctr in descending order and by ad_id in ascending order in case of a tie.
+```diff
+  Ads table:
+  +-------+---------+---------+
+  | ad_id | user_id | action  |
+  +-------+---------+---------+
+  | 1     | 1       | Clicked |
+  | 2     | 2       | Clicked |
+  | 3     | 3       | Viewed  |
+  | 5     | 5       | Ignored |
+  | 1     | 7       | Ignored |
+  | 2     | 7       | Viewed  |
+  | 3     | 5       | Clicked |
+  | 1     | 4       | Viewed  |
+  | 2     | 11      | Viewed  |
+  | 1     | 2       | Clicked |
+  +-------+---------+---------+
+  Result table:
+  +-------+-------+
+  | ad_id | ctr   |
+  +-------+-------+
+  | 1     | 66.67 |
+  | 3     | 50.00 |
+  | 2     | 33.33 |
+  | 5     | 0.00  |
+  +-------+-------+
+- for ad_id = 1, ctr = (2/(2+1)) * 100 = 66.67
+- for ad_id = 2, ctr = (1/(1+2)) * 100 = 33.33
+- for ad_id = 3, ctr = (1/(1+1)) * 100 = 50.00
+- for ad_id = 5, ctr = 0.00, Note that ad_id has no clicks or views.
+- Note that we don't care about Ignored Ads.
+- Result table is ordered by the ctr. in case of a tie we order them by ad_id
+```
+
+```mysql
+select ad_id,
+    (case when clicks+views = 0 then 0 else round(clicks/(clicks+views)*100, 2) end) as ctr
+from 
+    (select ad_id,
+        sum(case when action='Clicked' then 1 else 0 end) as clicks,
+        sum(case when action='Viewed' then 1 else 0 end) as views
+    from Ads
+    group by ad_id) as t
+order by ctr desc, ad_id asc
+```
+## List the Products Ordered in a Period
+## Students With Invalid Departments 
+## Replace Employee ID with The Unique Identifier 
+## Top Travellers 
+## 1435. Create a Session Bar Chart 
+## 1484. Group Sold Products By The Date 
+## 1495. Friendly Movies Streamed Last Month 
+## 1511. Customer Order Frequency 
+## 1517. Find Users With Valid E-Mails 
+## 1527. Patients With a Condition 
+## 1543. Fix Product Name Format 
+## 1565. Unique Orders and Customers Per Month 
+## 1571. Warehouse Manager 
+## 1581. Customer Who Visited but Did Not Make Any Transactions
+## 1587. Bank Account Summary 
+## 1607. Sellers With No Sales
+## 1623. All Valid Triplets That Can Represent a Country
