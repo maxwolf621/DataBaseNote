@@ -4,7 +4,24 @@
 [`HAVING`](https://www.yiibai.com/mysql/having.html)     
 [`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)   
 [Difference btw `join` and `inner join`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)  
+[`union` and `union all`](https://www.fooish.com/sql/union.html)
 
+## [Tips](https://github.com/shawlu95/Beyond-LeetCode-SQL)
+- Using the `like` operator and wildcards (flexible search)
+- Avoiding the `or` operator, use `in` operator
+  > data retrieval is measurably faster by replac- ing OR conditions with the IN predicate
+- Avoiding the HAVING clause
+  > try to frame the restriction earlier (where clause)  
+  > try to keep HAVING clause simple (use constant, not function)  
+- Avoiding large sort operations
+  > it is best to schedule queries with large sorts as periodic batch processes during off-peak database usage so that the performance of most user processes is not affected.
+- Prefer stored procedure
+  > compiled and permanently stored in the database in an executable format.
+- Disabling indexes during batch loads
+  > When the batch load is complete, you should rebuild the indexes.
+  > reduction of fragmentation that is found in the index
+- cost-based optimization: check database server manual
+- Using view: keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
 
 ## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
 
@@ -1701,18 +1718,706 @@ HAVING sum(unit) >= '100'
 ```
 
 ## Students With Invalid Departments 
+
+```Departments table:
++------+--------------------------+
+| id   | name                     |
++------+--------------------------+
+| 1    | Electrical Engineering   |
+| 7    | Computer Engineering     |
+| 13   | Bussiness Administration |
++------+--------------------------+
+
+Students table:
++------+----------+---------------+
+| id   | name     | department_id |
++------+----------+---------------+
+| 23   | Alice    | 1             |
+| 1    | Bob      | 7             |
+| 5    | Jennifer | 13            |
+| 2    | John     | 14            |
+| 4    | Jasmine  | 77            |
+| 3    | Steve    | 74            |
+| 6    | Luis     | 1             |
+| 8    | Jonathan | 7             |
+| 7    | Daiana   | 33            |
+| 11   | Madelynn | 1             |
++------+----------+---------------+
+
+Result table:
++------+----------+
+| id   | name     |
++------+----------+
+| 2    | John     |
+| 7    | Daiana   |
+| 4    | Jasmine  |
+| 3    | Steve    |
++------+----------+
+
+John, Daiana, Steve and Jasmine are enrolled in departments 14, 33, 74 and 77 respectively. 
+
+department 14, 33, 74 and 77 doesn't exist in the Departments table.
+```
 ## Replace Employee ID with The Unique Identifier 
-## Top Travellers 
-## 1435. Create a Session Bar Chart 
-## 1484. Group Sold Products By The Date 
-## 1495. Friendly Movies Streamed Last Month 
-## 1511. Customer Order Frequency 
-## 1517. Find Users With Valid E-Mails 
-## 1527. Patients With a Condition 
-## 1543. Fix Product Name Format 
-## 1565. Unique Orders and Customers Per Month 
-## 1571. Warehouse Manager 
-## 1581. Customer Who Visited but Did Not Make Any Transactions
-## 1587. Bank Account Summary 
-## 1607. Sellers With No Sales
-## 1623. All Valid Triplets That Can Represent a Country
+
+
+Write an SQL query to show the unique ID of each user, If a user doesn’t have a unique ID replace just show null.
+- Return the result table in any order.
+```
+Employees table:
++----+----------+
+| id | name     |
++----+----------+
+| 1  | Alice    |
+| 7  | Bob      |
+| 11 | Meir     |
+| 90 | Winston  |
+| 3  | Jonathan |
++----+----------+
+
+EmployeeUNI table:
++----+-----------+
+| id | unique_id |
++----+-----------+
+| 3  | 1         |
+| 11 | 2         |
+| 90 | 3         |
++----+-----------+
+
+EmployeeUNI table:
++-----------+----------+
+| unique_id | name     |
++-----------+----------+
+| null      | Alice    |
+| null      | Bob      |
+| 2         | Meir     |
+| 3         | Winston  |
+| 1         | Jonathan |
++-----------+----------+
+
+Alice and Bob don't have a unique ID, We will show null instead.
+The unique ID of Meir is 2.
+The unique ID of Winston is 3.
+The unique ID of Jonathan is 1.
+```
+
+
+
+## [Top Travellers](https://code.dennyzhang.com/top-travellers)
+
+Write an SQL query to report the distance travelled by each user.
+- Return the result table ordered by travelled_distance in descending order, if two or more users travelled the same distance, order them by their name in ascending order.
+```
+Users table:
++------+-----------+
+| id   | name      |
++------+-----------+
+| 1    | Alice     |
+| 2    | Bob       |
+| 3    | Alex      |
+| 4    | Donald    |
+| 7    | Lee       |
+| 13   | Jonathan  |
+| 19   | Elvis     |
++------+-----------+
+
+Rides table:
++------+----------+----------+
+| id   | user_id  | distance |
++------+----------+----------+
+| 1    | 1        | 120      |
+| 2    | 2        | 317      |
+| 3    | 3        | 222      |
+| 4    | 7        | 100      |
+| 5    | 13       | 312      |
+| 6    | 19       | 50       |
+| 7    | 7        | 120      |
+| 8    | 19       | 400      |
+| 9    | 7        | 230      |
++------+----------+----------+
+
+Result table:
++----------+--------------------+
+| name     | travelled_distance |
++----------+--------------------+
+| Elvis    | 450                |
+| Lee      | 450                |
+| Bob      | 317                |
+| Jonathan | 312                |
+| Alex     | 222                |
+| Alice    | 120                |
+| Donald   | 0                  |
++----------+--------------------+
+```
+
+```mysql 
+SELECT U.name , IFNULL(distance,0) AS travelled_distance 
+FROM Users as U LEFT JOIN Rides AS R
+OB U.Id = R.user_id
+GROUP BY u.name
+ORDER BY travelled_distance ASEC, U.name ASEC 
+```
+## Create a Session Bar Chart 
+Write an SQL query to report the (bin, total) in any order.
+
+```
+  Sessions table:
+  +-------------+---------------+
+  | session_id  | duration      |
+  +-------------+---------------+
+  | 1           | 30            |
+  | 2           | 299           |
+  | 3           | 340           |
+  | 4           | 580           |
+  | 5           | 1000          |
+  +-------------+---------------+
+  
+  Result table:
+  +--------------+--------------+
+  | bin          | total        |
+  +--------------+--------------+
+  | [0-5>        | 3            |
+  | [5-10>       | 1            |
+  | [10-15>      | 0            |
+  | 15 or more   | 1            |
+  +--------------+--------------+
+- For session_id 1, 2 and 3 have a duration greater or equal than 0 minutes and less than 5 minutes.
+- For session_id 4 has a duration greater or equal than 5 minutes and less than 10 minutes.
+- There are no session with a duration greater or equial than 10 minutes and less than 15 minutes.
+- For session_id 5 has a duration greater or equal than 15 minutes.
+```
+
+```mysql
+/**
+  * create attributes
+  *    [0-5>
+  *    [5-10>
+  *    [10-15>
+  *    15 or more
+  */
+select '[0-5>' as bin, count(1) as total
+from Sessions
+where duration>=0 and duration < 300
+union
+select '[5-10>' as bin, count(1) as total
+from Sessions
+where duration>=300 and duration < 600
+union
+select '[10-15>' as bin, count(1) as total
+from Sessions
+where duration>=600 and duration < 900
+union
+select '15 or more' as bin, count(1) as total
+from Sessions
+where duration >= 900
+```
+## Group Sold Products By The Date 
+
+```
+  Activities table:
+  +------------+-------------+
+  | sell_date  | product     |
+  +------------+-------------+
+  | 2020-05-30 | Headphone   |
+  | 2020-06-01 | Pencil      |
+  | 2020-06-02 | Mask        |
+  | 2020-05-30 | Basketball  |
+  | 2020-06-01 | Bible       |
+  | 2020-06-02 | Mask        |
+  | 2020-05-30 | T-Shirt     |
+  +------------+-------------+
+
+  Result table:
+  +------------+----------+------------------------------+
+  | sell_date  | num_sold | products                     |
+  +------------+----------+------------------------------+
+  | 2020-05-30 | 3        | Basketball,Headphone,T-shirt |
+  | 2020-06-01 | 2        | Bible,Pencil                 |
+  | 2020-06-02 | 1        | Mask                         |
+  +------------+----------+------------------------------+
+For 2020-05-30, Sold items were (Headphone, Basketball, T-shirt), we sort them lexicographically and separate them by comma.
+For 2020-06-01, Sold items were (Pencil, Bible), we sort them lexicographically and separate them by comma.
+For 2020-06-02, Sold item is (Mask), we just return it.
+```
+
+
+- usage of `group_concat( attribute, )`
+```
+select sell_date, count(distinct product) as num_sold,  group_concat(distinct product) as products
+from Activities 
+group by sell_date
+order by sell_date
+```
+
+## Friendly Movies Streamed Last Month 
+
+Write an SQL query to report the distinct titles of the kid-friendly movies streamed in June 2020.
+- Return the result table in any order.
+
+```
+  TVProgram table:
+  +--------------------+--------------+-------------+
+  | program_date       | content_id   | channel     |
+  +--------------------+--------------+-------------+
+  | 2020-06-10 08:00   | 1            | LC-Channel  |
+  | 2020-05-11 12:00   | 2            | LC-Channel  |
+  | 2020-05-12 12:00   | 3            | LC-Channel  |
+  | 2020-05-13 14:00   | 4            | Disney Ch   |
+  | 2020-06-18 14:00   | 4            | Disney Ch   |
+  | 2020-07-15 16:00   | 5            | Disney Ch   |
+  +--------------------+--------------+-------------+
+
+  Content table:
+  +------------+----------------+---------------+---------------+
+  | content_id | title          | Kids_content  | content_type  |
+  +------------+----------------+---------------+---------------+
+  | 1          | Leetcode Movie | N             | Movies        |
+  | 2          | Alg. for Kids  | Y             | Series        |
+  | 3          | Database Sols  | N             | Series        |
+  | 4          | Aladdin        | Y             | Movies        |
+  | 5          | Cinderella     | Y             | Movies        |
+  +------------+----------------+---------------+---------------+
+
+  Result table:
+  +--------------+
+  | title        |
+  +--------------+
+  | Aladdin      |
+  +--------------+
+- "Leetcode Movie" is not a content for kids.
+- "Alg. for Kids" is not a movie.
+- "Database Sols" is not a movie
+- "Alladin" is a movie, content for kids and was streamed in June 2020.
+- "Cinderella" was not streamed in June 2020.
+```
+
+```mysql
+SELECT DISTINCT a.title FROM Content AS a
+JOIN TVProgram AS b
+ON a.content_id = b.content_id
+WHERE a.content_type = 'Movies'
+AND a.Kids_content = 'Y'
+AND LEFT(b.program_date,7) ='2020-06';
+
+--
+/**
+  * JOIN The tables implicitly 
+  * using FROM multiple tables
+  */
+SELECT distinct title
+FROM Content c, TVProgram tv
+WHERE c.content_id = tv.content_id
+        and Kids_content = 'Y'
+        and content_type = 'Movies'
+        and program_date between '2020-06-01' and '2020-06-30'
+```
+
+## Customer Order Frequency 
+
+Write an SQL query to report the `customer_id` and of customers who have spent at least `$100` in each month of June and July 2020.
+- Return the result table in any order.
+
+```
+  Customers
+  +--------------+-----------+-------------+
+  | customer_id  | name      | country     |
+  +--------------+-----------+-------------+
+  | 1            | Winston   | USA         |
+  | 2            | Jonathan  | Peru        |
+  | 3            | Moustafa  | Egypt       |
+  +--------------+-----------+-------------+
+
+  Product
+  +--------------+-------------+-------------+
+  | product_id   | description | price       |
+  +--------------+-------------+-------------+
+  | 10           | LC Phone    | 300         |
+  | 20           | LC T-Shirt  | 10          |
+  | 30           | LC Book     | 45          |
+  | 40           | LC Keychain | 2           |
+  +--------------+-------------+-------------+
+
+  Orders
+  +--------------+-------------+-------------+-------------+-----------+
+  | order_id     | customer_id | product_id  | order_date  | quantity  |
+  +--------------+-------------+-------------+-------------+-----------+
+  | 1            | 1           | 10          | 2020-06-10  | 1         |
+  | 2            | 1           | 20          | 2020-07-01  | 1         |
+  | 3            | 1           | 30          | 2020-07-08  | 2         |
+  | 4            | 2           | 10          | 2020-06-15  | 2         |
+  | 5            | 2           | 40          | 2020-07-01  | 10        |
+  | 6            | 3           | 20          | 2020-06-24  | 2         |
+  | 7            | 3           | 30          | 2020-06-25  | 2         |
+  | 9            | 3           | 30          | 2020-05-08  | 3         |
+  +--------------+-------------+-------------+-------------+-----------+
+
+
+  Result table:
+  +--------------+------------+
+  | customer_id  | name       |  
+  +--------------+------------+
+  | 1            | Winston    |
+  +--------------+------------+ 
+Winston spent $300 (300 * 1) in June and $100 ( 10 * 1 + 45 * 2) in July 2020.
+Jonathan spent $600 (300 * 2) in June and $20 ( 2 * 10) in July 2020.
+Moustafa spent $110 (10 * 2 + 45 * 2) in June and $0 in July 2020.
+```
+
+```mysql
+/**
+  * Condition : July and June
+  * Display : the customer spent total price > 100
+  */
+select o.customer_id, c.name
+from Customers c, Product p, Orders o
+where c.customer_id = o.customer_id and p.product_id = o.product_id
+group by o.customer_id
+having 
+(
+    sum(case when o.order_date like '2020-06%' then o.quantity*p.price else 0 end) >= 100
+    and
+    sum(case when o.order_date like '2020-07%' then o.quantity*p.price else 0 end) >= 100
+)
+```
+
+## [Find Users With Valid E-Mails](https://cloud.tencent.com/developer/article/1787722)
+Write an SQL query to find the users who have valid emails.
+Return the result table in any order.
+
+A valid e-mail has a prefix name and a domain where:
+- The prefix name is a string that may contain letters (upper or lower case), digits, underscore `_`, period `.` and/or dash `-`.
+- The prefix name must start with a letter.
+- The domain is `@leetcode.com`.
+
+```
+  Users
+  +---------+-----------+-------------------------+
+  | user_id | name      | mail                    |
+  +---------+-----------+-------------------------+
+- | 1       | Winston   | winston@leetcode.com    |
+  | 2       | Jonathan  | jonathanisgreat         |
+- | 3       | Annabelle | bella-@leetcode.com     |
+- | 4       | Sally     | sally.come@leetcode.com |
+  | 5       | Marwan    | quarz#2020@leetcode.com |
+  | 6       | David     | david69@gmail.com       |
+  | 7       | Shapiro   | .shapo@leetcode.com     |
+  +---------+-----------+-------------------------+
+
+  Result table:
+  +---------+-----------+-------------------------+
+  | user_id | name      | mail                    |
+  +---------+-----------+-------------------------+
+  | 1       | Winston   | winston@leetcode.com    |
+  | 3       | Annabelle | bella-@leetcode.com     |
+  | 4       | Sally     | sally.come@leetcode.com |
+  +---------+-----------+-------------------------+
+The mail of user 2 doesn't have a domain.
+The mail of user 5 has # sign which is not allowed.
+The mail of user 6 doesn't have leetcode domain.
+The mail of user 7 starts with a period.
+```
+
+usage of `regexp`
+
+```sql
+SELECT * 
+FROM   users AS u   
+WHERE  u.mail REGEXP '^[a-zA-Z][a-zA-Z0-9._-]*@leetcode.com$'; 
+
+```
+
+## Patients With a Condition 
+
+Write an SQL query to report the `patient_id`, `patient_name` all conditions of patients who have Type I Diabetes.   
+Type I Diabetes always starts with `DIAB1` prefix
+
+Return the result table in any order.
+
+```
+  Patients
+  +------------+--------------+--------------+
+  | patient_id | patient_name | conditions   |
+  +------------+--------------+--------------+
+  | 1          | Daniel       | YFEV COUGH   |
+  | 2          | Alice        |              |
+  | 3          | Bob          | DIAB100 MYOP |
+  | 4          | George       | ACNE DIAB100 |
+  | 5          | Alain        | DIAB201      |
+  +------------+--------------+--------------+
+
+  Result table:
+  +------------+--------------+--------------+
+  | patient_id | patient_name | conditions   |
+  +------------+--------------+--------------+
+  | 3          | Bob          | DIAB100 MYOP |
+  | 4          | George       | ACNE DIAB100 | 
+  +------------+--------------+--------------+
+  Bob and George both have a condition that starts with DIAB1.
+```
+
+```sql
+select *
+from Patients
+where conditions like "%DIAB1%"
+```
+
+## Fix Product Name Format 
+
+Write an SQL query to report
+- `product_name` in lowercase without leading or trailing white spaces.
+- `sale_date` in the format ('YYYY-MM')
+- total the number of times the product was sold in this month.
+- Return the result table ordered by product_name in ascending order, in case of a tie order it by sale_date in ascending order.
+```
+Sales
++------------+------------------+--------------+
+| sale_id    | product_name     | sale_date    |
++------------+------------------+--------------+
+| 1          |      LCPHONE     | 2000-01-16   |
+| 2          |    LCPhone       | 2000-01-17   |
+| 3          |     LcPhOnE      | 2000-02-18   |
+| 4          |      LCKeyCHAiN  | 2000-02-19   |
+| 5          |   LCKeyChain     | 2000-02-28   |
+| 6          | Matryoshka       | 2000-03-31   | 
++------------+------------------+--------------+
+
+Result table:
++--------------+--------------+----------+
+| product_name | sale_date    | total    |
++--------------+--------------+----------+
+| lcphone      | 2000-01      | 2        |
+| lckeychain   | 2000-02      | 2        | 
+| lcphone      | 2000-02      | 1        | 
+| matryoshka   | 2000-03      | 1        | 
++--------------+--------------+----------+
+
+In January, 2 LcPhones were sold, 
+In Februery, 2 LCKeychains and 1 LCPhone were sold.
+In March, 1 matryoshka was sold.
+```
+- please note that the product names are ot case sensitive and may contain spaces.
+
+## Unique Orders and Customers Per Month 
+
+Write an SQL query to find the number of unique orders and the number of unique customers with invoices > `$20` for each different month.
+- Return the result table sorted in any order.
+```
+Orders
++----------+------------+-------------+------------+
+| order_id | order_date | customer_id | invoice    |
++----------+------------+-------------+------------+
+| 1        | 2020-09-15 | 1           | 30         |
+| 2        | 2020-09-17 | 2           | 90         |
+| 3        | 2020-10-06 | 3           | 20         |
+| 4        | 2020-10-20 | 3           | 21         |
+| 5        | 2020-11-10 | 1           | 10         |
+| 6        | 2020-11-21 | 2           | 15         |
+| 7        | 2020-12-01 | 4           | 55         |
+| 8        | 2020-12-03 | 4           | 77         |
+| 9        | 2021-01-07 | 3           | 31         |
+| 10       | 2021-01-15 | 2           | 20         |
++----------+------------+-------------+------------+
+
+Result table:
++---------+-------------+----------------+
+| month   | order_count | customer_count |
++---------+-------------+----------------+
+| 2020-09 | 2           | 2              |
+| 2020-10 | 1           | 1              |
+| 2020-12 | 2           | 1              |
+| 2021-01 | 1           | 1              |
++---------+-------------+----------------+
+In September 2020 we have two orders from 2 different customers with invoices > $20.
+In October 2020 we have two orders from 1 customer, and only one of the two orders has invoice > $20.
+In November 2020 we have two orders from 2 different customers but invoices < $20, so we don't include that month.
+In December 2020 we have two orders from 1 customer both with invoices > $20.
+In January 2021 we have two orders from 2 different customers, but only one of them with invoice > $20.
+```
+
+## Warehouse Manager 
+
+Write an SQL query to report how much cubic feet of volume does the inventory occupy in each warehouse.
+- Return the result table in any order.
+
+
+```
+Warehouse table:
++------------+--------------+-------------+
+| name       | product_id   | units       |
++------------+--------------+-------------+
+| LCHouse1   | 1            | 1           |
+| LCHouse1   | 2            | 10          |
+| LCHouse1   | 3            | 5           |
+| LCHouse2   | 1            | 2           |
+| LCHouse2   | 2            | 2           |
+| LCHouse3   | 4            | 1           |
++------------+--------------+-------------+
+
+Products table:
++------------+--------------+------------+----------+-----------+
+| product_id | product_name | Width      | Length   | Height    |
++------------+--------------+------------+----------+-----------+
+| 1          | LC-TV        | 5          | 50       | 40        |
+| 2          | LC-KeyChain  | 5          | 5        | 5         |
+| 3          | LC-Phone     | 2          | 10       | 10        |
+| 4          | LC-T-Shirt   | 4          | 10       | 20        |
++------------+--------------+------------+----------+-----------+
+
+Result table:
++----------------+------------+
+| warehouse_name | volume     | 
++----------------+------------+
+| LCHouse1       | 12250      | 
+| LCHouse2       | 20250      |
+| LCHouse3       | 800        |
++----------------+------------+
+Volume of product_id = 1 (LC-TV), 5x50x40 = 10000
+Volume of product_id = 2 (LC-KeyChain), 5x5x5 = 125 
+Volume of product_id = 3 (LC-Phone), 2x10x10 = 200
+Volume of product_id = 4 (LC-T-Shirt), 4x10x20 = 800
+LCHouse1: 1 unit of LC-TV + 10 units of LC-KeyChain + 5 units of LC-Phone.
+          Total volume: 1*10000 + 10*125  + 5*200 = 12250 cubic feet
+LCHouse2: 2 units of LC-TV + 2 units of LC-KeyChain.
+          Total volume: 2*10000 + 2*125 = 20250 cubic feet
+LCHouse3: 1 unit of LC-T-Shirt.
+          Total volume: 1*800 = 800 cubic feet.
+```
+## Customer Who Visited but Did Not Make Any Transactions
+
+````
+Visits
++----------+-------------+
+| visit_id | customer_id |
++----------+-------------+
+| 1        | 23          |
+| 2        | 9           |
+| 4        | 30          |
+| 5        | 54          |
+| 6        | 96          |
+| 7        | 54          |
+| 8        | 54          |
++----------+-------------+
+
+Transactions
++----------------+----------+--------+
+| transaction_id | visit_id | amount |
++----------------+----------+--------+
+| 2              | 5        | 310    |
+| 3              | 5        | 300    |
+| 9              | 5        | 200    |
+| 12             | 1        | 910    |
+| 13             | 2        | 970    |
++----------------+----------+--------+
+
+Result table:
++-------------+----------------+
+| customer_id | count_no_trans |
++-------------+----------------+
+| 54          | 2              |
+| 30          | 1              |
+| 96          | 1              |
++-------------+----------------+
+```
+- Customer with id = 23 visited the mall once and made one transaction during the visit with id = 12.
+- Customer with id = 9 visited the mall once and made one transaction during the visit with id = 13.
+- Customer with id = 30 visited the mall once and did not make any transactions.
+- Customer with id = 54 visited the mall three times. During 2 visits they did not make any transactions, and during one visit they made 3 transactions.
+- Customer with id = 96 visited the mall once and did not make any transactions.
+As we can see, users with IDs 30 and 96 visited the mall one time without making any transactions.   
+Also user 54 visited the mall twice and did not make any transactions.
+
+
+## Bank Account Summary 
+
+Write an SQL query to report the names of all sellers who did not make any sales in 2020.
+- Return the result table ordered by seller_name in ascending order.
+```
+Users table:
++------------+--------------+
+| account    | name         |
++------------+--------------+
+| 900001     | Alice        |
+| 900002     | Bob          |
+| 900003     | Charlie      |
++------------+--------------+
+
+Transactions table:
++------------+------------+------------+---------------+
+| trans_id   | account    | amount     | transacted_on |
++------------+------------+------------+---------------+
+| 1          | 900001     | 7000       |  2020-08-01   |
+| 2          | 900001     | 7000       |  2020-09-01   |
+| 3          | 900001     | -3000      |  2020-09-02   |
+| 4          | 900002     | 1000       |  2020-09-12   |
+| 5          | 900003     | 6000       |  2020-08-07   |
+| 6          | 900003     | 6000       |  2020-09-07   |
+| 7          | 900003     | -4000      |  2020-09-11   |
++------------+------------+------------+---------------+
+
+Result table:
++------------+------------+
+| name       | balance    |
++------------+------------+
+| Alice      | 11000      |
++------------+------------+
+```
+## Sellers With No Sales
+
+```
+Customer table:
++--------------+---------------+
+| customer_id  | customer_name |
++--------------+---------------+
+| 101          | Alice         |
+| 102          | Bob           |
+| 103          | Charlie       |
++--------------+---------------+
+
+Orders table:
++-------------+------------+--------------+-------------+-------------+
+| order_id    | sale_date  | order_cost   | customer_id | seller_id   |
++-------------+------------+--------------+-------------+-------------+
+| 1           | 2020-03-01 | 1500         | 101         | 1           |
+| 2           | 2020-05-25 | 2400         | 102         | 2           |
+| 3           | 2019-05-25 | 800          | 101         | 3           |
+| 4           | 2020-09-13 | 1000         | 103         | 2           |
+| 5           | 2019-02-11 | 700          | 101         | 2           |
++-------------+------------+--------------+-------------+-------------+
+
+Seller table:
++-------------+-------------+
+| seller_id   | seller_name |
++-------------+-------------+
+| 1           | Daniel      |
+| 2           | Elizabeth   |
+| 3           | Frank       |
++-------------+-------------+
+
+Result table:
++-------------+
+| seller_name |
++-------------+
+| Frank       |
++-------------+
+Daniel made 1 sale in March 2020.
+Elizabeth made 2 sales in 2020 and 1 sale in 2019.
+Frank made 1 sale in 2019 but no sales in 2020.
+```
+
+## All Valid Triplets That Can Represent a Country
+
+
+```mysql
+SELECT a.student_name AS 'member_A',
+b.student_name AS 'member_B',
+c.student_name AS 'member_C'
+FROM SchoolA AS a
+JOIN SchoolB AS b
+ON a.student_id <> b.student_id
+AND a.student_name <> b.student_name
+JOIN SchoolC AS c
+ON a.student_id <> c.student_id
+AND b.student_id <> c.student_id
+AND a.student_name <> c.student_name
+AND b.student_name <> c.student_name;
+```
