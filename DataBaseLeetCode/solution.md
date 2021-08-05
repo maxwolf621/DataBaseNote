@@ -2165,7 +2165,7 @@ where conditions like "%DIAB1%"
 
 Write an SQL query to report
 - `product_name` in lowercase without leading or trailing white spaces.
-- `sale_date` in the format ('YYYY-MM')
+- `sale_date` in the format `('YYYY-MM')`
 - total the number of times the product was sold in this month.
 - Return the result table ordered by product_name in ascending order, in case of a tie order it by sale_date in ascending order.
 ```
@@ -2239,7 +2239,6 @@ In January 2021 we have two orders from 2 different customers, but only one of t
 Write an SQL query to report how much cubic feet of volume does the inventory occupy in each warehouse.
 - Return the result table in any order.
 
-
 ```
 Warehouse table:
 +------------+--------------+-------------+
@@ -2275,6 +2274,7 @@ Volume of product_id = 1 (LC-TV), 5x50x40 = 10000
 Volume of product_id = 2 (LC-KeyChain), 5x5x5 = 125 
 Volume of product_id = 3 (LC-Phone), 2x10x10 = 200
 Volume of product_id = 4 (LC-T-Shirt), 4x10x20 = 800
+
 LCHouse1: 1 unit of LC-TV + 10 units of LC-KeyChain + 5 units of LC-Phone.
           Total volume: 1*10000 + 10*125  + 5*200 = 12250 cubic feet
 LCHouse2: 2 units of LC-TV + 2 units of LC-KeyChain.
@@ -2282,9 +2282,20 @@ LCHouse2: 2 units of LC-TV + 2 units of LC-KeyChain.
 LCHouse3: 1 unit of LC-T-Shirt.
           Total volume: 1*800 = 800 cubic feet.
 ```
+
+```mysql
+SELECT name AS warehouse_name,
+       SUM(units*Width*LENGTH*Height) AS volume
+FROM Warehouse w
+INNER JOIN Products p ON w.product_id = p.product_id
+GROUP BY name
+ORDER BY NULL;
+```
+
+
 ## Customer Who Visited but Did Not Make Any Transactions
 
-````
+```
 Visits
 +----------+-------------+
 | visit_id | customer_id |
@@ -2361,7 +2372,16 @@ Result table:
 | Alice      | 11000      |
 +------------+------------+
 ```
+
+```mysql
+
+```
+
 ## Sellers With No Sales
+
+Write an SQL query to report the names of all sellers who did not make any sales in 2020.
+
+Return the result table ordered by seller_name in ascending order.
 
 ```
 Customer table:
@@ -2402,6 +2422,18 @@ Result table:
 Daniel made 1 sale in March 2020.
 Elizabeth made 2 sales in 2020 and 1 sale in 2019.
 Frank made 1 sale in 2019 but no sales in 2020.
+```
+
+```mysql
+SELECT seller_name
+FROM seller s
+WHERE NOT EXISTS
+  (
+    SELECT 1
+    FROM orders o
+    WHERE s.seller_id = o.seller_id AND o.sale_date >= '2020-01-01'
+  )
+ORDER BY 1;
 ```
 
 ## All Valid Triplets That Can Represent a Country
