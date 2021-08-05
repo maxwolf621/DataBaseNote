@@ -1,8 +1,10 @@
 [Easy](https://zhuanlan.zhihu.com/p/265354299)
 
-[`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)     
+[`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)      
 [`HAVING`](https://www.yiibai.com/mysql/having.html)     
-[`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)  
+[`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)   
+[Difference btw `join` and `inner join`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)  
+
 
 ## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
 
@@ -1600,6 +1602,104 @@ from
 order by ctr desc, ad_id asc
 ```
 ## List the Products Ordered in a Period
+
+Write an SQL query to get the names of products with greater than or equal to 100 units ordered in `February 2020` and their amount.
+
+```diff
+  Products table:
+  +-------------+-----------------------+------------------+
+  | product_id  | product_name          | product_category |
+  +-------------+-----------------------+------------------+
+  | 1           | Leetcode Solutions    | Book             |
+  | 2           | Jewels of Stringology | Book             |
+  | 3           | HP                    | Laptop           |
+  | 4           | Lenovo                | Laptop           |
+  | 5           | Leetcode Kit          | T-shirt          |
+  +-------------+-----------------------+------------------+
+
+  Orders table:
+  +--------------+--------------+----------+
+  | product_id   | order_date   | unit     |
+  +--------------+--------------+----------+
+  | 1            | 2020-02-05   | 60       |
+  | 1            | 2020-02-10   | 70       |
+  | 2            | 2020-01-18   | 30       |
+  | 2            | 2020-02-11   | 80       |
+  | 3            | 2020-02-17   | 2        |
+  | 3            | 2020-02-24   | 3        |
+  | 4            | 2020-03-01   | 20       |
+  | 4            | 2020-03-04   | 30       |
+  | 4            | 2020-03-04   | 60       |
+  | 5            | 2020-02-25   | 50       |
+  | 5            | 2020-02-27   | 50       |
+  | 5            | 2020-03-01   | 50       |
+  +--------------+--------------+----------+
+
+  Result table:
+  +--------------------+---------+
+  | product_name       | unit    |
+  +--------------------+---------+
+  | Leetcode Solutions | 130     |
+  | Leetcode Kit       | 100     |
+  +--------------------+---------+
+
+- Products with product_id = 1 is ordered in February a total of (60 + 70) = 130.
+Products with product_id = 2 is ordered in February a total of 80.
+Products with product_id = 3 is ordered in February a total of (2 + 3) = 5.
+Products with product_id = 4 was not ordered in February 2020.
+- Products with product_id = 5 is ordered in February a total of (50 + 50) = 100.
+```
+
+```mysql
+
+  +-------------+-----------------------+------------------+
+  | product_id  | product_name          | product_category |
+  +-------------+-----------------------+------------------+
+  | 1           | Leetcode Solutions    | Book             |
+  | 2           | Jewels of Stringology | Book             |
+  | 3           | HP                    | Laptop           |
+  | 4           | Lenovo                | Laptop           |
+  | 5           | Leetcode Kit          | T-shirt          |
+  +-------------+-----------------------+------------------+
+
+  Orders table:
+  +--------------+--------------+----------+
+  | product_id   | order_date   | unit     |
+  +--------------+--------------+----------+
+  | 1            | 2020-02-05   | 60       |
+  | 1            | 2020-02-10   | 70       |
+  | 2            | 2020-01-18   | 30       |
+  | 2            | 2020-02-11   | 80       |
+  | 3            | 2020-02-17   | 2        |
+  | 3            | 2020-02-24   | 3        |
+  | 4            | 2020-03-01   | 20       |
+  | 4            | 2020-03-04   | 30       |
+  | 4            | 2020-03-04   | 60       |
+  | 5            | 2020-02-25   | 50       |
+  | 5            | 2020-02-27   | 50       |
+  | 5            | 2020-03-01   | 50       |
+  +--------------+--------------+----------+
+/** 
+ JOIN
+    prodict_id , product_name product_category , order_date, unit
+ **/
+
+SELECT product_name, sum(unit) AS unit
+FROM Products inner join Orders
+ON Products.product_id = Orders.product_id
+Where left(order_date, 7) = "2020-02"
+GROUP BY Products.product_id
+HAVING sum(unit)>=100
+
+
+SELECT product_name, SUM(unit) AS unit FROM Products AS p 
+JOIN Orders AS o 
+ON p.product_id = o.product_id 
+WHERE order_date BETWEEN '2020-02-01' AND '2020-02-29' 
+GROUP BY product_name 
+HAVING sum(unit) >= '100'
+```
+
 ## Students With Invalid Departments 
 ## Replace Employee ID with The Unique Identifier 
 ## Top Travellers 
