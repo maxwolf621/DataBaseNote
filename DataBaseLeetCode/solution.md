@@ -5,6 +5,7 @@
 [`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)   
 [Difference btw `join` and `inner join`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)  
 [`union` and `union all`](https://www.fooish.com/sql/union.html)
+[`join on ... where ...`](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)  
 
 ## [Tips](https://github.com/shawlu95/Beyond-LeetCode-SQL)
 - Using the `like` operator and wildcards (flexible search)
@@ -24,6 +25,11 @@
 - Using view: keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
 
 ## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
+
+CONCEPT : HOW TO JOIN TABLE WITH `BTWEEN ... AND ...`
+
+Write an SQL query to find the average selling price for each product.  
+- `average_price` should be rounded to 2 decimal places.  
 
 ```diff
   Prices table
@@ -61,15 +67,12 @@
 - Average selling price for product 2 = ((200 * 15) + (30 * 30)) / 230 = 16.96
 ```
 
-Write an SQL query to find the average selling price for each product.  
-- `average_price` should be rounded to 2 decimal places.  
-
 ```sql
-select UnitsSold.product_id, round(sum(units*price)/sum(units), 2) as average_price
-from UnitsSold inner join Prices
-on UnitsSold.product_id = Prices.product_id
-and UnitsSold.purchase_date between Prices.start_date and Prices.end_date
-group by UnitsSold.product_id
+SELECT UnitsSold.product_id, round(sum(units*price)/sum(units), 2) AS average_price
+FROM UnitsSold inner join Prices
+ON UnitsSold.product_id = Prices.product_id
+AND UnitsSold.purchase_date between Prices.start_date AND Prices.end_date
+GROUP BY UnitsSold.product_id
 ```
 
 ## [Sales Analysis i](https://code.dennyzhang.com/sales-analysis-i)    
@@ -592,10 +595,7 @@ GROUP BY class
 HAVING COUNT(SELECT DISTINCT student) > 4;
 ```
 
-## [Friend Requests I: Overall Acceptance Rate](https://zhuanlan.zhihu.com/p/258790804)
-
 ## [Consecutive Available Seats](https://zhuanlan.zhihu.com/p/259420594)
-
 
 Query all the consecutive available seats order by the `seat_id` using the following cinema table?
 - The `seat_id` is an auto increment `int`, and free is bool ('1' means free, and '0' means occupied.).
@@ -639,13 +639,11 @@ AND(c1.free=TRUE and c2.free=TRUE)
 ORDER BY a.seat_id;
 ```
 
-
-
 ## [Friend Requests I: Overall Acceptance Rate](https://zhuanlan.zhihu.com/p/258790804)
-
 
 ```diff
 friend_request
++-----------+------------+------------+
 | sender_id | send_to_id |request_date|
 |-----------|------------|------------|
 | 1         | 2          | 2016_06-01 |
@@ -653,8 +651,10 @@ friend_request
 | 1         | 4          | 2016_06-01 |
 | 2         | 3          | 2016_06-02 |
 | 3         | 4          | 2016-06-09 |
++-----------+------------+------------+
 
 request_accepted
++--------------+-------------+------------+
 | requester_id | accepter_id |accept_date |
 |--------------|-------------|------------|
 | 1            | 2           | 2016_06-03 |
@@ -662,22 +662,27 @@ request_accepted
 | 2            | 3           | 2016-06-08 |
 | 3            | 4           | 2016-06-09 |
 | 3            | 4           | 2016-06-10 |
++--------------+-------------+------------+
 
+RESULT
++-----------+
 |accept_rate|
 |-----------|
 |       0.80|
++-----------+
 ```
 
 ```mysql
+# Time:  O(rlogr + aloga)
+# Space: O(r + a)
 SELECT
 ROUND(
     IFNULL(
-        (SELECT COUNT(distinct requester_id, accepter_id)
-         FROM request_accepted)/ 
-        (SELECT COUNT(distinct sender_id, send_to_id)
-         FROM friend_request)
-    ,0)
-,2) accept_rate
+    (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM request_accepted) AS r)
+    /
+    (SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM friend_request) AS a),
+    0)
+, 2) AS accept_rate;
 ```
 
 
@@ -699,8 +704,7 @@ from friend_request), 0),2) as accept_rate
 
 ## [Sales Person](https://zhuanlan.zhihu.com/p/259424830)
 
-Output all the names in the table salesperson, who didn’t have sales to company 'RED'.
-
+Output all the names in the table salesperson, who didn’t have sales to company `RED`.
 ```diff
 salesperson
 +----------+------+--------+-----------------+-----------+
@@ -767,9 +771,7 @@ WHERE sales_id NOT IN (SELECT o.sales_id
 
 ## [Triangle Judgement](https://zhuanlan.zhihu.com/p/259435481)  
 
-
 For the sample data above, your query should return the follow result:
-
 ```diff
 +----+----+----+
 | x  | y  | z  |
@@ -1364,6 +1366,12 @@ group by query_name
 
 ## Number of Comments per Post
 
+Write an SQL query to find number of comments per each post.  
+- Result table should contain `post_id` and its corresponding number of comments, and must be sorted by `post_id` in ascending order.
+- You should count the number of unique comments per post.  
+- Submissions may contain duplicate comments.  
+- Submissions may contain duplicate posts. You should treat them as one post.
+
 ```diff
   Submissions table:
   +---------+------------+
@@ -1373,15 +1381,16 @@ group by query_name
   | 2       | Null       |
   | 1       | Null       |
   | 12      | Null       |
-  | 3       | 1          |
+- | 3       | 1          |
   | 5       | 2          |
-  | 3       | 1          |
-  | 4       | 1          |
-  | 9       | 1          |
+- | 3       | 1          |
+- | 4       | 1          |
+- | 9       | 1          |
   | 10      | 2          |
   | 6       | 7          |
   +---------+------------+
-
+- sub_id 1,2,12 are submissions
+- There is no primary key for this table, it may have duplicate rows.
 
   Result Table
   +---------+--------------------+
@@ -1393,8 +1402,27 @@ group by query_name
   +---------+--------------------+
 ```
 
+Concept
+- Nested Query
+- `SELECT DISTINCT` TO FIND SUBS
+- `LEFT JOIN` TO FROM SUBS AND SUBS OF COMMENT
+- `COUNT()` AND `GROUD BY` TO COUNT COMMENTS
 
-## 1280. Students and Examinations
+```sql
+SELECT DISTINCT post_id, COUNT(distinct sub_id) AS number_of_comments FROM (
+/** SUBS TABLE**/
+(SELECT DISTINCT sub_id AS post_id FROM submissions WHERE parent_id IS NULL) AS P
+/** FOUND COMMENT OF EACH SUBS **/
+LEFT JOIN submissions C ON P.post_id = C.parent_id) AS tmp
+GROUP BY post_id
+```
+
+## Students and Examinations
+
+
+Write an SQL query to find the number of times each student attended each exam.   
+Order the result table by student_id and subject_name.   
+
 ```diff
   Students table:
   +------------+--------------+
@@ -1454,7 +1482,23 @@ The result table should contain all students and all subjects.
 + John attended Math exam 1 time, Physics exam 1 time and Programming exam 1 time.
 ```
 
-[Reformat Department Table]
+```
+SELECT a.student_id, 
+       a.student_name, 
+       b.subject_name, 
+       Count(c.subject_name) AS attended_exams 
+FROM   students AS a 
+       CROSS JOIN subjects AS b 
+       LEFT JOIN examinations AS c 
+              ON a.student_id = c.student_id 
+                 AND b.subject_name = c.subject_name 
+GROUP  BY a.student_id, 
+          b.subject_name
+ORDER  BY a.student_id, 
+          b.subject_name;
+```
+
+## [Reformat Department Table]
 
 ## Weather Type in Each Country 
 
@@ -1668,7 +1712,6 @@ Products with product_id = 4 was not ordered in February 2020.
 ```
 
 ```mysql
-
   +-------------+-----------------------+------------------+
   | product_id  | product_name          | product_category |
   +-------------+-----------------------+------------------+
@@ -1714,10 +1757,12 @@ JOIN Orders AS o
 ON p.product_id = o.product_id 
 WHERE order_date BETWEEN '2020-02-01' AND '2020-02-29' 
 GROUP BY product_name 
-HAVING sum(unit) >= '100'
+HAVING sum(unit) >= 100
 ```
 
 ## Students With Invalid Departments 
+
+WRite a query that student does not exist in the department 
 
 ```Departments table:
 +------+--------------------------+
@@ -1755,13 +1800,34 @@ Result table:
 +------+----------+
 
 John, Daiana, Steve and Jasmine are enrolled in departments 14, 33, 74 and 77 respectively. 
-
 department 14, 33, 74 and 77 doesn't exist in the Departments table.
 ```
+
+```
+# Time:  O(n) 
+# Space: O(n) 
+SELECT s.id, 
+       s.name 
+FROM   students s 
+       LEFT JOIN departments d 
+              ON d.id = s.department_id 
+WHERE  d.id IS NULL; 
+
+# Time:  O(n) 
+# Space: O(n) 
+SELECT s.id, 
+       s.name 
+FROM   students s
+WHERE  NOT EXISTS (SELECT id 
+                   FROM   departments d
+                   WHERE  d.id = s.department_id); 
+```
+
 ## Replace Employee ID with The Unique Identifier 
 
+###### KEYWORD : `LEFT JOIN ... ON ...`
 
-Write an SQL query to show the unique ID of each user, If a user doesn’t have a unique ID replace just show null.
+Write an SQL query to show the unique ID of each user, If a user doesn’t have a unique ID replace just show `NULL`.
 - Return the result table in any order.
 ```
 Employees table:
@@ -1801,12 +1867,24 @@ The unique ID of Winston is 3.
 The unique ID of Jonathan is 1.
 ```
 
+```mysql
+# Time:  O(n)
+# Space: O(n)
+
+SELECT u.unique_id, e.name
+FROM employees e
+LEFT JOIN employeeuni u
+ON e.id = u.id
+```
 
 
 ## [Top Travellers](https://code.dennyzhang.com/top-travellers)
 
+
+###### Keyword : `LEFT JOIN`, `ORDER BY ... , ...` 
+
 Write an SQL query to report the distance travelled by each user.
-- Return the result table ordered by travelled_distance in descending order, if two or more users travelled the same distance, order them by their name in ascending order.
+- Return the result table ordered by `travelled_distance` in **descending order**, if two or more users travelled the same distance, order them by their name in ascending order.
 ```
 Users table:
 +------+-----------+
@@ -1857,9 +1935,9 @@ OB U.Id = R.user_id
 GROUP BY u.name
 ORDER BY travelled_distance ASEC, U.name ASEC 
 ```
-## Create a Session Bar Chart 
-Write an SQL query to report the (bin, total) in any order.
 
+## Create a Session Bar Chart 
+Write an SQL query to report the (`bin`, `total`) in any order.
 ```
   Sessions table:
   +-------------+---------------+
@@ -1887,6 +1965,7 @@ Write an SQL query to report the (bin, total) in any order.
 - For session_id 5 has a duration greater or equal than 15 minutes.
 ```
 
+###### Keyword : `Count(1)` , `UNION`, `New A table`
 ```mysql
 /**
   * create attributes
@@ -1895,24 +1974,66 @@ Write an SQL query to report the (bin, total) in any order.
   *    [10-15>
   *    15 or more
   */
-select '[0-5>' as bin, count(1) as total
-from Sessions
-where duration>=0 and duration < 300
-union
-select '[5-10>' as bin, count(1) as total
-from Sessions
-where duration>=300 and duration < 600
-union
-select '[10-15>' as bin, count(1) as total
-from Sessions
-where duration>=600 and duration < 900
-union
-select '15 or more' as bin, count(1) as total
-from Sessions
-where duration >= 900
+
+# Time:  O(n)
+# Space: O(1)
+
+SELECT '[0-5>'  AS bin, 
+       Count(1) AS total 
+FROM   sessions 
+WHERE  duration >= 0 
+       AND duration < 300 
+UNION ALL
+SELECT '[5-10>' AS bin, 
+       Count(1) AS total 
+FROM   sessions 
+WHERE  duration >= 300 
+       AND duration < 600 
+UNION ALL 
+SELECT '[10-15>' AS bin, 
+       Count(1)  AS total 
+FROM   sessions 
+WHERE  duration >= 600 
+       AND duration < 900 
+UNION ALL 
+SELECT '15 or more' AS bin, 
+       Count(1)     AS total 
+FROM   sessions 
+WHERE  duration >= 900;
+
+# Time:  O(n)
+# Space: O(n)
+SELECT
+    t2.BIN,
+    COUNT(t1.BIN) AS TOTAL
+FROM (
+SELECT
+    CASE 
+        WHEN duration/60 BETWEEN 0 AND 5 THEN "[0-5>"
+        WHEN duration/60 BETWEEN 5 AND 10 THEN "[5-10>"
+        WHEN duration/60 BETWEEN 10 AND 15 THEN "[10-15>"
+        WHEN duration/60 >= 15 THEN "15 or more" 
+        ELSE NULL END AS BIN
+FROM Sessions
+) t1 
+RIGHT JOIN(
+    SELECT "[0-5>"        AS BIN
+    UNION ALL
+    SELECT "[5-10>"       AS BIN
+    UNION ALL
+    SELECT "[10-15>"      AS BIN
+    UNION ALL
+    SELECT "15 or more"   AS BIN
+) t2
+ON t1.bin = t2.bin
+GROUP BY t2.bin
+ORDER BY NULL;
 ```
 ## Group Sold Products By The Date 
 
+Write an SQL query to find for each date, the number of distinct products sold and their names.   
+The sold-products names for each date should be sorted lexicographically.   
+- Return the result table ordered by sell_date.
 ```
   Activities table:
   +------------+-------------+
@@ -1941,19 +2062,23 @@ For 2020-06-02, Sold item is (Mask), we just return it.
 ```
 
 
-- usage of `group_concat( attribute, )`
-```
-select sell_date, count(distinct product) as num_sold,  group_concat(distinct product) as products
-from Activities 
-group by sell_date
-order by sell_date
+###### Keyword : `group_concat( [ATTRIBUTE] [ORDER BY] [SEPARATOR 'STRING'])`
+```mysql
+# Time:  O(nlogn)
+# Space: O(n)
+
+SELECT sell_date,
+       COUNT(DISTINCT(product)) AS num_sold, 
+       GROUP_CONCAT(DISTINCT product ORDER BY product ASC SEPARATOR ',') AS products
+FROM Activities
+GROUP BY sell_date
+ORDER BY sell_date ASC;
 ```
 
 ## Friendly Movies Streamed Last Month 
 
-Write an SQL query to report the distinct titles of the kid-friendly movies streamed in June 2020.
+Write an SQL query to report the distinct titles of the kid-friendly movies streamed in `June 2020`.
 - Return the result table in any order.
-
 ```
   TVProgram table:
   +--------------------+--------------+-------------+
@@ -2017,6 +2142,9 @@ WHERE c.content_id = tv.content_id
 Write an SQL query to report the `customer_id` and of customers who have spent at least `$100` in each month of June and July 2020.
 - Return the result table in any order.
 
+
+###### Keyword : `Implicitly join three tables with WHERE`, `sum()` , `INNER JOIN three tables together`
+
 ```
   Customers
   +--------------+-----------+-------------+
@@ -2078,6 +2206,28 @@ having
     and
     sum(case when o.order_date like '2020-07%' then o.quantity*p.price else 0 end) >= 100
 )
+
+
+# Time:  O(n)
+# Space: O(n)
+SELECT a.customer_id, a.name
+FROM Customers AS a
+INNER JOIN (SELECT *
+            FROM Orders
+            WHERE order_date BETWEEN "2020-06-01" AND "2020-07-31" ) AS b
+ON a.customer_id = b.customer_id
+INNER JOIN Product AS c
+ON b.product_id = c.product_id
+GROUP BY a.customer_id
+HAVING SUM(CASE
+               WHEN LEFT(b.order_date, 7) = "2020-06" THEN c.price * b.quantity
+               ELSE 0
+           END) >= 100
+AND    SUM(CASE
+               WHEN LEFT(b.order_date, 7) = "2020-07" THEN c.price * b.quantity
+               ELSE 0
+           END) >= 100
+ORDER BY NULL;
 ```
 
 ## [Find Users With Valid E-Mails](https://cloud.tencent.com/developer/article/1787722)
@@ -2088,6 +2238,9 @@ A valid e-mail has a prefix name and a domain where:
 - The prefix name is a string that may contain letters (upper or lower case), digits, underscore `_`, period `.` and/or dash `-`.
 - The prefix name must start with a letter.
 - The domain is `@leetcode.com`.
+
+
+###### Keyword : `regexp`
 
 ```
   Users
@@ -2117,16 +2270,16 @@ The mail of user 6 doesn't have leetcode domain.
 The mail of user 7 starts with a period.
 ```
 
-usage of `regexp`
 
 ```sql
 SELECT * 
 FROM   users AS u   
 WHERE  u.mail REGEXP '^[a-zA-Z][a-zA-Z0-9._-]*@leetcode.com$'; 
-
 ```
 
 ## Patients With a Condition 
+
+###### Keyword : `LIKE` , `WILDCARD`
 
 Write an SQL query to report the `patient_id`, `patient_name` all conditions of patients who have Type I Diabetes.   
 Type I Diabetes always starts with `DIAB1` prefix
@@ -2163,33 +2316,35 @@ where conditions like "%DIAB1%"
 
 ## Fix Product Name Format 
 
+###### Keyword : `SUBSTRING()` , `TRIM()` , `LOWER()`, `ORDER BY 1,2` AND `GROUP BY 1,2` 
+
 Write an SQL query to report
 - `product_name` in lowercase without leading or trailing white spaces.
 - `sale_date` in the format `('YYYY-MM')`
 - total the number of times the product was sold in this month.
 - Return the result table ordered by product_name in ascending order, in case of a tie order it by sale_date in ascending order.
 ```
-Sales
-+------------+------------------+--------------+
-| sale_id    | product_name     | sale_date    |
-+------------+------------------+--------------+
-| 1          |      LCPHONE     | 2000-01-16   |
-| 2          |    LCPhone       | 2000-01-17   |
-| 3          |     LcPhOnE      | 2000-02-18   |
-| 4          |      LCKeyCHAiN  | 2000-02-19   |
-| 5          |   LCKeyChain     | 2000-02-28   |
-| 6          | Matryoshka       | 2000-03-31   | 
-+------------+------------------+--------------+
+  Sales
+  +------------+------------------+--------------+
+  | sale_id    | product_name     | sale_date    |
+  +------------+------------------+--------------+
+  | 1          | LCPHONE          | 2000-01-16   |
+  | 2          | LCPhone          | 2000-01-17   |
+  | 3          | LcPhOnE          | 2000-02-18   |
+  | 4          | LCKeyCHAiN       | 2000-02-19   |
+  | 5          | LCKeyChain       | 2000-02-28   |
+  | 6          | Matryoshka       | 2000-03-31   | 
+  +------------+------------------+--------------+
 
-Result table:
-+--------------+--------------+----------+
-| product_name | sale_date    | total    |
-+--------------+--------------+----------+
-| lcphone      | 2000-01      | 2        |
-| lckeychain   | 2000-02      | 2        | 
-| lcphone      | 2000-02      | 1        | 
-| matryoshka   | 2000-03      | 1        | 
-+--------------+--------------+----------+
+  Result table:
+  +--------------+--------------+----------+
+  | product_name | sale_date    | total    |
+  +--------------+--------------+----------+
+  | lcphone      | 2000-01      | 2        |
+  | lckeychain   | 2000-02      | 2        | 
+  | lcphone      | 2000-02      | 1        | 
+  | matryoshka   | 2000-03      | 1        | 
+  +--------------+--------------+----------+
 
 In January, 2 LcPhones were sold, 
 In Februery, 2 LCKeychains and 1 LCPhone were sold.
@@ -2197,7 +2352,21 @@ In March, 1 matryoshka was sold.
 ```
 - please note that the product names are ot case sensitive and may contain spaces.
 
+```mysql
+# Time:  O(nlogn)
+# Space: O(n)
+
+SELECT LOWER(TRIM(product_name)) product_name,
+       substring(sale_date, 1, 7) sale_date,
+       count(sale_id) total
+FROM Sales
+GROUP BY 1, 2
+ORDER BY 1, 2;
+```
+
 ## Unique Orders and Customers Per Month 
+
+###### Keyword : `LEFT`, `GROUP BY 1` 
 
 Write an SQL query to find the number of unique orders and the number of unique customers with invoices > `$20` for each different month.
 - Return the result table sorted in any order.
@@ -2217,6 +2386,7 @@ Orders
 | 9        | 2021-01-07 | 3           | 31         |
 | 10       | 2021-01-15 | 2           | 20         |
 +----------+------------+-------------+------------+
+- customer_id might contain duplicates
 
 Result table:
 +---------+-------------+----------------+
@@ -2232,6 +2402,18 @@ In October 2020 we have two orders from 1 customer, and only one of the two orde
 In November 2020 we have two orders from 2 different customers but invoices < $20, so we don't include that month.
 In December 2020 we have two orders from 1 customer both with invoices > $20.
 In January 2021 we have two orders from 2 different customers, but only one of them with invoice > $20.
+```
+
+```mysql
+# Time:  O(n)
+# Space: O(n)
+SELECT LEFT(order_date, 7) month,
+       COUNT(DISTINCT order_id) order_count,
+       COUNT(DISTINCT customer_id) customer_count
+FROM orders
+WHERE invoice > 20
+GROUP BY 1
+ORDER BY NULL;
 ```
 
 ## Warehouse Manager 
@@ -2284,12 +2466,18 @@ LCHouse3: 1 unit of LC-T-Shirt.
 ```
 
 ```mysql
-SELECT name AS warehouse_name,
-       SUM(units*Width*LENGTH*Height) AS volume
+SELECT name AS warehouse_name, SUM(units*Width*LENGTH*Height) AS volume
 FROM Warehouse w
 INNER JOIN Products p ON w.product_id = p.product_id
 GROUP BY name
 ORDER BY NULL;
+
+SELECT name as warehouse_name, sum(units * vol) AS volume
+FROM Warehouse w
+JOIN (select product_id, Width*Length*Height AS vol
+     from Products) p
+ON w.product_id = p.product_id
+GROUP BY name
 ```
 
 
@@ -2338,50 +2526,71 @@ As we can see, users with IDs 30 and 96 visited the mall one time without making
 Also user 54 visited the mall twice and did not make any transactions.
 
 
-## Bank Account Summary 
+## Bank Account Summary II
 
-Write an SQL query to report the names of all sellers who did not make any sales in 2020.
-- Return the result table ordered by seller_name in ascending order.
+Write an SQL query to report the `name` and `balance` of users with a balance higher than 10000(`balance > 1000`).   
+- The balance of an account is equal to the sum of the amounts of all transactions involving that account.
+- Return the result table in any order.
+
 ```
-Users table:
-+------------+--------------+
-| account    | name         |
-+------------+--------------+
-| 900001     | Alice        |
-| 900002     | Bob          |
-| 900003     | Charlie      |
-+------------+--------------+
+  Users table:
+  +------------+--------------+
+  | account    | name         |
+  +------------+--------------+
+  | 900001     | Alice        |
+  | 900002     | Bob          |
+  | 900003     | Charlie      |
+  +------------+--------------+
 
-Transactions table:
-+------------+------------+------------+---------------+
-| trans_id   | account    | amount     | transacted_on |
-+------------+------------+------------+---------------+
-| 1          | 900001     | 7000       |  2020-08-01   |
-| 2          | 900001     | 7000       |  2020-09-01   |
-| 3          | 900001     | -3000      |  2020-09-02   |
-| 4          | 900002     | 1000       |  2020-09-12   |
-| 5          | 900003     | 6000       |  2020-08-07   |
-| 6          | 900003     | 6000       |  2020-09-07   |
-| 7          | 900003     | -4000      |  2020-09-11   |
-+------------+------------+------------+---------------+
+  Transactions table:
+  +------------+------------+------------+---------------+
+  | trans_id   | account    | amount     | transacted_on |
+  +------------+------------+------------+---------------+
+  | 1          | 900001     | 7000       |  2020-08-01   |
+  | 2          | 900001     | 7000       |  2020-09-01   |
+  | 3          | 900001     | -3000      |  2020-09-02   |
+  | 4          | 900002     | 1000       |  2020-09-12   |
+  | 5          | 900003     | 6000       |  2020-08-07   |
+  | 6          | 900003     | 6000       |  2020-09-07   |
+  | 7          | 900003     | -4000      |  2020-09-11   |
+  +------------+------------+------------+---------------+
 
-Result table:
-+------------+------------+
-| name       | balance    |
-+------------+------------+
-| Alice      | 11000      |
-+------------+------------+
+  Result table:
+  +------------+------------+
+  | name       | balance    |
+  +------------+------------+
+  | Alice      | 11000      |
+  +------------+------------+
 ```
 
 ```mysql
+/**
+  * Condition : Total Transaction > 1000
+  */
+SELECT U.name, T.sum(amount) 
+FROM User U JOIN Transactions T
+ON U.account = T.account
+GROUP BY U.name
+HAVING sum(amount) > 1000;
 
+/** 
+  * VIA NESTED QUERY
+  **/
+SELECT name, balance
+FROM (SELECT account, sum(amount) AS balance
+      FROM Transactions
+      GROUP BY account
+      HAVING sum(amount) > 10000) t
+JOIN Users u
+on u.account = t.account;
 ```
 
 ## Sellers With No Sales
 
-Write an SQL query to report the names of all sellers who did not make any sales in 2020.
+###### USAGE : `WHERE ... NOT EXISTS ...`
 
-Return the result table ordered by seller_name in ascending order.
+Write an SQL query to report the names of all sellers who did not make any sales in 2020.
+- Return the result table ordered by `seller_name` in ascending order.
 
 ```
 Customer table:
@@ -2434,10 +2643,21 @@ WHERE NOT EXISTS
     WHERE s.seller_id = o.seller_id AND o.sale_date >= '2020-01-01'
   )
 ORDER BY 1;
+
+
+select sellInfo.seller_name as seller_name
+from (
+    select s.seller_name as seller_name, max(o.sale_date) as latest_sale_date
+    from Orders o
+    right join Seller s
+    on o.seller_id = s.seller_id
+    group by s.seller_id
+) sellInfo
+where sellInfo.latest_sale_date is null or datediff('2020-01-01', sellInfo.latest_sale_date) > 0
+order by seller_name
 ```
 
 ## All Valid Triplets That Can Represent a Country
-
 
 ```mysql
 SELECT a.student_name AS 'member_A',
