@@ -210,6 +210,6 @@ ORDER BY COUNT(CustomerID) DESC;
 ## SELECT DISTINCT
 
 Forbid showing up duplicate records
-It can't work with COUNT(*) , MIN(), MAX()
+It can't work with `COUNT(*)` , `MIN()`, `MAX()`
 
 [EXAMPLE](https://www.w3schools.com/sql/sql_distinct.asp)
