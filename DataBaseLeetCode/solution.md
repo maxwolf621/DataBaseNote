@@ -1345,6 +1345,8 @@ GROUP BY extra;
 
 ## User Activity for the Past 30 Days I   
 
+###### Keyword : `DATEDIFF`
+
 Write an SQL query to find the daily active user count for a period of 30 days ending `2019-07-27` inclusively.  
 - A user was active on some day if he/she made at least one activity on that day.
 ```
@@ -1386,12 +1388,11 @@ Note that we do not care about days with zero active users.
 | 1       | 1          |               | scroll_down   |
 | 1       | 1          |               | end_session   |
 | 2       | 4          |               | open_session  |
-
 | 2       | 4          | 2019-07-21    | send_message  |
-| 2       | 4          | 2019-07-21    | end_session   |
-| 3       | 2          | 2019-07-21    | open_session  |
-| 3       | 2          | 2019-07-21    | send_message  |
-| 3       | 2          | 2019-07-21    | end_session   |
+| 2       | 4          |               | end_session   |
+| 3       | 2          |               | open_session  |
+| 3       | 2          |               | send_message  |
+| 3       | 2          |               | end_session   |
 +---------+------------+---------------+---------------+ 
 **/
 SELECT activity_date           AS day, 
@@ -1404,14 +1405,60 @@ ORDER  BY NULL
 
 ## [User Activity for the Past 30 Days II](https://zhuanlan.zhihu.com/p/260558715)
 
+###### Keyword : `AVG` , `DISTINCT`, `DATEDIFF`
+
+Write an SQL query to find the **average number of sessions per user for a period of 30 days ending 2019-07-27 inclusively**, rounded to 2 decimal places.  
+The sessions we want to count for a user are those with at least one activity in that time period.
+
+```
+Activity table:
++---------+------------+---------------+---------------+
+| user_id | session_id | activity_date | activity_type |
++---------+------------+---------------+---------------+
+| 1       | 1          | 2019-07-20    | open_session  |
+| 1       | 1          | 2019-07-20    | scroll_down   |
+| 1       | 1          | 2019-07-20    | end_session   |
+| 2       | 4          | 2019-07-20    | open_session  |
+| 2       | 4          | 2019-07-21    | send_message  |
+| 2       | 4          | 2019-07-21    | end_session   |
+| 3       | 2          | 2019-07-21    | open_session  |
+| 3       | 2          | 2019-07-21    | send_message  |
+| 3       | 2          | 2019-07-21    | end_session   |
+| 3       | 5          | 2019-07-21    | open_session  |
+| 3       | 5          | 2019-07-21    | scroll_down   |
+| 3       | 5          | 2019-07-21    | end_session   |
+| 4       | 3          | 2019-06-25    | open_session  |
+| 4       | 3          | 2019-06-25    | end_session   |
++---------+------------+---------------+---------------+
+
+Result table:
++---------------------------+ 
+| average_sessions_per_user |
++---------------------------+ 
+| 1.33                      |
++---------------------------+ 
+User 1 and 2 each had 1 session in the past 30 days while user 3 had 2 sessions 
+so the average  is (1 + 1 + 2) / 3 = 1.33. 
+```
+
+```mysql
+# Time:  O(n)
+# Space: O(n)
+SELECT Round(Ifnull(Count(DISTINCT session_id) / Count(DISTINCT user_id), 0), 2) 
+       AS 
+       average_sessions_per_user 
+FROM   activity 
+WHERE  Datediff("2019-07-27", activity_date) < 30 
+```
+
 ## [Article Views I](https://zhuanlan.zhihu.com/p/260564257)
 
+###### Keyword : `SELECT DISTINCT`
+
 Write an SQL query to find all the authors that viewed at least one of their own articles, sorted in ascending order by their id.
-
-**Note that equal author_id and viewer_id indicate the same person.**
-
+- Note that equal `author_id` and `viewer_id` indicate the same person.
 ```diff
-  VIEW TABLE 
+  Views TABLE 
   +------------+-----------+-----------+------------+
   | article_id | author_id | viewer_id | view_date  |
   +------------+-----------+-----------+------------+
@@ -1435,21 +1482,26 @@ Write an SQL query to find all the authors that viewed at least one of their own
 
 
 ```mysql
-SELECT DISTINCT author_id AS id FROM Views
+SELECT DISTINCT author_id AS id 
+FROM Views
 WHERE author_id = viewer_id
 ORDER BY id;
 ```
 
+## Immediate Food Delivery I --
 
-## Immediate Food Delivery I
+##### Keyword : `SUM(SELECT COUNT(*) FROM ... WHERE ...)`
+
+Write an SQL query to find the percentage of `immediate` orders in the table, rounded to 2 decimal places.  
+- **If the preferred delivery date of the customer is the same as the order date then the order is called `immediate` otherwise it’s called scheduled.**
 
 ```diff
   +-------------+-------------+------------+-----------------------------+
   | delivery_id | customer_id | order_date | customer_pref_delivery_date |
   +-------------+-------------+------------+-----------------------------+
   | 1           | 1           | 2019-08-01 | 2019-08-02                  |
-  | 2           | 5           | 2019-08-02 | 2019-08-02                  |
-  | 3           | 1           | 2019-08-11 | 2019-08-11                  |
+- | 2           | 5           | 2019-08-02 | 2019-08-02                  |
+- | 3           | 1           | 2019-08-11 | 2019-08-11                  |
   | 4           | 3           | 2019-08-24 | 2019-08-26                  |
   | 5           | 4           | 2019-08-21 | 2019-08-22                  |
   | 6           | 2           | 2019-08-11 | 2019-08-13                  |
@@ -1462,11 +1514,24 @@ ORDER BY id;
   | 33.33                |
   +----------------------+
 - The orders with delivery id 2 and 3 are immediate while the others are scheduled.
-
 ```
 
+```mysql
+SELECT
+ROUND(100* (SELECT COUNT(*) FROM Delivery WHERE order_date = customer_pref_delivery_date) / (SELECT COUNT(*) FROM Delivery),2) 
+AS immediate_percentage;
+
+# Time:  O(n)
+# Space: O(1)
+SELECT Round(100 * Sum(order_date = customer_pref_delivery_date) / Count(*), 2) 
+       AS 
+       immediate_percentage 
+FROM   delivery;
+```
 
 ## Reformat Department Table
+
+###### Keyword : `CASE WHEN ...`, `IF`
 
 Write an SQL query to reformat the table such that there is a department id column and a revenue column for each month.
 ```
@@ -1509,6 +1574,24 @@ SUM(CASE WHEN month = 'Nov' THEN revenue ELSE NULL END) AS Nov_Revenue,
 SUM(CASE WHEN month = 'Dec' THEN revenue ELSE NULL END) AS Dec_Revenue
 FROM Department
 GROUP BY id;
+
+# Time:  O(n)
+# Space: O(n)
+SELECT id, 
+       SUM(IF(month = 'Jan', revenue, NULL)) AS Jan_Revenue, 
+       SUM(IF(month = 'Feb', revenue, NULL)) AS Feb_Revenue, 
+       SUM(IF(month = 'Mar', revenue, NULL)) AS Mar_Revenue, 
+       SUM(IF(month = 'Apr', revenue, NULL)) AS Apr_Revenue, 
+       SUM(IF(month = 'May', revenue, NULL)) AS May_Revenue, 
+       SUM(IF(month = 'Jun', revenue, NULL)) AS Jun_Revenue, 
+       SUM(IF(month = 'Jul', revenue, NULL)) AS Jul_Revenue, 
+       SUM(IF(month = 'Aug', revenue, NULL)) AS Aug_Revenue, 
+       SUM(IF(month = 'Sep', revenue, NULL)) AS Sep_Revenue, 
+       SUM(IF(month = 'Oct', revenue, NULL)) AS Oct_Revenue, 
+       SUM(IF(month = 'Nov', revenue, NULL)) AS Nov_Revenue, 
+       SUM(IF(month = 'Dec', revenue, NULL)) AS Dec_Revenue 
+FROM   department 
+GROUP  BY id;
 ```
 
 ## [Queries Quality and Percentage](https://zhuanlan.zhihu.com/p/260937964)
