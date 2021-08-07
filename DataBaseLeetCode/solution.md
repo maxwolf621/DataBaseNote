@@ -1594,48 +1594,52 @@ FROM   department
 GROUP  BY id;
 ```
 
-## [Queries Quality and Percentage](https://zhuanlan.zhihu.com/p/260937964)
+## [Queries Quality and Percentage](https://zhuanlan.zhihu.com/p/260937964) --
 
+###### Keyword : `aggregation function with query`
 Write an SQL query to find each `query_name`, the `quality` and `poor_query_percentage`. 
 - Both `quality` and `poor_query_percentage` should be rounded to 2 decimal places.
+
+- We define query quality as: 
+  > The average of the ratio between query rating and its position.
+- We also define poor_query_percentage as: 
+  > The percentage of all queries with `rating` less than 3.
+  > if `rating` > 3 then `1` else `0`
 ```diff
-Queries table:
-+------------+-------------------+----------+--------+
-| query_name | result            | position | rating |
-+------------+-------------------+----------+--------+
-| Dog        | Golden Retriever  | 1        | 5      |
-| Dog        | German Shepherd   | 2        | 5      |
-| Dog        | Mule              | 200      | 1      |
-| Cat        | Shirazi           | 5        | 2      |
-| Cat        | Siamese           | 3        | 3      |
-| Cat        | Sphynx            | 7        | 4      |
-+------------+-------------------+----------+--------+
+  Queries table:
+  +------------+-------------------+----------+--------+
+  | query_name | result            | position | rating |
+  +------------+-------------------+----------+--------+
+  | Dog        | Golden Retriever  | 1        | 5      |
+  | Dog        | German Shepherd   | 2        | 5      |
+  | Dog        | Mule              | 200      | 1      |
+  | Cat        | Shirazi           | 5        | 2      |
+  | Cat        | Siamese           | 3        | 3      |
+  | Cat        | Sphynx            | 7        | 4      |
+  +------------+-------------------+----------+--------+
 
-- We define query quality as: The average of the ratio between query rating and its position.
-- We also define poor_query_percentage as: The percentage of all queries with rating less than 3.
-
-
-Result table:
-+------------+---------+-----------------------+
-| query_name | quality | poor_query_percentage |
-+------------+---------+-----------------------+
-| Dog        | 2.50    | 33.33                 |
-| Cat        | 0.66    | 33.33                 |
-+------------+---------+-----------------------+
+  Result table:
+  +------------+---------+-----------------------+
+  | query_name | quality | poor_query_percentage |
+  +------------+---------+-----------------------+
+  | Dog        | 2.50    | 33.33                 |
+  | Cat        | 0.66    | 33.33                 |
+  +------------+---------+-----------------------+
 - Dog queries quality is ((5 / 1) + (5 / 2) + (1 / 200)) / 3 = 2.50
 - Dog queries poor_ query_percentage is (1 / 3) * 100 = 33.33
+
 - Cat queries quality equals ((2 / 5) + (3 / 3) + (4 / 7)) / 3 = 0.66
 - Cat queries poor_ query_percentage is (1 / 3) * 100 = 33.33
 ```
 
 ```mysql
-select query_name, round(avg(rating/position), 2) as quality,
-       round(100*sum(case when rating<3 then 1 else 0 end)/count(1), 2) as poor_query_percentage
+select query_name, round(avg(rating/position), 2) AS quality,
+       round(100*sum(case when rating < 3 then 1 else 0 end)/count(1), 2) AS poor_query_percentage
 from Queries
 group by query_name
 ```
 
-## Number of Comments per Post
+## Number of Comments per Post ++
 
 Write an SQL query to find number of comments per each post.  
 - Result table should contain `post_id` and its corresponding number of comments, and must be sorted by `post_id` in ascending order.
@@ -1653,11 +1657,11 @@ Write an SQL query to find number of comments per each post.
   | 1       | Null       |
   | 12      | Null       |
 - | 3       | 1          |
-  | 5       | 2          |
++ | 5       | 2          |
 - | 3       | 1          |
 - | 4       | 1          |
 - | 9       | 1          |
-  | 10      | 2          |
++ | 10      | 2          |
   | 6       | 7          |
   +---------+------------+
 - sub_id 1,2,12 are submissions
@@ -1680,19 +1684,51 @@ Concept
 - `COUNT()` AND `GROUD BY` TO COUNT COMMENTS
 
 ```sql
+/** 
+    +---------+------------+
+    | sub_id  | parent_id  |
+    +---------+------------+
+    | 1       | Null       |
+    | 2       | Null       |
+    | 12      | Null       | 
+    +---------+------------+
+                              
+    +---------+------------+    
+    | sub_id  | parent_id  |  
+    +---------+------------+
+    | 3       | 1          |
+  + | 5       | 2          |
+  - | 3       | 1          |
+  - | 4       | 1          |
+  - | 9       | 1          |
+  + | 10      | 2          |
+    | 6       | 7          |
+    +---------+------------+
+  */
 SELECT DISTINCT post_id, COUNT(distinct sub_id) AS number_of_comments FROM (
 /** SUBS TABLE**/
 (SELECT DISTINCT sub_id AS post_id FROM submissions WHERE parent_id IS NULL) AS P
 /** FOUND COMMENT OF EACH SUBS **/
 LEFT JOIN submissions C ON P.post_id = C.parent_id) AS tmp
 GROUP BY post_id
+
+
+# Time:  O(n)
+# Space: O(n)
+SELECT COMMENTS.sub_id                 AS post_id, 
+       Count(DISTINCT POST.sub_id) AS number_of_comments 
+FROM   submissions COMMENTS
+       LEFT JOIN submissions POST
+              ON COMMENTS.sub_id = POST.parent_id 
+WHERE  COMMENTS.parent_id IS NULL 
+GROUP  BY COMMENTS.sub_id 
+ORDER  BY NULL 
 ```
 
 ## Students and Examinations
 
-
 Write an SQL query to find the number of times each student attended each exam.   
-Order the result table by student_id and subject_name.   
+Order the result table by `student_id` and `subject_name`.   
 
 ```diff
   Students table:
@@ -1753,7 +1789,10 @@ The result table should contain all students and all subjects.
 + John attended Math exam 1 time, Physics exam 1 time and Programming exam 1 time.
 ```
 
-```
+```mysql 
+# Time:  O((m * n) * log(m * n))
+# Space: O(m * n)
+
 SELECT a.student_id, 
        a.student_name, 
        b.subject_name, 
@@ -1768,8 +1807,6 @@ GROUP  BY a.student_id,
 ORDER  BY a.student_id, 
           b.subject_name;
 ```
-
-## [Reformat Department Table]
 
 ## Weather Type in Each Country 
 
