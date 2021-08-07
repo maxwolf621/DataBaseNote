@@ -1757,7 +1757,7 @@ GROUP  BY COMMENTS.sub_id
 ORDER  BY NULL 
 ```
 
-## Students and Examinations
+## Students and Examinations ***
 
 Write an SQL query to find the number of times each student attended each exam.   
 Order the result table by `student_id` and `subject_name`.   
@@ -1840,7 +1840,15 @@ ORDER  BY a.student_id,
           b.subject_name;
 ```
 
-## Weather Type in Each Country 
+## Weather Type in Each Country *
+
+Write an SQL query to find the type of weather in each country for `November 2019(2019-11)`.
+- The type of weather is 
+  > `Cold` if the average weather_state is less than or equal 15,    
+  > `Hot` if the average weather_state is greater than or equal 25 and   
+  > `Warm` otherwise.     
+
+Return result table in any order.
 
 ```diff
   Countries table:
@@ -1854,6 +1862,7 @@ ORDER  BY a.student_id,
   | 8          | Morocco      |
   | 9          | Spain        |
   +------------+--------------+
+  
   Weather table:
   +------------+---------------+------------+
   | country_id | weather_state | day        |
@@ -1894,14 +1903,28 @@ ORDER  BY a.student_id,
 - We know nothing about average weather_state in Spain in November so we don't include it in the result table. 
 ```
 
+###### Keyword : `case when ... then`
+
 ```mysql
-select country_name, case when avg(weather_state) <= 15 then "Cold"
+SELECT country_name, case when avg(weather_state) <= 15 then "Cold"
                           when avg(weather_state) >= 25 then "Hot"
                           else "Warm" end as weather_type
-from Countries inner join Weather
-on Countries.country_id = Weather.country_id
-where left(day, 7) = '2019-11'
-group by country_name
+FROM Countries INNER JOIN Weather
+ON Countries.country_id = Weather.country_id
+WHERE LEFT(day, 7) = '2019-11'
+GROUP BY country_name
+
+/** USING BETWEEN ... AND ... **/
+SELECT c.country_name,
+       CASE
+           WHEN AVG(w.weather_state * 1.0) <= 15.0 THEN 'Cold'
+           WHEN AVG(w.weather_state * 1.0) >= 25.0 THEN 'Hot'
+           ELSE 'Warm'
+       END AS weather_type
+FROM Countries AS c
+INNER JOIN Weather AS w ON c.country_id = w.country_id
+WHERE w.day BETWEEN '2019-11-01' AND '2019-11-30'
+GROUP BY c.country_id;
 ```
 ## Find the Team Size  
 
@@ -1934,20 +1957,33 @@ Write an SQL query to find the team size of each of the employees.
 - Employees with Id 4 is part of a team with team_id = 7.
 - Employees with Id 5,6 are part of a team with team_id = 9.
 ```
-```mysql
-select t1.employee_id, t2.team_size
-from Employee as t1
-inner join (select team_id, count(1) as team_size
-    from Employee
-    group by team_id) as t2
-on t1.team_id = t2.team_id
 
-SELECT a.employee_id, b.team_size FROM Employee AS a
-LEFT JOIN (
-SELECT team_id, COUNT(*) AS team_size FROM Employee
-GROUP BY team_id
-) AS b
-ON a.team_id = b.team_id;
+```mysql
+/** THINK WHY IT NOT WORKING **/
+select employee_id , count(team_id)  team_size
+from Employee
+group by team_id;
+```
+
+```mysql
+# Time:  O(n)
+# Space: O(n)
+SELECT employee_id, 
+       team_size 
+FROM   employee AS e 
+       LEFT JOIN (SELECT team_id, 
+                         Count(1) AS team_size 
+                  FROM   employee 
+                  GROUP  BY team_id) AS teams 
+              ON e.team_id = teams.team_id 
+              
+SELECT t1.employee_id, t2.team_size
+FROM Employee as t1
+INNER JOIN (select team_id, count(1) as team_size
+            FROM Employee
+            GROUP BY team_id) as t2
+ON t1.team_id = t2.team_id
+
 
 SELECT employee_id, COUNT(employee_id)OVER(PARTITION BY team_id) AS team_size
 FROM Employee
@@ -2002,9 +2038,9 @@ from
     group by ad_id) as t
 order by ctr desc, ad_id asc
 ```
-## List the Products Ordered in a Period
+## List the Products Ordered in a Period **
 
-Write an SQL query to get the names of products with greater than or equal to 100 units ordered in `February 2020` and their amount.
+Write an SQL query to get the names of products with greater than or equal to 100 units(`>100`) ordered in `February 2020` and their amount.
 
 ```diff
   Products table:
@@ -2017,7 +2053,7 @@ Write an SQL query to get the names of products with greater than or equal to 10
   | 4           | Lenovo                | Laptop           |
   | 5           | Leetcode Kit          | T-shirt          |
   +-------------+-----------------------+------------------+
-
+  - Product_id is PK
   Orders table:
   +--------------+--------------+----------+
   | product_id   | order_date   | unit     |
@@ -2051,39 +2087,12 @@ Products with product_id = 4 was not ordered in February 2020.
 - Products with product_id = 5 is ordered in February a total of (50 + 50) = 100.
 ```
 
+
+Concept 
+- GET DESIRED `product_id` and `order_date` FROM `Orders` table
+- INNER JOIN WITH `Product`
+
 ```mysql
-  +-------------+-----------------------+------------------+
-  | product_id  | product_name          | product_category |
-  +-------------+-----------------------+------------------+
-  | 1           | Leetcode Solutions    | Book             |
-  | 2           | Jewels of Stringology | Book             |
-  | 3           | HP                    | Laptop           |
-  | 4           | Lenovo                | Laptop           |
-  | 5           | Leetcode Kit          | T-shirt          |
-  +-------------+-----------------------+------------------+
-
-  Orders table:
-  +--------------+--------------+----------+
-  | product_id   | order_date   | unit     |
-  +--------------+--------------+----------+
-  | 1            | 2020-02-05   | 60       |
-  | 1            | 2020-02-10   | 70       |
-  | 2            | 2020-01-18   | 30       |
-  | 2            | 2020-02-11   | 80       |
-  | 3            | 2020-02-17   | 2        |
-  | 3            | 2020-02-24   | 3        |
-  | 4            | 2020-03-01   | 20       |
-  | 4            | 2020-03-04   | 30       |
-  | 4            | 2020-03-04   | 60       |
-  | 5            | 2020-02-25   | 50       |
-  | 5            | 2020-02-27   | 50       |
-  | 5            | 2020-03-01   | 50       |
-  +--------------+--------------+----------+
-/** 
- JOIN
-    prodict_id , product_name product_category , order_date, unit
- **/
-
 SELECT product_name, sum(unit) AS unit
 FROM Products inner join Orders
 ON Products.product_id = Orders.product_id
@@ -2098,11 +2107,25 @@ ON p.product_id = o.product_id
 WHERE order_date BETWEEN '2020-02-01' AND '2020-02-29' 
 GROUP BY product_name 
 HAVING sum(unit) >= 100
+
+# Time:  O(n)  
+# Space: O(n)  
+SELECT p.product_name, 
+       o.unit 
+FROM   (/** Table with product_id with desired order_Date **/
+        SELECT product_id, 
+               Sum(unit) AS unit 
+        FROM   orders 
+        WHERE  order_date BETWEEN '2020-02-01' AND '2020-02-29' 
+        GROUP  BY product_id 
+        HAVING unit >= 100) o 
+INNER JOIN products p 
+ON o.product_id = p.product_id 
 ```
 
 ## Students With Invalid Departments 
 
-WRite a query that student does not exist in the department 
+Write a query that student does not exist in the department 
 
 ```Departments table:
 +------+--------------------------+
@@ -2117,7 +2140,7 @@ Students table:
 +------+----------+---------------+
 | id   | name     | department_id |
 +------+----------+---------------+
-| 23   | Alice    | 1             |
+| 23   | Alice    | 1             | 
 | 1    | Bob      | 7             |
 | 5    | Jennifer | 13            |
 | 2    | John     | 14            |
@@ -2159,13 +2182,16 @@ SELECT s.id,
        s.name 
 FROM   students s
 WHERE  NOT EXISTS (SELECT id 
+                   /** EQUI JOIN **/
                    FROM   departments d
                    WHERE  d.id = s.department_id); 
 ```
 
 ## Replace Employee ID with The Unique Identifier 
 
-###### KEYWORD : `LEFT JOIN ... ON ...`
+A PROBLEM THAT FIND WHO DOESN'T EXIST ON ANOTHER TABLE
+
+###### KEYWORD : `LEFT JOIN`
 
 Write an SQL query to show the unique ID of each user, If a user doesn’t have a unique ID replace just show `NULL`.
 - Return the result table in any order.
@@ -2210,7 +2236,6 @@ The unique ID of Jonathan is 1.
 ```mysql
 # Time:  O(n)
 # Space: O(n)
-
 SELECT u.unique_id, e.name
 FROM employees e
 LEFT JOIN employeeuni u
@@ -2218,41 +2243,41 @@ ON e.id = u.id
 ```
 
 
-## [Top Travellers](https://code.dennyzhang.com/top-travellers)
-
+## [Top Travellers](https://code.dennyzhang.com/top-travellers) *
 
 ###### Keyword : `LEFT JOIN`, `ORDER BY ... , ...` 
 
-Write an SQL query to report the distance travelled by each user.
+Write an SQL query to report the distance travelled by EACH USER.
 - Return the result table ordered by `travelled_distance` in **descending order**, if two or more users travelled the same distance, order them by their name in ascending order.
-```
-Users table:
-+------+-----------+
-| id   | name      |
-+------+-----------+
-| 1    | Alice     |
-| 2    | Bob       |
-| 3    | Alex      |
-| 4    | Donald    |
-| 7    | Lee       |
-| 13   | Jonathan  |
-| 19   | Elvis     |
-+------+-----------+
+```diff
+  Users table:
+  +------+-----------+
+  | id   | name      |
+  +------+-----------+
+  | 1    | Alice     |
+  | 2    | Bob       |
+  | 3    | Alex      |
+  | 4    | Donald    |
+  | 7    | Lee       |
+  | 13   | Jonathan  |
+  | 19   | Elvis     |
+  +------+-----------+
+- Id is PK
 
-Rides table:
-+------+----------+----------+
-| id   | user_id  | distance |
-+------+----------+----------+
-| 1    | 1        | 120      |
-| 2    | 2        | 317      |
-| 3    | 3        | 222      |
-| 4    | 7        | 100      |
-| 5    | 13       | 312      |
-| 6    | 19       | 50       |
-| 7    | 7        | 120      |
-| 8    | 19       | 400      |
-| 9    | 7        | 230      |
-+------+----------+----------+
+  Rides table:
+  +------+----------+----------+
+  | id   | user_id  | distance |
+  +------+----------+----------+
+  | 1    | 1        | 120      |
+  | 2    | 2        | 317      |
+  | 3    | 3        | 222      |
+  | 4    | 7        | 100      |
+  | 5    | 13       | 312      |
+  | 6    | 19       | 50       |
+  | 7    | 7        | 120      |
+  | 8    | 19       | 400      |
+  | 9    | 7        | 230      |
+  +------+----------+----------+
 
 Result table:
 +----------+--------------------+
@@ -2274,9 +2299,10 @@ FROM Users as U LEFT JOIN Rides AS R
 OB U.Id = R.user_id
 GROUP BY u.name
 ORDER BY travelled_distance ASEC, U.name ASEC 
+
 ```
 
-## Create a Session Bar Chart 
+## Create a Session Bar Chart **
 Write an SQL query to report the (`bin`, `total`) in any order.
 ```
   Sessions table:
@@ -2306,6 +2332,7 @@ Write an SQL query to report the (`bin`, `total`) in any order.
 ```
 
 ###### Keyword : `Count(1)` , `UNION`, `New A table`
+
 ```mysql
 /**
   * create attributes
@@ -2317,7 +2344,6 @@ Write an SQL query to report the (`bin`, `total`) in any order.
 
 # Time:  O(n)
 # Space: O(1)
-
 SELECT '[0-5>'  AS bin, 
        Count(1) AS total 
 FROM   sessions 
@@ -2401,7 +2427,6 @@ For 2020-06-01, Sold items were (Pencil, Bible), we sort them lexicographically 
 For 2020-06-02, Sold item is (Mask), we just return it.
 ```
 
-
 ###### Keyword : `group_concat( [ATTRIBUTE] [ORDER BY] [SEPARATOR 'STRING'])`
 ```mysql
 # Time:  O(nlogn)
@@ -2442,7 +2467,7 @@ Write an SQL query to report the distinct titles of the kid-friendly movies stre
   | 4          | Aladdin        | Y             | Movies        |
   | 5          | Cinderella     | Y             | Movies        |
   +------------+----------------+---------------+---------------+
-
+- content_id is PK
   Result table:
   +--------------+
   | title        |
@@ -2457,11 +2482,11 @@ Write an SQL query to report the distinct titles of the kid-friendly movies stre
 ```
 
 ```mysql
-SELECT DISTINCT a.title FROM Content AS a
-JOIN TVProgram AS b
-ON a.content_id = b.content_id
-WHERE a.content_type = 'Movies'
-AND a.Kids_content = 'Y'
+SELECT DISTINCT c.title FROM Content AS c
+JOIN TVProgram AS t
+ON c.content_id = t.content_id
+WHERE c.content_type = 'Movies'
+AND t.Kids_content = 'Y'
 AND LEFT(b.program_date,7) ='2020-06';
 
 --
@@ -2469,7 +2494,7 @@ AND LEFT(b.program_date,7) ='2020-06';
   * JOIN The tables implicitly 
   * using FROM multiple tables
   */
-SELECT distinct title
+SELECT DISTINCT title
 FROM Content c, TVProgram tv
 WHERE c.content_id = tv.content_id
         and Kids_content = 'Y'
@@ -2482,8 +2507,7 @@ WHERE c.content_id = tv.content_id
 Write an SQL query to report the `customer_id` and of customers who have spent at least `$100` in each month of June and July 2020.
 - Return the result table in any order.
 
-
-###### Keyword : `Implicitly join three tables with WHERE`, `sum()` , `INNER JOIN three tables together`
+###### Keyword : `EQUI-JOIN THREE TABLES`, `SUM` , `INNER JOIN THREE TABLES`
 
 ```
   Customers
