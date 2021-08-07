@@ -879,6 +879,24 @@ SELECT MAX(num) AS num FROM
 
 Please write a SQL query to output movies with an odd numbered ID and a description that is not 'boring'. Order the result by rating.
 
+```
++---------+-----------+--------------+-----------+
+|   id    | movie     |  description |  rating   |
++---------+-----------+--------------+-----------+
+|   1     | War       |   great 3D   |   8.9     |
+|   2     | Science   |   fiction    |   8.5     |
+|   3     | irish     |   boring     |   6.2     |
+|   4     | Ice song  |   Fantacy    |   8.6     |
+|   5     | House card|   Interesting|   9.1     |
++---------+-----------+--------------+-----------+
+
++---------+-----------+--------------+-----------+
+|   id    | movie     |  description |  rating   |
++---------+-----------+--------------+-----------+
+|   5     | House card|   Interesting|   9.1     |
+|   1     | War       |   great 3D   |   8.9     |
++---------+-----------+--------------+-----------+
+```
 
 - via `mod(attribute, integer) = q`
 ```mysql
@@ -889,17 +907,72 @@ ORDER BY rating DESC;
 
 
 ## [Swap Salary](https://zhuanlan.zhihu.com/p/259763823)
+###### Keyword : `UPDATE attribute SET` , `CASE WHEN ... THEN ...` , `IF(..,..,..)`
 
-Swap all f and m values (i.e., change all f values to m and vice versa) with a single update statement and no intermediate temp table.  
+Swap all `f` and `m` values (i.e., change all f values to m and vice versa) with a single update statement and no intermediate temp table.  
+```
++----+------+-----+--------+
+| id | name | sex | salary |
+|----|------|-----|--------|
+| 1  | A    | m   | 2500   |
+| 2  | B    | f   | 1500   |
+| 3  | C    | m   | 5500   |
+| 4  | D    | f   | 500    |
+After running your query, the above salary table should have the following rows:
++----+------+-----+--------+
+| id | name | sex | salary |
+|----|------|-----|--------|
+| 1  | A    | f   | 2500   |
+| 2  | B    | m   | 1500   |
+| 3  | C    | f   | 5500   |
+| 4  | D    | m   | 500    |
++----+------+-----+--------+
+```
 
 **Note that you must write a single update statement, DO NOT write any select statement for this problem. **
 
-- via `case when ... then ... else ... end`
+```sql
+UPDATE salary 
+SET sex = CASE sex 
+          WHEN 'm' THEN 'f' 
+          WHEN 'f' THEN 'm' 
+          END;    
+
+UPDATE salary SET sex = IF(sex = 'm', 'f', 'm');
+
+-- XOR
+UPDATE salary SET sex = CHAR(ASCII(sex) ^ (ASCII('m') ^ ASCII('f')));
+```
 
 
 ## [Actors & Directors Cooperated >= 3 Times](https://zhuanlan.zhihu.com/p/259934531)
 
-Write a SQL query for a report that provides the pairs (actor_id, director_id) where the actor have cooperated with the director at least 3 times.
+###### Keyword : `Group By two attribute`
+
+Write a SQL query for a report that provides the pairs (`actor_id`, `director_id`) where the actor have cooperated with the director at least 3 times.
+
+```
+ActorDirector table:
++-------------+-------------+-------------+
+| actor_id    | director_id | timestamp   |
++-------------+-------------+-------------+
+| 1           | 1           | 0           |
+| 1           | 1           | 1           |
+| 1           | 1           | 2           |
+| 1           | 2           | 3           |
+| 1           | 2           | 4           |
+| 2           | 1           | 5           |
+| 2           | 1           | 6           |
++-------------+-------------+-------------+
+
+Result table:
++-------------+-------------+
+| actor_id    | director_id |
++-------------+-------------+
+| 1           | 1           |
++-------------+-------------+
+The only pair is (1, 1) where they cooperated exactly 3 times.
+```
 
 ```mysql
 SELECT actor_id, director_id FROM ActorDirector
@@ -912,6 +985,7 @@ HAVING COUNT(timestamp) >= 3;
 Write an SQL query that reports all product names of the products in the Sales table along with their selling year and price.
 
 ```diff
+ Sales table
   +---------+------------+------+----------+-------+
 - | sale_id | product_id | year | quantity | price |
   +---------+------------+------+----------+-------+ 
@@ -940,20 +1014,11 @@ Result table:
 ```
 
 ```mysql
---  +---------+------------+------+----------+-------+-------------+
---  | sale_id | product_id | year | quantity | price | product_name|
---  +---------+------------+------+----------+-------+-------------+
---  | 1       | 100        | 2008 | 10       | 5000  | Nokia       |
---  | 2       | 100        | 2009 | 12       | 5000  | Nokia       |
---  | 7       | 200        | 2011 | 15       | 9000  | Apple       |
---  +---------+------------+------+----------+-------+-------------+
-
-SELECT b.product_name, a.year,  a.price
-FROM Sales AS a
-LEFT JOIN Product AS b
-ON a.product_id = b.product_id;
+SELECT P.product_name, S.year,  S.price
+FROM Sales AS S
+LEFT JOIN Product AS P
+ON S.product_id = P.product_id;
 ```
-
 
 ## [Product Sales Analysis II](https://zhuanlan.zhihu.com/p/259937061)
 
@@ -965,19 +1030,10 @@ FROM Sales
 GROUP BY product_id;
 ```
 ## [Project Employees I](https://zhuanlan.zhihu.com/p/259948436)
+###### Keyword : `INNER JOIN`
 
-Write an SQL query that reports the average experience years of all the employees for each project, rounded to 2 digits.
-
-```mysql
-SELECT a.project_id, ROUND(AVG(b.experience_years),2) AS average_years FROM Project AS a
-JOIN Employee AS b
-ON a.employee_id = b.employee_id
-GROUP BY a.project_id;
+Write an SQL query that reports **the average experience years of all the employees for each project**, rounded to 2 digits.
 ```
-
-## [Project Employees II]()
-
-```diff
   Project table:
   +-------------+-------------+
 - | project_id  | employee_id |
@@ -998,8 +1054,7 @@ GROUP BY a.project_id;
   | 3           | John   | 1                |
   | 4           | Doe    | 2                |
   +-------------+--------+------------------+
-
-  Result table:
+    Result table:
   +-------------+---------------+
 - | project_id  | average_years |
   +-------------+---------------+
@@ -1007,19 +1062,101 @@ GROUP BY a.project_id;
   | 2           | 2.50          |
   +-------------+---------------+
 
-+ The average experience years for the first project is (3 + 2 + 1) / 3 = 2.00 and 
-+ for the second project is (3 + 2) / 2 = 2.50
++ The average experience years 
+  for the first project is (3 + 2 + 1) / 3 = 2.00 and 
+  for the second project is (3 + 2) / 2 = 2.50
+```
+
+
+```mysql
+-- +-------------+--------+-------------------------------+
+-- | employee_id | name   | experience_years |project_id  |
+-- +-------------+--------+------------------+------------+
+-- |     1       | Khaled |         3        | 1          |   
+-- |     2       | Ali    |         2        | 1          |
+-- |     3       | John   |         1        | 1          |
+-- |     1       | Khaled |         3        | 2          | 
+-- |     4       | Doe    |         2        | 2          |
+-- +-------------+--------+------------------+------------+
+# Time:  O(m + n) 
+# Space: O(m + n) 
+SELECT P.project_id, 
+       ROUND(AVG(E.experience_years),2) AS average_years 
+FROM Project AS P
+     [INNER] JOIN Employee AS E
+     ON P.employee_id = E.employee_id
+GROUP BY P.project_id;
+ORDER BY NULL 
+```
+
+## Project Employees II
+
+#### Keyword : `Find MAX`
+
+Write an SQL query that reports **all the projects** that have the most employees.
+
+```diff
+  Project table:
+  +-------------+-------------+
+  | project_id  | employee_id |
+  +-------------+-------------+
+  | 1           | 1           |
+  | 1           | 2           |
+  | 1           | 3           |
+  | 2           | 1           |
+  | 2           | 4           |
+  +-------------+-------------+
+
+
+  Result table:
+  +-------------+
+  | project_id  |
+  +-------------+
+  | 1           |
+  +-------------+
 ```
 
 ```mysql
-select project_id, round(avg(experience_years), 2) as average_years
-from Project inner join Employee
-on Project.employee_id = Employee.employee_id
-group by project_id
+# Time:  O(n)
+# Space: O(n)
+
+/**
+  * 
+  * FIND THE MAX (MAY CONTAINS TWO SMAE MAXIMUMS)
+  +-------------+-------------+
+  | project_id  | employee_id |
+  +-------------+-------------+
+  | 1           | 1           |
+  |             | 2           |
+  |             | 3           |
+  | 2           | 1           |
+  |             | 4           |
+  +-------------+-------------+  
+  
+  +-------------+-------------+
+  | Count(employee_id)        |
+  +-------------+-------------+
+  | 3                         |
+  +-------------+-------------+
+  
+  */
+  
+ 
+SELECT project_id 
+FROM   project 
+GROUP  BY project_id 
+// If HAVING(employee_id) has multiple maximums
+HAVING Count(employee_id) = (SELECT Count(employee_id) 
+                             FROM   project 
+                             GROUP  BY project_id 
+                             ORDER  BY Count(employee_id) DESC 
+                             LIMIT  1) 
+ORDER  BY NULL 
 ```
 
-## [Sales Analysis I]
+## Sales Analysis I
 
+Write an SQL query that reports the best seller by total sales price, If there is a tie, report them all.
 
 ```diff
   Product table:
@@ -1054,13 +1191,15 @@ group by project_id
 
 ```mysql
 WITH tmp AS (
-SELECT seller_id, RANK() OVER(ORDER BY SUM(price) DESC) AS rnk FROM Sales
+SELECT seller_id, RANK() OVER(ORDER BY SUM(price) DESC) AS rnk 
+FROM Sales
 GROUP BY seller_id
 )
-
 SELECT seller_id FROM tmp
 WHERE rnk = 1;
+```
 
+```mysql
 select seller_id
 from Sales
 group by seller_id
@@ -1073,9 +1212,10 @@ HAVING sum(price) = (
     )
 ```
 
-## Sales Analysis II 
+## Sales Analysis II --
 
-Write an SQL query that reports the buyers who have bought S8 but not iPhone. Note that S8 and iPhone are products present in the Product table.
+Write an SQL query that reports the buyers who have bought `S8` but not `iPhone`. 
+- Note that S8 and iPhone are products present in the Product table.
 
 ```diff
   Result table:
@@ -1084,7 +1224,8 @@ Write an SQL query that reports the buyers who have bought S8 but not iPhone. No
   +-------------+
   | 1           |
   +-------------+
-- The buyer with id 1 bought an S8 but didn't buy an iPhone. The buyer with id 3 bought both.
+- The buyer with id 1 bought an S8 but didn't buy an iPhone.
+- The buyer with id 3 bought both.
 ```
 
 ```mysql
@@ -1099,23 +1240,23 @@ SELECT DISTINCT buyer_id FROM tmp
 WHERE buyer_id NOT IN (SELECT buyer_id FROM tmp WHERE product_name = 'iPhone')
 AND buyer_id IN (SELECT buyer_id FROM tmp WHERE product_name = 'S8');
 
-/** nested query with join **/
-select distinct buyer_id
-from Sales inner join Product
-where Sales.product_id = Product.product_id
-    and product_name = 'S8'
-    and buyer_id not in
-    (select distinct buyer_id
-    from Sales inner join Product
-    where Sales.product_id = Product.product_id
-        and product_name = 'iPhone')
+/** nested query with JOIN **/
+SELECT distinct buyer_id
+FROM Sales INNER JOIN Product
+WHERE Sales.product_id = Product.product_id
+      AND Product_name = 'S8'
+      AND buyer_id NOT IN
+      /** Buyer who bought Iphone**/
+     (SELECT distinct buyer_id
+      FROM Sales inner join Product
+      WHERE Sales.product_id = Product.product_id
+            AND product_name = 'iPhone')
 ```
 
-## 1084 Sales Analysis III [Easy]
+## Sales Analysis III --
 
-Write an SQL query that reports the products that were only sold in spring 2019. 
-
-That is, between `2019-01-01` and `2019-03-31` inclusive.
+Write an SQL query that reports the products that were only sold in spring 2019.   
+- That is, between `2019-01-01` and `2019-03-31` inclusive.
 
 ```diff
   Sales table:
@@ -1126,7 +1267,7 @@ That is, between `2019-01-01` and `2019-03-31` inclusive.
   | 2       | 100        | 2009 | 12       | 5000  |
   | 7       | 200        | 2011 | 15       | 9000  |
   +---------+------------+------+----------+-------+
-
+  
   Product table:
   +------------+--------------+
   | product_id | product_name |
@@ -1151,11 +1292,20 @@ JOIN Product AS b
 ON a.product_id = b.product_id
 WHERE a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date < '2019-01-01')
 AND a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date > '2019-03-31');
+
+SELECT product_id, 
+       product_name 
+FROM   product 
+WHERE  product_id NOT IN (SELECT product_id 
+                          FROM   sales 
+                          WHERE  sale_date NOT BETWEEN 
+                                 '2019-01-01' AND '2019-03-31'); 
 ```
 
-## Reported Posts
+## Reported Posts --
 
-Write an SQL query that **report**s the number of posts reported yesterday for each report reason. Assume today is `2019-07-05`.
+Write an SQL query that reports the number of posts reported yesterday for each report reason. 
+- Assume today is `2019-07-05`.
 ```diff
  Actions table:
   +---------+---------+-------------+--------+--------+
@@ -1184,7 +1334,6 @@ Write an SQL query that **report**s the number of posts reported yesterday for e
   +---------------+--------------+
 ```
 
-
 ```mysql
 SELECT extra AS report_reason, COUNT(DISTINCT post_id) AS report_count
 FROM Actions
@@ -1194,27 +1343,66 @@ AND DATEDIFF("2019-07-05", action_date) = 1
 GROUP BY extra;
 ```
 
-## User Activity for the Past 30 Days I 
-
-There is no primary key for this table, it may have duplicate rows. 
-
-The activity_type column is an ENUM of type `('open_session', 'end_session', 'scroll_down', 'send_message')`.
+## User Activity for the Past 30 Days I   
 
 Write an SQL query to find the daily active user count for a period of 30 days ending `2019-07-27` inclusively.  
-A user was active on some day if he/she made at least one activity on that day.
+- A user was active on some day if he/she made at least one activity on that day.
+```
+Activity table:
++---------+------------+---------------+---------------+
+| user_id | session_id | activity_date | activity_type |
++---------+------------+---------------+---------------+
+| 1       | 1          | 2019-07-20    | open_session  |
+| 1       | 1          | 2019-07-20    | scroll_down   |
+| 1       | 1          | 2019-07-20    | end_session   |
+| 2       | 4          | 2019-07-20    | open_session  |
+| 2       | 4          | 2019-07-21    | send_message  |
+| 2       | 4          | 2019-07-21    | end_session   |
+| 3       | 2          | 2019-07-21    | open_session  |
+| 3       | 2          | 2019-07-21    | send_message  |
+| 3       | 2          | 2019-07-21    | end_session   |
+| 4       | 3          | 2019-06-25    | open_session  |
+| 4       | 3          | 2019-06-25    | end_session   |
++---------+------------+---------------+---------------+
+There is no primary key for this table, it may have duplicate rows. 
+The activity_type column is an ENUM of type ('open_session', 'end_session', 'scroll_down', 'send_message').
+
+Result table:
++------------+--------------+ 
+| day        | active_users |
++------------+--------------+ 
+| 2019-07-20 | 2            |
+| 2019-07-21 | 2            |
++------------+--------------+ 
+Note that we do not care about days with zero active users.
+```
 
 ```mysql
-SELECT activity_date AS day, COUNT(DISTINCT user_id) AS active_users FROM (
-SELECT DISTINCT activity_date, user_id FROM Activity
-WHERE activity_date > DATE_SUB("2019-07-27", INTERVAL 30 DAY)
-GROUP BY activity_date, user_id
-HAVING COUNT(DISTINCT activity_type) >= 1
-) AS tmp
-GROUP BY activity_date;
+/**
++---------+------------+---------------+---------------+
+| user_id | session_id | activity_date | activity_type |
++---------+------------+---------------+---------------+
+| 1       | 1          | 2019-07-20    | open_session  |
+| 1       | 1          |               | scroll_down   |
+| 1       | 1          |               | end_session   |
+| 2       | 4          |               | open_session  |
+
+| 2       | 4          | 2019-07-21    | send_message  |
+| 2       | 4          | 2019-07-21    | end_session   |
+| 3       | 2          | 2019-07-21    | open_session  |
+| 3       | 2          | 2019-07-21    | send_message  |
+| 3       | 2          | 2019-07-21    | end_session   |
++---------+------------+---------------+---------------+ 
+**/
+SELECT activity_date           AS day, 
+       Count(DISTINCT user_id) AS active_users 
+FROM   activity 
+GROUP  BY activity_date 
+HAVING Datediff("2019-07-27", activity_date) < 30 
+ORDER  BY NULL 
 ```
 
 ## [User Activity for the Past 30 Days II](https://zhuanlan.zhihu.com/p/260558715)
-
 
 ## [Article Views I](https://zhuanlan.zhihu.com/p/260564257)
 
