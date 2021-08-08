@@ -1,13 +1,14 @@
-[Easy](https://zhuanlan.zhihu.com/p/265354299)  
-[Source Codes](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)  
-[`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)      
-[`HAVING`](https://www.yiibai.com/mysql/having.html)     
-[`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)   
-[Difference btw `join` and `inner join`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)  
-[`union` and `union all`](https://www.fooish.com/sql/union.html)
-[`join on ... where ...`](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)  
+[QUESTION EASY](https://zhuanlan.zhihu.com/p/265354299)   
+[QUESTION SOLUTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)   
+[`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)  
+[`HAVING`](https://www.yiibai.com/mysql/having.html)  
+[`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)  
+[`JOIN` and `INNER JOIN`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)  
+[`union` and `union all`](https://www.fooish.com/sql/union.html)  
+[`JOIN ... WHERE ...`](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)  
+[sql summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)  
 
-## [Tips](https://github.com/shawlu95/Beyond-LeetCode-SQL)
+## [Tips](https://github.com/shawlu95/Beyond-LeetCode-SQL)  
 - Using the `like` operator and wildcards (flexible search)
 - Avoiding the `or` operator, use `in` operator
   > data retrieval is measurably faster by replac- ing OR conditions with the IN predicate
