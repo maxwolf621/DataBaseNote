@@ -2669,9 +2669,8 @@ Return the result table in any order.
   | 3          | Bob          | DIAB100 MYOP |
   | 4          | George       | ACNE DIAB100 | 
   +------------+--------------+--------------+
-  Bob and George both have a condition that starts with DIAB1.
 ```
-
+- Bob and George both have a condition that starts with `DIAB1`(`LIKE`).
 ```sql
 select *
 from Patients
@@ -2683,11 +2682,11 @@ where conditions like "%DIAB1%"
 ###### Keyword : `SUBSTRING()` , `TRIM()` , `LOWER()`, `ORDER BY 1,2` AND `GROUP BY 1,2` 
 
 Write an SQL query to report
-- `product_name` in lowercase without leading or trailing white spaces.
+- `product_name` in lowercase(`LOWER()`) without leading or trailing white spaces.
 - `sale_date` in the format `('YYYY-MM')`
-- total the number of times the product was sold in this month.
-- Return the result table ordered by product_name in ascending order, in case of a tie order it by sale_date in ascending order.
-```
+- total the number of times the product(`COUNT`) was sold in this month.
+- Return the result table ordered by `product_name` in ascending order, in case of a tie order it by `sale_date` in ascending order.
+```diff
   Sales
   +------------+------------------+--------------+
   | sale_id    | product_name     | sale_date    |
@@ -2709,64 +2708,77 @@ Write an SQL query to report
   | lcphone      | 2000-02      | 1        | 
   | matryoshka   | 2000-03      | 1        | 
   +--------------+--------------+----------+
-
-In January, 2 LcPhones were sold, 
-In Februery, 2 LCKeychains and 1 LCPhone were sold.
-In March, 1 matryoshka was sold.
 ```
-- please note that the product names are ot case sensitive and may contain spaces.
+- In January, 2 LcPhones were sold, 
+- In Februery, 2 LCKeychains and 1 LCPhone were sold.
+- In March, 1 matryoshka was sold.
+- NOTE that the product names are ot case sensitive and may contain spaces.
 
 ```mysql
+/**
+    SELECT account_id, open_emp_id
+             ^^^^        ^^^^
+              1           2
+
+    FROM account
+    GROUP BY 1;
+  */
 # Time:  O(nlogn)
 # Space: O(n)
-
 SELECT LOWER(TRIM(product_name)) product_name,
        substring(sale_date, 1, 7) sale_date,
        count(sale_id) total
 FROM Sales
 GROUP BY 1, 2
 ORDER BY 1, 2;
+
+-- SAME AS 
+SELECT LOWER(TRIM(product_name)) AS product_name, 
+       LEFT(sale_date, 7) AS sale_date, 
+       COUNT(*) AS total FROM Sales
+GROUP BY LOWER(TRIM(product_name)), LEFT(sale_date, 7)
+ORDER BY product_name, sale_date;
 ```
 
 ## Unique Orders and Customers Per Month 
 
-###### Keyword : `LEFT`, `GROUP BY 1` 
+###### Keyword : `LEFT JION`, `GROUP BY 1` 
 
-Write an SQL query to find the number of unique orders and the number of unique customers with invoices > `$20` for each different month.
+Write an SQL query to find the number of **unique orders and the number of unique customers**(`DISTINCT`) with `invoices` > `$20` for each different month.
 - Return the result table sorted in any order.
-```
-Orders
-+----------+------------+-------------+------------+
-| order_id | order_date | customer_id | invoice    |
-+----------+------------+-------------+------------+
-| 1        | 2020-09-15 | 1           | 30         |
-| 2        | 2020-09-17 | 2           | 90         |
-| 3        | 2020-10-06 | 3           | 20         |
-| 4        | 2020-10-20 | 3           | 21         |
-| 5        | 2020-11-10 | 1           | 10         |
-| 6        | 2020-11-21 | 2           | 15         |
-| 7        | 2020-12-01 | 4           | 55         |
-| 8        | 2020-12-03 | 4           | 77         |
-| 9        | 2021-01-07 | 3           | 31         |
-| 10       | 2021-01-15 | 2           | 20         |
-+----------+------------+-------------+------------+
-- customer_id might contain duplicates
+```diff
+  Orders
+  +----------+------------+-------------+------------+
+  | order_id | order_date | customer_id | invoice    |
+  +----------+------------+-------------+------------+
+  | 1        | 2020-09-15 | 1           | 30         |
+  | 2        | 2020-09-17 | 2           | 90         |
+  | 3        | 2020-10-06 | 3           | 20         |
+  | 4        | 2020-10-20 | 3           | 21         |
+  | 5        | 2020-11-10 | 1           | 10         |
+  | 6        | 2020-11-21 | 2           | 15         |
+  | 7        | 2020-12-01 | 4           | 55         |
+  | 8        | 2020-12-03 | 4           | 77         |
+  | 9        | 2021-01-07 | 3           | 31         |
+  | 10       | 2021-01-15 | 2           | 20         |
+  +----------+------------+-------------+------------+
+  - customer_id might contain duplicates
 
-Result table:
-+---------+-------------+----------------+
-| month   | order_count | customer_count |
-+---------+-------------+----------------+
-| 2020-09 | 2           | 2              |
-| 2020-10 | 1           | 1              |
-| 2020-12 | 2           | 1              |
-| 2021-01 | 1           | 1              |
-+---------+-------------+----------------+
-In September 2020 we have two orders from 2 different customers with invoices > $20.
-In October 2020 we have two orders from 1 customer, and only one of the two orders has invoice > $20.
-In November 2020 we have two orders from 2 different customers but invoices < $20, so we don't include that month.
-In December 2020 we have two orders from 1 customer both with invoices > $20.
-In January 2021 we have two orders from 2 different customers, but only one of them with invoice > $20.
+  Result table:
+  +---------+-------------+----------------+
+  | month   | order_count | customer_count |
+  +---------+-------------+----------------+
+  | 2020-09 | 2           | 2              |
+  | 2020-10 | 1           | 1              |
+  | 2020-12 | 2           | 1              |
+  | 2021-01 | 1           | 1              |
+  +---------+-------------+----------------+
 ```
+- In September 2020 we have two orders from 2 different customers with invoices > $20.
+- In October 2020 we have two orders from 1 customer, and only one of the two orders has invoice > $20.
+- In November 2020 we have two orders from 2 different customers but invoices < $20, so we don't include that month.
+- In December 2020 we have two orders from 1 customer both with invoices > $20.
+- In January 2021 we have two orders from 2 different customers, but only one of them with invoice > $20.
 
 ```mysql
 # Time:  O(n)
@@ -2782,7 +2794,7 @@ ORDER BY NULL;
 
 ## Warehouse Manager 
 
-Write an SQL query to report how much cubic feet of volume does the inventory occupy in each warehouse.
+Write an SQL query to report how much cubic feet of volume does the inventory occupy in **each warehouse**.
 - Return the result table in any order.
 
 ```
@@ -2820,14 +2832,14 @@ Volume of product_id = 1 (LC-TV), 5x50x40 = 10000
 Volume of product_id = 2 (LC-KeyChain), 5x5x5 = 125 
 Volume of product_id = 3 (LC-Phone), 2x10x10 = 200
 Volume of product_id = 4 (LC-T-Shirt), 4x10x20 = 800
-
-LCHouse1: 1 unit of LC-TV + 10 units of LC-KeyChain + 5 units of LC-Phone.
-          Total volume: 1*10000 + 10*125  + 5*200 = 12250 cubic feet
-LCHouse2: 2 units of LC-TV + 2 units of LC-KeyChain.
-          Total volume: 2*10000 + 2*125 = 20250 cubic feet
-LCHouse3: 1 unit of LC-T-Shirt.
-          Total volume: 1*800 = 800 cubic feet.
 ```
+- LCHouse1: 1 unit of LC-TV + 10 units of LC-KeyChain + 5 units of LC-Phone.
+  > Total volume: `1*10000 + 10*125  + 5*200 = 12250` cubic feet
+- LCHouse2: 2 units of LC-TV + 2 units of LC-KeyChain.
+  > Total volume: `2*10000 + 2*125 = 20250` cubic feet
+- LCHouse3: 1 unit of LC-T-Shirt.
+  > Total volume: `1*800 = 800` cubic feet.
+
 
 ```mysql
 SELECT name AS warehouse_name, SUM(units*Width*LENGTH*Height) AS volume
@@ -2847,29 +2859,33 @@ GROUP BY name
 
 ## Customer Who Visited but Did Not Make Any Transactions
 
-```
-Visits
-+----------+-------------+
-| visit_id | customer_id |
-+----------+-------------+
-| 1        | 23          |
-| 2        | 9           |
-| 4        | 30          |
-| 5        | 54          |
-| 6        | 96          |
-| 7        | 54          |
-| 8        | 54          |
-+----------+-------------+
+Write an SQL query to find the IDs of the users who visited without making any transactions and the number of times they made these types of visits.
+
+Return the result table sorted in any order.
+```diff
+  Visits
+  +----------+-------------+
+  | visit_id | customer_id |
+  +----------+-------------+
++ | 1        | 23          |
++ | 2        | 9           |
+  | 4        | 30          |
++ | 5        | 54          |
+  | 6        | 96          |
+  | 7        | 54          |
+  | 8        | 54          |
+  +----------+-------------+
+- visit_id is PK
 
 Transactions
 +----------------+----------+--------+
 | transaction_id | visit_id | amount |
 +----------------+----------+--------+
-| 2              | 5        | 310    |
-| 3              | 5        | 300    |
-| 9              | 5        | 200    |
-| 12             | 1        | 910    |
-| 13             | 2        | 970    |
+| 2              | 5        | 310    | -- 54
+| 3              | 5        | 300    | -- 54
+| 9              | 5        | 200    | -- 54
+| 12             | 1        | 910    | -- 23
+| 13             | 2        | 970    | -- 9
 +----------------+----------+--------+
 
 Result table:
@@ -2878,17 +2894,32 @@ Result table:
 +-------------+----------------+
 | 54          | 2              |
 | 30          | 1              |
-| 96          | 1              |
+| 96          | 1              | 
 +-------------+----------------+
 ```
 - Customer with id = 23 visited the mall once and made one transaction during the visit with id = 12.
 - Customer with id = 9 visited the mall once and made one transaction during the visit with id = 13.
 - Customer with id = 30 visited the mall once and did not make any transactions.
-- Customer with id = 54 visited the mall three times. During 2 visits they did not make any transactions, and during one visit they made 3 transactions.
+- Customer with id = 54 visited the mall three times. 
+  > During 2 visits they did not make any transactions, and during one visit they made 3 transactions.
 - Customer with id = 96 visited the mall once and did not make any transactions.
+
 As we can see, users with IDs 30 and 96 visited the mall one time without making any transactions.   
 Also user 54 visited the mall twice and did not make any transactions.
 
+```
+# Time:  O(n)
+# Space: O(n)
+
+SELECT DISTINCT customer_id,
+                count(customer_id) AS count_no_trans
+FROM visits v
+LEFT JOIN transactions t 
+     ON v.visit_id = t.visit_id
+WHERE transaction_id IS NULL
+GROUP BY customer_id
+ORDER BY NULL;
+```
 
 ## Bank Account Summary II
 
