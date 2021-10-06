@@ -41,32 +41,30 @@ WHERE Height < 179 AND Weight < 60
 ```
 
 
-## PEOJECT `π`
+## PROJECT `π`
 
 To Create A New Table (projection) **with specified attributes from the old one**
 
-> A new Table with Atrribute A and B from table R  
+> A new Table with Attribute A and B from table R  
 > ![](https://i.imgur.com/7dG9aBv.png)  
 
 - Relation Algebra `πA(R)`   
   > A : Attribute from table R   
 
-- Priority of selection and projection depend on situation
+- Priority of selection and projection depend on SITUATION
 
 ## UNION
 
-Merge two tables remove duplicate data    
+Merge two tables and remove duplicate data    
 
-![](https://i.imgur.com/QK08qqb.png)    
+![](https://i.imgur.com/QK08qqb.png)      
 
 > Relation Algebra : $R \cup S$    
 > : ![](https://i.imgur.com/otdaoWf.png)    
 
-
 ## CARTESIAN PRODUCT `R X S`
 
 Merge a set of n attributes from table R with m attributes from table S   
-
 
 ![](https://i.imgur.com/4jC4AD6.png)  
 - We get a merged Table with `n+m = 6` attributes  and `X * Y = 9` data  
@@ -99,18 +97,22 @@ THEN
 ! A - B ={1,2}
 ```
 
-## JOIN  (WICHTIG)
+## JOIN 
 [Reference](https://www.gushiciku.cn/dc_hk/201216734)
 
 ![](https://i.imgur.com/IglA41f.png)  
 
 **Join operation is essentially a CARTESIAN PRODUCT followed by a selection criterion.**   
+
 - Relational Algebra : $R ⨝pS$    
+
+### JOIN TYPES
 
 ![image](https://user-images.githubusercontent.com/68631186/127828038-954c84aa-f5c1-459c-bc87-a8cb8e583997.png)   
 
+
 ![](https://i.imgur.com/9v3HGUy.png)  
-- OUTER JOIN
+- OUTER JOIN TYPES
   > `I` : LEFT OUTER JOIN  
   > `III` : RIGHT OUTER JOIN
   > Full Outer Join
@@ -120,62 +122,65 @@ THEN
 
 ### NATURAL JOIN
 
-```mysql
-- SYNTAX
+```sql
+-- SYNTAX
 FROM A 
 NATURAL JOIN B
-- is equal
-FROM A INNER JOIN B
+
+-- is equal
+FROM A 
+INNER JOIN B
 ON A.c = B.c 
 ```
 - It's recommended Use `INNER JOIN` instead of using `NATURAL JOIN` 
+
 
 ![](https://i.imgur.com/Y2dDe14.png)  
 
 ### THETA JOIN `θ`
 The GENERAL case of JOIN operation is called a Theta join.
-- Merging two table with operation `=,＜,≦,＞,≧,≠`
+
+- Merging two tables with operation `=,＜,≦,＞,≧,≠`
 - `θ` are represented one of these operations
 
 ```diff
 (A X B) where A.X θ B.Y 
-- X : attribute of table A 
-- Y : attribute of table B 
++ X : attribute of table A 
++ Y : attribute of table B 
 ```
 
 ### EQUI-JOIN
+
 When a theta join uses only equivalence condition, it becomes a equi join.   
 It merges Attributes from table A `=` Attributes from table B to form a desired table
 - A EQUI-JOIN TABLE may have contain duplicates
 
-```mysql
-- Syntax
+```sql
 FROM R,S WHERE (R.c == S.c)
 ```
 
-For example  
+For example ::   
 ![](https://i.imgur.com/qO74Xdb.png)  
 ![](https://i.imgur.com/WdmmXj7.png)  
-
+- It contain duplicates columns (two 班級代號)
 ### OUTER JOIN
 In an outer join, along with tuples that satisfy the matching criteria, we also include first (left outer join), second (right outer join) or all **tuples that do not match the criteria.**
 
 - **If tuples are not satisfied with the matching criteria , they will be set as `NULL` by default**
 
-- Why we use it?
-  > Because we dont want to miss any of information as merging two different tables
+The reason for using OUTER JOIN is because we don't want to miss any of information as merging two different tables
 
-```mysql
-- Syntax
+```sql
 SELECT *
-FROM TableA [RIGHT|LEFT] [OUTER JOIN] TableB
+FROM TableA 
+[RIGHT|LEFT] [OUTER JOIN] TableB
 ON TableA.PK = TableB.FK
 ```
 
 ### LEFT OUTER JOIN
 ![](https://i.imgur.com/iaiKGHH.png)
 
-```mysql
+```sql
 SELECT *
 FROM 老師資料表 AS A LEFT OUTER JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號
@@ -184,9 +189,8 @@ ON A.老師編號 = B.老師編號
 
 ![image](https://user-images.githubusercontent.com/68631186/111078928-bff07d00-8532-11eb-9d77-aa6443b9e8f6.png)   
 
-If we want to query for a specified teacher dont open the any lectures 
-We can use `LEFT OUTER JOIN EXCLUDING INNER JOIN`
-```mysql
+If we want to query for a certain teacher who has no any lectures. We can use `LEFT OUTER JOIN EXCLUDING INNER JOIN`
+```sql
 SELECT *
 FROM 老師資料表 AS A LEFT OUTER JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號
@@ -218,8 +222,8 @@ WHERE B.老師編號 IS NULL
  +------+------+---------+---------+
 ```
 
-```mysql
-SELECT A.PK, B.PK, A.Value, B.Valueh
+```sql
+SELECT A.PK, B.PK, A.Value, B.Value
 FROM Table_A RIGHT JOIN Table_B    
 ON A.PK = B.PK;
 ```
@@ -228,14 +232,13 @@ ON A.PK = B.PK;
 
 ![image](https://user-images.githubusercontent.com/68631186/127832877-ae5fb919-7bff-4ff6-a57a-b5109c922975.png)  
 
-```mysql
+```sql
 SELECT A.PK AS A_PK, B.PK AS B_PK,
        A.Value AS A_Value, B.Value AS B_Value
 FROM Table_A A
 FULL OUTER JOIN Table_B B
 ON A.PK = B.PK;
 ```
-
 ## Interaction 
 Section belonging to both R and S   
 ![](https://i.imgur.com/gJiMj1e.png)    
@@ -244,7 +247,7 @@ Section belonging to both R and S
 > ![](https://i.imgur.com/71LOY0u.png)   
 
 Fro example
-```mysql
+```sql
 SELECT *
 FROM 老師資料表 AS A RIGHT OUTER JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號

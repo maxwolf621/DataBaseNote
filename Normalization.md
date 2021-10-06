@@ -20,7 +20,6 @@
 刪除異常 Delete Anomalies  
 - Deleting one row of the Entity causes other entities to lose their information 
 
-
 ### For Example  
 
 #### EX1
@@ -58,7 +57,7 @@
 ![](https://i.imgur.com/gEJ9kia.png)  
 
 1. `X->Y` in R 成立,不代表`Y->X`也成立  
-2. Functional Dependnecy是`One To One`的關係  
+2. Functional Dependency是`One To One`的關係  
 3. 關聯R中的X若為主鍵(候選鍵),則關聯R中所有其它屬性必功能相依於X  
 
 #### For example 

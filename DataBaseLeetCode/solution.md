@@ -1,33 +1,39 @@
-[QUESTION EASY](https://zhuanlan.zhihu.com/p/265354299)   
-[QUESTION SOLUTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)   
-[`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)  
-[`HAVING`](https://www.yiibai.com/mysql/having.html)  
-[`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)  
-[`JOIN` and `INNER JOIN`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)  
-[`union` and `union all`](https://www.fooish.com/sql/union.html)  
-[`JOIN ... WHERE ...`](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)  
-[sql summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)  
+
+## Reference
+
+[QUESTION EASY](https://zhuanlan.zhihu.com/p/265354299)     
+[QUESTION SOLUTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)    
+[`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)    
+[`HAVING`](https://www.yiibai.com/mysql/having.html)    
+[`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)    
+[`JOIN` and `INNER JOIN`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)   
+[`union` and `union all`](https://www.fooish.com/sql/union.html)    
+[`JOIN ... WHERE ...`](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)     
+[sql summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)    
 
 ## [Tips](https://github.com/shawlu95/Beyond-LeetCode-SQL)  
+
 - Using the `like` operator and wildcards (flexible search)
+
 - Avoiding the `or` operator, use `in` operator
   > data retrieval is measurably faster by replac- ing OR conditions with the IN predicate
-- Avoiding the HAVING clause
-  > try to frame the restriction earlier (where clause)  
-  > try to keep HAVING clause simple (use constant, not function)  
+- Avoiding the `HAVING` clause
+  > try to frame the restriction earlier (`where` clause)  
+  > try to keep `HAVING` clause simple (use constant, not function)  
 - Avoiding large sort operations
   > it is best to schedule queries with large sorts as periodic batch processes during off-peak database usage so that the performance of most user processes is not affected.
+
 - Prefer stored procedure
   > compiled and permanently stored in the database in an executable format.
 - Disabling indexes during batch loads
   > When the batch load is complete, you should rebuild the indexes.
   > reduction of fragmentation that is found in the index
 - cost-based optimization: check database server manual
-- Using view: keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
+- Using `view`: keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
 
 ## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
 
-CONCEPT : HOW TO JOIN TABLE WITH `BTWEEN ... AND ...`
+CONCEPT : HOW TO JOIN TABLE WITH `BETWEEN ... AND ...`
 
 Write an SQL query to find the average selling price for each product.  
 - `average_price` should be rounded to 2 decimal places.  

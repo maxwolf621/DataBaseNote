@@ -3,11 +3,12 @@
 [TOC]
 
 ## SELECT
-```mysql
-SELECT Attribute1, Attribute2 , ... AttributeN  # SELECT 指定 Attirbutes
+```sql
+SELECT Attribute1, Attribute2 , ... AttributeN  # SELECT 指定 Attributes
+
 SELECT *                                
 FROM Table1, Table2, ... , TableN       # FROM 指定 tables
-WHERE CODITION                          # REQUIRED condition for the fetch data
+WHERE CONDITION                         # REQUIRED condition for the fetch data
 GROUP BY Attribute1, ... , AttributeN   # Group the qualifizierte ressourcen
 ORDER BY Attribute1, ... , AttributeN   # ORDER
 LIMIT 
@@ -15,7 +16,7 @@ LIMIT
 
 ## AS
 
-```mysql
+```sql
 /*
  * Alias of <pre> CourseName <pre> 
  * is <pre> CP <pre>
@@ -53,11 +54,11 @@ WHERE CourseID='C004' OR CourseID='C005'
 WHERE NOT Grade >=60
 ```
 
-## `NULL`
-```mysql
+## `IS NULL`
+```sql
 use ex_db;
 SELECT ID,Name.Grade
-FRom CourseSelection
+From CourseSelection
 /**
   * <pre> IS </pre> can not
   * replace with 
@@ -82,32 +83,34 @@ Wildcard Characters in MS Access
 Wildcard Characters in SQL Server
 | Symbol | Description| Example |
 | -----  |  ----------| ------  |
-| %      |	Represents zero or more characters                        | bl% finds 任何bl開頭名稱
-| _      |  Represents a single character	                            | h_t finds h[a-z]t      
-|[]      |  Represents any single character within the brackets	      | h[oa]t finds hot and hat only 
-|^	     |  Represents any character not in the brackets              | h[^oa]t finds 名稱非hot and hat
-|-       |  Represents a range of characters                          | c[a-c]t finds cat,cbt and cct
+| `%`      |	Represents zero or more characters                        | bl`%` finds 任何bl開頭名稱   
+|`[]`      |  Represents any single character within the brackets	      | h`[oa]`t finds hot and hat only 
+|`^`	     |  Represents any character not in the brackets              | h`[^oa]`t finds data whose name is not `hot` and `hat`
+|`-`       |  Represents a range of characters                          | c`[a-c]`t finds cat,cbt and cct
+| `_`      |  Represents a single character	                            | h_t finds h`[a-z]`t   
 
 
 ### wildcard with `WHERE` attribute `LIKE ... `  
-```mysql
+```sql
 WHERE Name LIKE 'J_HN'
 WHERE Name LIKE '%Y%'
 ```
 
 ### `WHERE` attribute `IN(... , ... )`
-```mysql
+```sql
 /**
-  * The IN operator allows you to specify multiple values in a <pre> WHERE </pre> clause.
-  * <strong> The IN operator is a shorthand for multiple <pre> OR </pre> conditions
-  * </strong>
+  * The IN operator allows you 
+  * to specify multiple values in a <pre> WHERE </pre> clause.
+  * 
+  * The IN operator is a shorthand 
+  * for multiple <pre> OR </pre> conditions
   */
 SELECT column_name(s)
 FROM table_name
 WHERE column_name IN (value1, value2, ...);
 
 /**
-  * use <pre> OR <pre> instread
+  * use <pre> OR <pre> instead
   */
 WHERE column_name1=value1 or column_name2=value2 or column_name3 = ... ;
 
@@ -143,7 +146,7 @@ WHERE Grade >= 60 AND Grade <=90
   * ASC (default) : Ascending
   * DESC : Descending
   */
-ORDER BY ID ASC, Grade DSEC
+ORDER BY ID ASC, Grade DESC
 ```
 
 ![](https://i.imgur.com/tYINXRX.png)
@@ -181,8 +184,8 @@ LIMIT number;
 SELECT 學號,課號,成績
 FROM 選課表
 WHERE 課號='C005'
-ORDER BY 成績 DSEC
-LIMIT 2     #ONLY SHOW UP 2 RECRODS
+ORDER BY 成績 DESC
+LIMIT 2     #ONLY SHOW UP 2 RECORDS
 ```
 ![](https://i.imgur.com/Ig4xCFO.png)
 
@@ -202,8 +205,8 @@ ORDER BY column_name(s);
   */
 SELECT COUNT(CustomerID), Country
 FROM Customers
-GROUP BY Country # Sort By Attirbute Country
-HAVING COUNT(CustomerID) > 5 # Only display 
+GROUP BY Country # Sort By Attribute Country
+HAVING COUNT(CustomerID) > 5 # Group that has customerId > 5 
 ORDER BY COUNT(CustomerID) DESC;
 ```
 

@@ -1,5 +1,4 @@
 # Basic SQL
-###### tags: `DataBase`
 
 ![](https://i.imgur.com/v6rAbRL.png)  
 #### DDL
@@ -33,7 +32,7 @@ Alter Database Courses
 CHARACTER SET utf8
 ```
 
-### Table
+### Create Table And Attribute
 
 Create A Table
 ```mysql
@@ -41,7 +40,7 @@ Create table tableX
 (Attribute{Datatype|Domain}[NULL|NOTNULL][DEFAULT VALUE][RESTRICTION])
 
 RRIMARY KEY(attributeX) --Cant not be NULL 
-UNIQUE(attirbuteY)      --Can  be NULL
+UNIQUE(attributeY)      --Can  be NULL
 
 /**
   * attributeX in tableX is  
@@ -53,11 +52,10 @@ FOREIGN KEY(attributeZ) REFERENCE tableJ(attributeL) [ON DELETE option] [ON UPDA
 
 For example  
 ![](https://i.imgur.com/VfZCdk4.png)  
-```mysql
+```sql
 /**
   * Order of creating tables
   *  Student --> Courses first -> CourseSelection second
-  *
   */
 
 /**
@@ -74,7 +72,7 @@ CREATE TABLE `Student` (
   UNIQUE KEY `Mobile` (`Mobile`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
-/* table Courses */
+-- create table Courses 
 CREATE TABLE `Course` (
   `CourseID` char(8) NOT NULL,
   `CourseName` char(20) DEFAULT NULL,
@@ -101,14 +99,14 @@ CREATE TABLE `StudentCourse` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ```
 
-#### To Alter Table
+#### Alter Table's Attribute
 
 with `ALTER TABLE Name_Of_TableX`, we can do   
-```mysql 
+```sql 
 /**
-  * <li> ADD new Attirbute </li>
-  * <li> MODEIFY the Attribute </li>
-  * <li> DROP the Attirbute </li>
+  * <li> ADD new Attribute </li>
+  * <li> MODIFY the Attribute </li>
+  * <li> DROP the Attribute </li>
   */
 ADD Name_OF_Attribute {dataType | Domain} [NULL|NOT NULL]
 MODIFY Name_OF_Attribute{dataType | Domain} [NULL | NOT NULL]
@@ -117,19 +115,19 @@ DROP Name_OF_Attribute
 
 For example   
 add new attribute to table Student   
-```mysql
+```sql
 ALTER TABLE student 
 ADD Email CHAR(50)
 ADD Sex CHAR(1) Default 'M'
 ``` 
 modify attribute in table Student   
-```mysql
+```sql
 ALTER TABLE student
 /* Address from CHAR(20) TO CHAR(50) NOT NULL */
 MODIFY Address CHAR(50) NOT NULL
 ```
 Drop the Attribute in table Student   
-```mysql
+```sql
 ALTER TABLE student
 DROP Email
 ``` 
@@ -149,7 +147,7 @@ BASIC COMMAND
 
 
 Insert values  
-```mysql  
+```sql  
 INSERT INTO Name_OF_Table<attribute>  
 VALUES(<attribute> | <SELECT>)  
 /* for example */   
@@ -162,17 +160,19 @@ VALUES
 Insert data in the table a to other table b
 ![](https://i.imgur.com/qEUimbZ.png)
 
-```mysql
+```sql
 INSERT INTO Student
-/* Select ALL from oldstudent */
+
+-- Select ALL from OldStudent
 SELECT * FROM OldStudent
 ```
 
-Update value
-```mysql
+Update value 
+```sql
 UPDATE Name_OF_Table
 SET {AttributeY=valueY, AttributeX=valueX , .... , AttributeN=valueN }
 [WHERE<CONDITION>]
+
 /* for example */
 UPDATE Student
 SET Mobile='1111'
@@ -180,40 +180,46 @@ WHERE Mobile IS NULL and ID='S002'
 ```
 
 Update multiple records at same time
-```mysql
+```sql
 UPDATE Courses
 SET Point='4', Option='N'
 WHERE CourseName='DataStructure'
 ```
 
 Update grade
-```mysql
+```sql
 UPDATE CourseSelection
 SET Grade = Grade*1.2
 WHERE Grade<70
 ```
 
 Delete A student
-```mysql
+```sql
 DELETE FROM `Student`
 WHERE Name LIKE 'John'
 ```
 
 ## DCL
 
+
+### `GRANT .. ON ... TO`
 Grant who has right to access database
-```mysql
+```sql
 GRANT {INSERT|UPDATE|DELETE|SELECT} ON NameOfDataBase
 TO NameOfTheUser
+
 /** FOR EXAMPLE **/
 GRANT SELECT,INSERT ON GUESTS
-TO Jian,Domi  --User Jian,Domi can modify data Using SELECT,INSERT
+TO Jian,Domi  --User Jian , Domi can modify data Using SELECT,INSERT
 
 GRANT SELECT ON GUESTS
 TO PUBLIC  -- EVERYONE can modify data Using SELECT 
 ```
+
+### `Revoke ... On ... From`
+
 Revoke(Take back) the authority to access the database from User
-```mysql
+```sql
 REVOKE {INSERT|UPDATE|DELETE|SELECT} ON NameOfDataBase
 FROM NameOfTheUser
 
