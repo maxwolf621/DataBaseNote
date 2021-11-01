@@ -117,8 +117,9 @@ THEN
   > `III` : RIGHT OUTER JOIN
   > Full Outer Join
 - INNER JOIN (Condition Join)
-  > `II` : An inner join, only those tuples that satisfy the matching criteria are included, while the rest are EXCLUDED      
-  > `THETA JOIN`,`EQUI JOIN`, `NATURAL JOIN`
+  - `II` 
+    - An inner join, only those tuples that satisfy the matching criteria are included, while the rest are EXCLUDED      
+  - `THETA JOIN`,`EQUI JOIN`, `NATURAL JOIN`
 
 ### NATURAL JOIN
 
@@ -182,19 +183,22 @@ ON TableA.PK = TableB.FK
 
 ```sql
 SELECT *
-FROM 老師資料表 AS A LEFT OUTER JOIN 課程資料表 AS B
+FROM 老師資料表 AS A 
+LEFT OUTER JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號
 ```
 - IF `老師資料表` can not reference the matching records => set `NULL` by default  
 
 ![image](https://user-images.githubusercontent.com/68631186/111078928-bff07d00-8532-11eb-9d77-aa6443b9e8f6.png)   
 
-If we want to query for a certain teacher who has no any lectures. We can use `LEFT OUTER JOIN EXCLUDING INNER JOIN`
+If we want to query for a certain teacher who has no any lectures.    
+We can use `LEFT OUTER JOIN EXCLUDING INNER JOIN`   
 ```sql
 SELECT *
-FROM 老師資料表 AS A LEFT OUTER JOIN 課程資料表 AS B
+FROM 老師資料表 AS A 
+LEFT OUTER JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號
-WHERE B.老師編號 IS NULL
+WHERE B.老師編號 IS NULL /* Filter the Table that have been "left join" */
 ```
 
 ### RIGHT OUTER JOIN  
