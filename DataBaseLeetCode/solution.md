@@ -175,9 +175,11 @@ ON S.product_id = P.product_id
 ```
 ## [Second Highest Salary](https://zhuanlan.zhihu.com/p/250015043)
 
+- Concept : `LIMIT ... OFFSET ...`
+
 Write a SQL query to get the second highest salary from the Employee Table.    
 
-For example, given the above Employee table, the query should return 200 as the second highest salary.  
+For example, given the above `Employee` table, the query should return `200` as the second highest salary.  
 ```diff
 +----+--------+
 | Id | Salary |
@@ -193,7 +195,6 @@ For example, given the above Employee table, the query should return 200 as the 
 | 200                 |
 +---------------------+
 - If there is no second highest salary, then the query should return null.
-
 ```
 
 ```mysql
@@ -211,8 +212,12 @@ AS SecondHighestSalary;
 
 ## [Duplicate Emails](https://zhuanlan.zhihu.com/p/251960784)
 
+Write a SQL query to find all duplicate emails.
 
-Write a SQL query to find all duplicate emails in a table named Person.
+### Concept
+- `Select .... From (Select ...)`
+- `Left Join ... ON .. AND` , `<>` 
+
 ```diff
 Person Table :
 +----+-------------+
@@ -226,7 +231,7 @@ Person Table :
 
 ```sql
 SELECT Email FROM
-  -- Create A table showing total count of Each Mail
+  -- Showing Total count of Each E-Mail
  (SELECT Email, COUNT(id) AS num 
   FROM Person GROUP BY Email) AS tmp
 WHERE num > 1;
@@ -247,15 +252,11 @@ Write a SQL query to find all customers who never order anything.
 1. using `LEFT JOIN` 
 2. using nested query with `where ... not in (nested query)`
 
-
 ## [Rising Temperature](https://zhuanlan.zhihu.com/p/252403796)  
-
-
 
 Write an SQL query to find all dates' id with higher temperature compared to its previous dates (yesterday).
 
 ![圖 1](../images/13d5336fb86e49f8198caa1de7d51e4c058cfe61ba2b420f958fea486e270bcb.png)  
-
 
 1. using `JOIN` to compare two same table via function
    > `DATEDIFF(date1, date2) = Difference`   
@@ -267,8 +268,8 @@ Write an SQL query to find all dates' id with higher temperature compared to its
 
 ## [Delete Duplicate Emails](https://zhuanlan.zhihu.com/p/252243481)   
 
-Write a SQL query to delete all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id. For example, after running your query, the above Person table should have the following rows:
-
+Write a SQL query to `DELETE` all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id.  
+For example, after running your query, the above Person table should have the following rows:  
 ```
 +----+------------------+
 | Id | Email            |
@@ -318,13 +319,11 @@ WHERE Id NOT IN
   **/
 (SELECT MinId 
  FROM (SELECT Email, 
-              MIN(Id) AS MinId -- get smaller one from duplicate 
+              MIN(Id) AS MinId
        FROM Person AS B 
        GROUP BY Email) 
  AS TMP);
 ```
-
----
 
 ```diff
 TABLE P
@@ -355,7 +354,8 @@ WHERE P.Id > TMP.Id AND P.Email = TMP.Email
 
 Write an SQL query that reports the first login date for each player.
 
-concept : `min(data)`
+#### Concept
+- `MIN(...)`
 
 ```diff
 
@@ -381,17 +381,8 @@ Result table:                                            |   |     |
 ```
 
 ```diff
-+-----------+-----------+------------+--------------+
-| player_id | device_id | event_date | games_played |
-+-----------+-----------+------------+--------------+
-| 1         | 2         | 2016-03-01 | 5            | 
-| 1         | 2         | 2016-05-02 | 6            |    
-| 2         | 3         | 2017-06-25 | 1            |   
-| 3         | 1         | 2016-03-02 | 0            | 
-| 3         | 4         | 2018-07-03 | 5            |  
-+-----------+-----------+------------+--------------+   
 
-
+- Group By player_id
 +-----------+-----------+------------+--------------+
 | player_id | device_id | event_date | games_played |
 +-----------+-----------+------------+--------------+
@@ -405,21 +396,13 @@ Result table:                                            |   |     |
 +-----------+-----------+------------+--------------+   
 
 
-+-----------+------------+
-| player_id | event_date |
-+-----------+------------+
-| 1         | 2016-03-01 |
-| 2         | 2017-06-25 |
-| 3         | 2016-03-02 |
-+-----------+------------+
-
-+-----------+-------------+
-| player_id | first_login | 
-+-----------+-------------+ 
-| 1         | 2016-03-01  | 
-| 2         | 2017-06-25  | 
-| 3         | 2016-03-02  | 
-+-----------+-------------+ 
++-----------+-----------------+
+| player_id | min(event_date) |
++-----------+-----------------+
+| 1         | 2016-03-01      |
+| 2         | 2017-06-25      |
+| 3         | 2016-03-02      |
++-----------+-----------------+
 ```
 
 ```sql
@@ -430,10 +413,9 @@ GROUP BY player_id
 ORDER BY player_id;
 ```
 
-
 ## [Game Play Analysis II](https://zhuanlan.zhihu.com/p/254370126)
 
-Write a SQL query that reports the **DEVICE that is first logged in for each player.**
+Write a SQL query that reports the **DEVICE that is first logged in for EACH player.**
 ```diff
 Activity table:
 +-----------+-----------+------------+--------------+
@@ -457,16 +439,6 @@ Result table:
 ```
 
 ```diff
-Activity
-+-----------+-----------+------------+--------------+
-| player_id | device_id | event_date | games_played |
-+-----------+-----------+------------+--------------+
-| 1         | 2         | 2016-03-01 | 5            |
-| 1         | 2         | 2016-05-02 | 6            |
-| 2         | 3         | 2017-06-25 | 1            |
-| 3         | 1         | 2016-03-02 | 0            |
-| 3         | 4         | 2018-07-03 | 5            |
-+-----------+-----------+------------+--------------+
 Table Result
 +-----------+-----------+------------+--------------+
 | player_id | device_id | event_date | games_played |
@@ -495,7 +467,7 @@ WHERE player_id IN (SELECT player_id, min(event_date) from Activity As TMP GROUP
 
 ## [Employee Bonus](https://zhuanlan.zhihu.com/p/258318063)
 
-Select all employee's name and bonus whose bonus is < 1000 (or NULL).
+Select all employee's name and bonus whose bonus is `< 1000 (or NULL)`.
 
 ```diff
 Employee
@@ -507,7 +479,6 @@ Employee
 |   3   | Brad   |  null     | 4000   |
 |   4   | Thomas |  3        | 4000   |
 +-------+--------+-----------+--------+
-
 Bonus
 +-------+-------+
 | empId | bonus |
@@ -542,7 +513,8 @@ Result
 
 ```sql
 SELECT name, bonus
-FROM EmployeeLEFT JOIN Bonus USING (empId)
+FROM Employee
+LEFT JOIN Bonus USING (empId)
 WHERE IFNULL(bonus, 0) < 1000　　
 ```
 
