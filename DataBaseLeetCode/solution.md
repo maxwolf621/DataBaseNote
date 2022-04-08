@@ -36,9 +36,6 @@
 
 ## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
 
-#### CONCEPT 
-- `BETWEEN ... AND ...`
-
 Write an SQL query to find the average selling price for each product.  
 - `average_price` should be rounded to 2 decimal places.  
 
@@ -459,10 +456,14 @@ TMP                                                    |  |    |
 +-----------+-----------+------------+--------------+
 ```
 ```sql
-SELECT player_id, device_id FROM Activity AS Result
-WHERE player_id IN (SELECT player_id, min(event_date) from Activity As TMP GROUP BY player_id )
+SELECT player_id, device_id 
+FROM Activity AS Result
+WHERE player_id 
+IN (SELECT player_id, 
+           min(event_date) 
+    FROM Activity AS TMP 
+    GROUP BY player_id )
 ```
-
 
 ## [Employee Bonus](https://zhuanlan.zhihu.com/p/258318063)
 
