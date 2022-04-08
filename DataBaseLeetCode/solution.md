@@ -9,7 +9,8 @@
 [`JOIN` and `INNER JOIN`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)   
 [`union` and `union all`](https://www.fooish.com/sql/union.html)    
 [`JOIN ... WHERE ...`](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)     
-[sql summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)    
+[Sql summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)  
+[`Count`](https://www.fooish.com/sql/count-function.html)
 
 ## [Tips](https://github.com/shawlu95/Beyond-LeetCode-SQL)  
 
@@ -33,11 +34,10 @@
 - Use`view`
   - Keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
 
-[TOC]
-
 ## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
 
-CONCEPT : HOW TO JOIN TABLE WITH `BETWEEN ... AND ...`
+#### CONCEPT 
+- `BETWEEN ... AND ...`
 
 Write an SQL query to find the average selling price for each product.  
 - `average_price` should be rounded to 2 decimal places.  
@@ -214,7 +214,7 @@ AS SecondHighestSalary;
 
 Write a SQL query to find all duplicate emails.
 
-### Concept
+#### Concept
 - `Select .... From (Select ...)`
 - `Left Join ... ON .. AND` , `<>` 
 
@@ -241,14 +241,14 @@ WHERE num > 1;
 SELECT DISTINCT p.Email FROM Person AS p
 JOIN Person AS p2
 ON p.Email = p2.Email
-AND p.Id <> p2.Id;
+   AND p.Id <> p2.Id;
 ```
 
 ## [Customers Who Never Order](https://zhuanlan.zhihu.com/p/251983949)
 
 Write a SQL query to find all customers who never order anything.  
 
-### Concept 
+#### Concept 
 1. using `LEFT JOIN` 
 2. using nested query with `where ... not in (nested query)`
 
@@ -301,6 +301,7 @@ TABLE B
 | 1  | john@example.com |
 | 2  | bob@example.com  |
 +----+------------------+
+
 TMP      P
 +----+   +----+
 |Id  |   | Id | 
@@ -314,15 +315,11 @@ TMP      P
 ```sql
 DELETE FROM Person AS P
 WHERE Id NOT IN
-/** 
-  * Create TMP table (No duplicates)
-  **/
-(SELECT MinId 
+(SELECT MinId -- Table with no duplicate emails
  FROM (SELECT Email, 
               MIN(Id) AS MinId
        FROM Person AS B 
-       GROUP BY Email) 
- AS TMP);
+       GROUP BY Email) AS TMP)
 ```
 
 ```diff
@@ -345,8 +342,10 @@ TABLE TMP                    |
 +----+------------------+
 ```
 ```sql
-DELETE P FROM Person P, Person TMP
-WHERE P.Id > TMP.Id AND P.Email = TMP.Email
+DELETE P 
+FROM Person P, Person TMP
+WHERE P.Id > TMP.Id 
+      AND P.Email = TMP.Email
 ```
 
 ## [Game Play Analysis I](https://zhuanlan.zhihu.com/p/254355214)
@@ -479,6 +478,7 @@ Employee
 |   3   | Brad   |  null     | 4000   |
 |   4   | Thomas |  3        | 4000   |
 +-------+--------+-----------+--------+
+
 Bonus
 +-------+-------+
 | empId | bonus |
@@ -486,17 +486,6 @@ Bonus
 | 2     | 500   |
 | 4     | 2000  |
 +-------+-------+
-
-JOIN TABLE
-+-------+--------+-----------+--------+-------+-------+
-| empId |  name  | supervisor| salary | empId | bonus |
-+-------+--------+-----------+--------+-------+-------+
-|   1   | John   |  3        | 1000   |  NA   |  NA   |
-|   2   | Dan    |  3        | 2000   |  2    | 500   |
-|   3   | Brad   |  null     | 4000   |  NA   |  NA   |
-|   4   | Thomas |  3        | 4000   |  4    | 2000  |
-+-------+--------+-----------+--------+-------+-------+
-
 
 Result
 +-------+-------+
@@ -514,17 +503,30 @@ Result
 ```sql
 SELECT name, bonus
 FROM Employee
-LEFT JOIN Bonus USING (empId)
+LEFT JOIN Bonus 
+USING (empId)
 WHERE IFNULL(bonus, 0) < 1000　　
 ```
 
+```
+JOIN TABLE
++-------+--------+-----------+--------+-------+-------+
+| empId |  name  | supervisor| salary | empId | bonus |
++-------+--------+-----------+--------+-------+-------+
+|   1   | John   |  3        | 1000   |  NA   |  NA   |
+|   2   | Dan    |  3        | 2000   |  2    | 500   |
+|   3   | Brad   |  null     | 4000   |  NA   |  NA   |
+|   4   | Thomas |  3        | 4000   |  4    | 2000  |
++-------+--------+-----------+--------+-------+-------+
+```
+
 ```sql
-SELECT a.name, 
-b.bonus
+SELECT a.name, b.bonus
 FROM Employee AS a
 LEFT JOIN Bonus AS b
 ON a.empId = b.empId
-WHERE b.bonus < 1000 OR b.bonus IS NULL;
+WHERE b.bonus < 1000 
+      OR b.bonus IS NULL;
 ```
 
 ## [Customer Placing the Largest Number of Orders](https://zhuanlan.zhihu.com/p/258700620)
@@ -553,7 +555,7 @@ Sample Output
 
 ```sql
 -- +--------------+-----------------+
--- | COUNT(*)      | customer_number |
+-- | COUNT(*)     | customer_number |
 -- |--------------|-----------------|
 -- | 2            | 3               |
 -- | 1            | 2               |
@@ -564,15 +566,16 @@ SELECT customer_number
 FROM orders
 GROUP BY customer_number 
 ORDER BY COUNT(*) DESC
-LIMIT 1; -- find the max
-
+LIMIT 1
 
 /** 
   * Using having 
   **/
 SELECT customer_number FROM orders 
 GROUP BY customer_number
-HAVING COUNT(customer_number) >= ALL(SELECT COUNT(customer_number) FROM orders GROUP BY customer_number);
+HAVING COUNT(customer_number) >= ALL(SELECT COUNT(customer_number) 
+       FROM orders 
+       GROUP BY customer_number
 ```
 
 ## [Find Customer Referee](https://zhuanlan.zhihu.com/p/258694894)
@@ -649,10 +652,12 @@ Should output:
 ```
 
 ```sql
-SELECT class 
-FROM courses 
-GROUP BY class
-HAVING COUNT(SELECT DISTINCT student) > 4;
+SELECT class FROM
+(SELECT class, 
+        COUNT(DISTINCT student) AS num
+ FROM courses
+ GROUP BY class) AS TMP
+WHERE num >= 5;
 ```
 
 ## [Consecutive Available Seats](https://zhuanlan.zhihu.com/p/259420594) **
@@ -992,7 +997,7 @@ ORDER BY rating DESC;
 ## [Swap Salary](https://zhuanlan.zhihu.com/p/259763823) **
 ###### Keyword : `UPDATE ... SET` , `CASE WHEN THEN` , `IF()`
 
-Swap all `f` and `m` values (i.e. change all `f` values to `m` and vice versa) with a single update statement and no intermediate temp table.  
+Swap all `f` and `m` values (i.e. change all `f` values to `m` and vice versa) with a single update statement and no intermed5iate temp table.  
 ```
 +----+------+-----+--------+
 | id | name | sex | salary |
