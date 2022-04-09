@@ -1183,7 +1183,6 @@ GROUP BY P.project_id;
 ORDER BY NULL 
 ```
 ## Project Employees II
-#### Keyword : `Find MAX`
 
 Write an SQL query that reports **all the projects** that have the most employees.
 ```diff
@@ -1223,29 +1222,44 @@ Write an SQL query that reports **all the projects** that have the most employee
   | 1           | 1           |
   |             | 2           |
   |             | 3           |
+  |-------------|-------------|
   | 2           | 1           |
   |             | 4           |
   +-------------+-------------+  
   
-(SELECT Count(employee_id) 
- FROM   project 
- GROUP  BY project_id 
- ORDER  BY Count(employee_id) DESC 
- LIMIT  1)
-
- The MAX is 3 (there might have multiple maximums existing (TIE)) 
+  SELECT Count(employee_id) 
+  FROM   project 
+  GROUP  BY project_id 
+  ORDER  BY Count(employee_id) DESC 
+  LIMIT  1
+  
   +-------------+-------------+
   | Count(employee_id)        |
   +-------------+-------------+
   | 3                         |
   +-------------+-------------+
 */
-  
- 
+```
+
+```
 SELECT project_id 
 FROM   project 
 GROUP  BY project_id 
--- If HAVING(employee_id) has multiple maximums
+-- IF TABLE PROJECT HAS THE TIE 
+/** 
+  FOR EXAMPLE
+  +-------------+-------------+
+  | project_id  | employee_id |
+  +-------------+-------------+
+  | 1           | 1           |
+  |             | 2           |
+  |             | 3           |
+  |-------------|-------------|
+  | 2           | 1           |
+  |             | 3           |
+  |             | 4           |
+  +-------------+-------------+  
+*/
 HAVING Count(employee_id) = (SELECT Count(employee_id) 
                              FROM   project 
                              GROUP  BY project_id 
@@ -1338,11 +1352,11 @@ Write an SQL query that reports the buyers who have bought `S8` but not `iPhone`
 ```
 
 ```sql
-WITH
-tmp AS (
-SELECT a.buyer_id, b.product_name FROM Sales AS a
-JOIN Product AS b
-ON a.product_id = b.product_id
+WITH tmp AS (
+  SELECT a.buyer_id, b.product_name 
+  FROM Sales AS a
+  JOIN Product AS b
+  ON a.product_id = b.product_id
 )
 
 SELECT DISTINCT buyer_id FROM tmp
@@ -1351,15 +1365,17 @@ AND buyer_id IN (SELECT buyer_id FROM tmp WHERE product_name = 'S8');
 
 /** nested query with JOIN **/
 SELECT distinct buyer_id
-FROM Sales INNER JOIN Product
-WHERE Sales.product_id = Product.product_id
+FROM Sales 
+INNER JOIN Product
+WHERE Sales.product_id = Product.product_id 
       AND Product_name = 'S8'
       AND buyer_id NOT IN
       /** Buyer who bought Iphone**/
-     (SELECT distinct buyer_id
-      FROM Sales inner join Product
-      WHERE Sales.product_id = Product.product_id
-            AND product_name = 'iPhone')
+      (SELECT distinct buyer_id
+       FROM Sales 
+       INNER JION Product
+       WHERE Sales.product_id = Product.product_id
+             AND product_name = 'iPhone')
 ```
 
 ## Sales Analysis III **
@@ -1401,9 +1417,13 @@ FROM sales
 GROUP BY product_id
 ```
 
+Write an SQL query that reports the products that were only sold in spring `2019`.  
+That is, between `2019-01-01` and `2019-03-31` inclusive.   
 
-Write an SQL query that reports the products that were only sold in spring 2019.   
-- That is, between `2019-01-01` and `2019-03-31` inclusive.
+#### Concept
+- `NOT BETWEEN 'YYYY-MM-DD' AND 'YYYY-MM-DD'`
+- `> 'YYYY-MM-DD', < 'YYYY-MM-DD'`
+
 ```mysql
   Product table:
   +------------+--------------+------------+
@@ -1424,7 +1444,8 @@ Write an SQL query that reports the products that were only sold in spring 2019.
   | 3         | 3          | 4        | 2019-05-13 | 2        | 2800  |
   +-----------+------------+----------+------------+----------+-------+
   
-SELECT DISTINCT a.product_id, b.product_name FROM Sales AS a
+SELECT DISTINCT a.product_id, 
+       b.product_name FROM Sales AS a
 JOIN Product AS b
 ON a.product_id = b.product_id
 WHERE a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date < '2019-01-01')
@@ -1441,8 +1462,8 @@ WHERE  product_id NOT IN (SELECT product_id
 
 ## Reported Posts --
 
-Write an SQL query that reports the number of posts reported yesterday for each report reason. 
-- Assume today is `2019-07-05`.
+Assume today is `2019-07-05`.  
+Write an SQL query that reports the number of posts reported yesterday for each report reason.  
 ```diff
  Actions table:
   +---------+---------+-------------+--------+--------+
