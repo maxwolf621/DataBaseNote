@@ -1611,7 +1611,8 @@ WHERE  Datediff("2019-07-27", activity_date) < 30
 
 ## [Article Views I](https://zhuanlan.zhihu.com/p/260564257)
 
-###### Keyword : `SELECT DISTINCT`
+#### Concept 
+- `SELECT DISTINCT`
 
 Write an SQL query to find all the authors that viewed at least one of their own articles, sorted in ascending order by their id.
 - Note that equal `author_id` and `viewer_id` indicate the same person.
@@ -1637,10 +1638,18 @@ Write an SQL query to find all the authors that viewed at least one of their own
   | 7    |
   +------+
 ```
-
-
 ```mysql
 SELECT DISTINCT author_id AS id 
+/**
+  +------------+-----------+-----------+
+  | article_id | author_id | viewer_id | 
+  +------------+-----------+-----------+
+  | 2          | 7         | 7         | 
+  +------------+-----------+-----------+
+  | 3          | 4         | 4         |
+  | 3          | 4         | 4         |
+  +------------+-----------+-----------+
+*/
 FROM Views
 WHERE author_id = viewer_id
 ORDER BY id;
@@ -1648,7 +1657,8 @@ ORDER BY id;
 
 ## Immediate Food Delivery I --
 
-##### Keyword : `SUM(SELECT COUNT(*) FROM ... WHERE ...)`
+##### Concept
+-`SUM(SELECT COUNT(*) FROM ... WHERE ...)`
 
 Write an SQL query to find the percentage of `immediate` orders in the table, rounded to 2 decimal places.  
 - **If the preferred delivery date of the customer is the same as the order date then the order is called `immediate` otherwise it’s called scheduled.**
@@ -1675,21 +1685,17 @@ Write an SQL query to find the percentage of `immediate` orders in the table, ro
 ```
 
 ```mysql
-SELECT
-ROUND(100* (SELECT COUNT(*) FROM Delivery WHERE order_date = customer_pref_delivery_date) / (SELECT COUNT(*) FROM Delivery),2) 
-AS immediate_percentage;
-
 # Time:  O(n)
 # Space: O(1)
 SELECT Round(100 * Sum(order_date = customer_pref_delivery_date) / Count(*), 2) 
-       AS 
-       immediate_percentage 
-FROM   delivery;
+       AS immediate_percentage 
+FROM  delivery;
 ```
 
-## Reformat Department Table
+## Reformat Department Table **
 
-###### Keyword : `CASE WHEN ...`, `IF`
+#### Concept
+-`CASE WHEN ...`, `IF`
 
 Write an SQL query to reformat the table such that there is a department id column and a revenue column for each month.
 ```
@@ -1754,15 +1760,17 @@ GROUP  BY id;
 
 ## [Queries Quality and Percentage](https://zhuanlan.zhihu.com/p/260937964) --
 
-###### Keyword : `aggregation function with query`
+###### Concept
+- Aggregation function with query : `(round(avg(...), ...)`,`CASE WHEN( IF ... THEN ... ELSE ... END )`
+
 Write an SQL query to find each `query_name`, the `quality` and `poor_query_percentage`. 
 - Both `quality` and `poor_query_percentage` should be rounded to 2 decimal places.
-
-- We define query quality as: 
+- We define query `quality` as: 
   > The average of the ratio between query rating and its position.
-- We also define poor_query_percentage as: 
-  > The percentage of all queries with `rating` less than 3.
-  > if `rating` > 3 then `1` else `0`
+- We also define `poor_query_percentage` as: 
+  > The percentage of all queries with `rating` less than 3.   
+  > if `rating > 3` then `1` else `0`   
+ 
 ```diff
   Queries table:
   +------------+-------------------+----------+--------+
@@ -1783,18 +1791,32 @@ Write an SQL query to find each `query_name`, the `quality` and `poor_query_perc
   | Dog        | 2.50    | 33.33                 |
   | Cat        | 0.66    | 33.33                 |
   +------------+---------+-----------------------+
-- Dog queries quality is ((5 / 1) + (5 / 2) + (1 / 200)) / 3 = 2.50
-- Dog queries poor_ query_percentage is (1 / 3) * 100 = 33.33
-
-- Cat queries quality equals ((2 / 5) + (3 / 3) + (4 / 7)) / 3 = 0.66
-- Cat queries poor_ query_percentage is (1 / 3) * 100 = 33.33
 ```
+- Dog queries `quality is ( (5 / 1) + (5 / 2) + (1 / 200) ) / 3  = 2.50`
+- Dog queries `poor_ query_percentage is (1 / 3) * 100 = 33.33`
+- Cat queries `quality equals ((2 / 5) + (3 / 3) + (4 / 7) ) / 3 = 0.66`
+- Cat queries `poor_ query_percentage is (1 / 3) * 100 = 33.33`
 
+- [`COUNT(*) VS COUNT(1)`](https://stackoverflow.com/questions/1221559/count-vs-count1-sql-server)
 ```mysql
-select query_name, round(avg(rating/position), 2) AS quality,
-       round(100*sum(case when rating < 3 then 1 else 0 end)/count(1), 2) AS poor_query_percentage
-from Queries
-group by query_name
+SELECT query_name,
+       round(avg(rating/position), 2) AS quality,
+       round(100 * sum(case when rating < 3 then 1 else 0 end)  / count(1), 2) AS poor_query_percentage
+       
+/**
+  +------------+-------------------+----------+--------+
+  | query_name | result            | position | rating |
+  +------------+-------------------+----------+--------+
+  | Dog        | Golden Retriever  | 1        | 5      |
+  |            | German Shepherd   | 2        | 5      |
+  |            | Mule              | 200      | 1      |
+  | Cat        | Shirazi           | 5        | 2      |
+  |            | Siamese           | 3        | 3      |
+  |            | Sphynx            | 7        | 4      |
+  +------------+-------------------+----------+--------+
+ */
+FROM Queries
+GROUP BY query_name
 ```
 
 ## Number of Comments per Post ++
@@ -1802,8 +1824,8 @@ group by query_name
 Write an SQL query to find number of comments per each post.  
 - Result table should contain `post_id` and its corresponding number of comments, and must be sorted by `post_id` in ascending order.
 - You should count the number of unique comments per post.  
-- Submissions may contain duplicate comments.  
-- Submissions may contain duplicate posts. You should treat them as one post.
+- Submissions table may contain duplicate comments.  
+- Submissions table may contain duplicate posts. You should treat them as one post.
 
 ```diff
   Submissions table:
@@ -1838,7 +1860,7 @@ Write an SQL query to find number of comments per each post.
 Concept
 - Nested Query
 - `SELECT DISTINCT` TO FIND SUBS
-- `LEFT JOIN` TO FROM SUBS AND SUBS OF COMMENT
+- `LEFT JOIN` 
 - `COUNT()` AND `GROUD BY` TO COUNT COMMENTS
 
 ```sql
@@ -1863,21 +1885,25 @@ Concept
     | 6       | 7          |
     +---------+------------+
   */
-SELECT DISTINCT post_id, COUNT(distinct sub_id) AS number_of_comments FROM (
-/** SUBS TABLE**/
-(SELECT DISTINCT sub_id AS post_id FROM submissions WHERE parent_id IS NULL) AS P
-/** FOUND COMMENT OF EACH SUBS **/
-LEFT JOIN submissions C ON P.post_id = C.parent_id) AS tmp
+SELECT DISTINCT post_id, 
+        COUNT(distinct sub_id) AS number_of_comments 
+        FROM (
+        -- SUBS TABLE
+          SELECT DISTINCT sub_id AS post_id 
+          FROM submissions 
+          WHERE parent_id IS NULL AS P)
+-- FOUND COMMENT OF EACH SUBS 
+LEFT JOIN submissions C 
+ON P.post_id = C.parent_id AS tmp
 GROUP BY post_id
-
 
 # Time:  O(n)
 # Space: O(n)
-SELECT COMMENTS.sub_id                 AS post_id, 
+SELECT COMMENTS.sub_id             AS post_id, 
        Count(DISTINCT POST.sub_id) AS number_of_comments 
 FROM   submissions COMMENTS
        LEFT JOIN submissions POST
-              ON COMMENTS.sub_id = POST.parent_id 
+       ON COMMENTS.sub_id = POST.parent_id 
 WHERE  COMMENTS.parent_id IS NULL 
 GROUP  BY COMMENTS.sub_id 
 ORDER  BY NULL 
@@ -1887,6 +1913,7 @@ ORDER  BY NULL
 
 Write an SQL query to find the number of times each student attended each exam.   
 Order the result table by `student_id` and `subject_name`.   
+
 
 ```diff
   Students table:
@@ -1898,6 +1925,7 @@ Order the result table by `student_id` and `subject_name`.
   | 13         | John         |
   | 6          | Alex         |
   +------------+--------------+
+  
   Subjects table:
   +--------------+
   | subject_name |
@@ -1906,6 +1934,7 @@ Order the result table by `student_id` and `subject_name`.
   | Physics      |
   | Programming  |
   +--------------+
+  
   Examinations table:
   +------------+--------------+
   | student_id | subject_name |
@@ -1940,12 +1969,13 @@ Order the result table by `student_id` and `subject_name`.
   | 13         | John         | Physics      | 1              |
   | 13         | John         | Programming  | 1              |
   +------------+--------------+--------------+----------------+
+```
 The result table should contain all students and all subjects.
 - Alice attended Math exam 3 times, Physics exam 2 times and Programming exam 1 time.
 - Bob attended Math exam 1 time, Programming exam 1 time and didn't attend the Physics exam.
 + Alex didn't attend any exam.
 + John attended Math exam 1 time, Physics exam 1 time and Programming exam 1 time.
-```
+
 
 ```mysql 
 # Time:  O((m * n) * log(m * n))
