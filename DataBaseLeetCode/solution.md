@@ -2131,41 +2131,58 @@ FROM   employee AS e
                          Count(1) AS team_size 
                   FROM   employee 
                   GROUP  BY team_id) AS teams 
-              ON e.team_id = teams.team_id 
-              
+       ON e.team_id = teams.team_id 
+
+---
+
 SELECT t1.employee_id, t2.team_size
 FROM Employee as t1
-INNER JOIN (select team_id, count(1) as team_size
+INNER JOIN (SELECT team_id, 
+            COUNT(1) AS team_size
             FROM Employee
             GROUP BY team_id) as t2
 ON t1.team_id = t2.team_id
 
+---
 
-SELECT employee_id, COUNT(employee_id)OVER(PARTITION BY team_id) AS team_size
+SELECT employee_id, 
+       COUNT(employee_id)OVER(PARTITION BY team_id) AS team_size
 FROM Employee
 ORDER BY employee_id;
 ```
 ## Ads Performance
 
-Write an SQL query to find the ctr of each Ad.
-
-Round ctr to 2 decimal points. Order the result table by ctr in descending order and by ad_id in ascending order in case of a tie.
+Write an SQL query to find the ctr of each Ad.  
+- Round ctr to 2 decimal points.  
+- Order the result table by ctr in descending order and by `ad_id` in ascending order in case of a tie.
 ```diff
   Ads table:
   +-------+---------+---------+
   | ad_id | user_id | action  |
+  +-------+---------+---------+ 
+  | 1     | 1       | Clicked | 1
+  | 2     | 2       | Clicked | 2
+  | 3     | 3       | Viewed  | 3
+  | 5     | 5       | Ignored | 
+  | 1     | 7       | Ignored | 
+  | 2     | 7       | Viewed  | 2
+  | 3     | 5       | Clicked | 3
+  | 1     | 4       | Viewed  | 1 
+  | 2     | 11      | Viewed  | 2
+  | 1     | 2       | Clicked | 1
   +-------+---------+---------+
-  | 1     | 1       | Clicked |
-  | 2     | 2       | Clicked |
-  | 3     | 3       | Viewed  |
-  | 5     | 5       | Ignored |
-  | 1     | 7       | Ignored |
-  | 2     | 7       | Viewed  |
-  | 3     | 5       | Clicked |
-  | 1     | 4       | Viewed  |
-  | 2     | 11      | Viewed  |
-  | 1     | 2       | Clicked |
-  +-------+---------+---------+
+```
+- for `crt = round( clicks / (clicks+views) * 100, 2) ` 
+  - `ad_id = 1, ctr = (2/(2+1)) * 100 = 66.67`
+  - `ad_id = 2, ctr = (1/(1+2)) * 100 = 33.33`
+  - `ad_id = 3, ctr = (1/(1+1)) * 100 = 50.00`
+  - `ad_id = 5, ctr = 0.00.` 
+- Note that ad_id has no clicks or views.
+- Note that we don't care about `Ignored` Ads.
+- Result table is ordered by the ctr. in case of a tie we order them by `ad_id`
+
+
+```mysql
   Result table:
   +-------+-------+
   | ad_id | ctr   |
@@ -2175,31 +2192,60 @@ Round ctr to 2 decimal points. Order the result table by ctr in descending order
   | 2     | 33.33 |
   | 5     | 0.00  |
   +-------+-------+
-- for ad_id = 1, ctr = (2/(2+1)) * 100 = 66.67
-- for ad_id = 2, ctr = (1/(1+2)) * 100 = 33.33
-- for ad_id = 3, ctr = (1/(1+1)) * 100 = 50.00
-- for ad_id = 5, ctr = 0.00, Note that ad_id has no clicks or views.
-- Note that we don't care about Ignored Ads.
-- Result table is ordered by the ctr. in case of a tie we order them by ad_id
 ```
 
 ```mysql
-select ad_id,
-    (case when clicks+views = 0 then 0 else round(clicks/(clicks+views)*100, 2) end) as ctr
-from 
-    (select ad_id,
-        sum(case when action='Clicked' then 1 else 0 end) as clicks,
-        sum(case when action='Viewed' then 1 else 0 end) as views
-    from Ads
-    group by ad_id) as t
-order by ctr desc, ad_id asc
+SELECT ad_id,
+    (
+      CASE WHEN clicks + views = 0 
+      THEN 0 
+      ELSE round( clicks / (clicks+views)*100, 2) end
+    ) AS ctr
+FROM 
+    ( /**
+          +-------+---------+---------+
+          | ad_id | user_id | action  |
+          +-------+---------+---------+ 
+          | 1     | 1       | Clicked | 
+          |       | 2       | Clicked | 
+          |       | 4       | Viewed  | 
+          |       | 7       | Ignored | 
+          | 2     | 2       | Clicked | 
+          |       | 7       | Viewed  | 
+          |       | 11      | Viewed  | 
+          | 3     | 3       | Viewed  | 
+          | 5     | 5       | Ignored | 
+          +-------+---------+---------+
+          
+          
+          
+          +-------+---------+---------+
+          | ad_id | clicks  | views   |
+          +-------+---------+---------+ 
+          | 1     | 2       | 1       | 
+          | 2     | 1       | 2       | 
+          | 3     | 0       | 1       | 
+          | 5     | 0       | 0       | 
+          +-------+---------+---------+
+          
+       */
+    SELECT ad_id,
+           SUM(case when action='Clicked' then 1 else 0 end) as clicks,
+           SUM(case when action='Viewed' then 1 else 0 end) as views
+    FROM Ads
+    GROUP BY ad_id) as t
+ORDER BY ctr DESC, 
+         ad_id ASC
 ```
+
 ## List the Products Ordered in a Period **
 
-Write an SQL query to get the names of products with greater than or equal to 100 units(`>100`) ordered in `February 2020` and their amount.
+Write an SQL query to get the names of products with greater than or equal to 100 units(` >= 100`) ordered in `February 2020` and their amount.
 
 ```diff
   Products table:
+  Product_id is PK
+  
   +-------------+-----------------------+------------------+
   | product_id  | product_name          | product_category |
   +-------------+-----------------------+------------------+
@@ -2209,7 +2255,7 @@ Write an SQL query to get the names of products with greater than or equal to 10
   | 4           | Lenovo                | Laptop           |
   | 5           | Leetcode Kit          | T-shirt          |
   +-------------+-----------------------+------------------+
-  - Product_id is PK
+ 
   Orders table:
   +--------------+--------------+----------+
   | product_id   | order_date   | unit     |
@@ -2244,18 +2290,18 @@ Products with product_id = 4 was not ordered in February 2020.
 ```
 
 
-Concept 
+#### Concept 
 - GET DESIRED `product_id` and `order_date` FROM `Orders` table
 - INNER JOIN WITH `Product`
 
 ```mysql
 SELECT product_name, sum(unit) AS unit
-FROM Products inner join Orders
+FROM Products 
+INNER JOIN Orders
 ON Products.product_id = Orders.product_id
-Where left(order_date, 7) = "2020-02"
+WHERE left(order_date, 7) = "2020-02"
 GROUP BY Products.product_id
 HAVING sum(unit)>=100
-
 
 SELECT product_name, SUM(unit) AS unit FROM Products AS p 
 JOIN Orders AS o 
@@ -2268,7 +2314,25 @@ HAVING sum(unit) >= 100
 # Space: O(n)  
 SELECT p.product_name, 
        o.unit 
-FROM   (/** Table with product_id with desired order_Date **/
+FROM   (
+        /** Table with product_id with desired order_Date 
+        
+        
+         
+        +--------------+--------------+----------+
+        | product_id   | order_date   | unit     |
+        +--------------+--------------+----------+
+        | 1            | 2020-02-05   | 60       |
+        | 1            | 2020-02-10   | 70       |
+        | 2            | 2020-01-18   | 30       |
+        | 2            | 2020-02-11   | 80       |
+        | 3            | 2020-02-17   | 2        |
+        | 3            | 2020-02-24   | 3        |
+        | 5            | 2020-02-25   | 50       |
+        | 5            | 2020-02-27   | 50       |
+        +--------------+--------------+----------+
+        
+        **/
         SELECT product_id, 
                Sum(unit) AS unit 
         FROM   orders 
@@ -2282,6 +2346,9 @@ ON o.product_id = p.product_id
 ## Students With Invalid Departments 
 
 Write a query that student does not exist in the department 
+
+#### Concept
+- `WHERE NOT EXISTS( ... )`
 
 ```Departments table:
 +------+--------------------------+
@@ -2317,19 +2384,48 @@ Result table:
 | 4    | Jasmine  |
 | 3    | Steve    |
 +------+----------+
-
-John, Daiana, Steve and Jasmine are enrolled in departments 14, 33, 74 and 77 respectively. 
-department 14, 33, 74 and 77 doesn't exist in the Departments table.
 ```
+- John, Daiana, Steve and Jasmine are enrolled in departments `14`, `33`, `74` and `77` respectively.
+department `14`, `33`, `74` and `77` doesn't exist in the Departments table.
 
-```
+
+```mysql
+/**
+
+SELECT s.id, 
+       s.name, 
+       s.department_id,
+       d.id,
+       d.name
+FROM   students  AS s 
+       LEFT JOIN departments AS d 
+       ON d.id = s.department_id 
+WHERE  d.id IS NULL;
+
++------+----------+---------------+------+--------------------------+
+| id   | name     | department_id | id   | name                     |
++------+----------+---------------+------+--------------------------+
+| 23   | Alice    | 1             | 1    | Electrical Engineering   |
+| 1    | Bob      | 7             | 7    | Computer Engineering     |
+| 5    | Jennifer | 13            | 13   | Bussiness Administration |
+| 2    | John     | 14            | null | null                     |
+| 4    | Jasmine  | 77            | null | null                     |
+| 3    | Steve    | 74            | null | null                     |
+| 6    | Luis     | 1             | 1    | Electrical Engineering   |
+| 8    | Jonathan | 7             | 7    | Computer Engineering     |
+| 7    | Daiana   | 33            | null | null                     |
+| 11   | Madelynn | 1             | 1    | Electrical Engineering   |
++------+----------+---------------+------+--------------------------+
+
+**/
+
 # Time:  O(n) 
 # Space: O(n) 
 SELECT s.id, 
        s.name 
 FROM   students s 
        LEFT JOIN departments d 
-              ON d.id = s.department_id 
+       ON d.id = s.department_id 
 WHERE  d.id IS NULL; 
 
 # Time:  O(n) 
@@ -2337,7 +2433,7 @@ WHERE  d.id IS NULL;
 SELECT s.id, 
        s.name 
 FROM   students s
-WHERE  NOT EXISTS (SELECT id 
+WHERE  NOT EXISTS (SELECT d.id 
                    /** EQUI JOIN **/
                    FROM   departments d
                    WHERE  d.id = s.department_id); 
@@ -2346,8 +2442,6 @@ WHERE  NOT EXISTS (SELECT id
 ## Replace Employee ID with The Unique Identifier 
 
 A PROBLEM THAT FIND WHO DOESN'T EXIST ON ANOTHER TABLE
-
-###### KEYWORD : `LEFT JOIN`
 
 Write an SQL query to show the unique ID of each user, If a user doesn’t have a unique ID replace just show `NULL`.
 - Return the result table in any order.
@@ -2372,7 +2466,7 @@ EmployeeUNI table:
 | 90 | 3         |
 +----+-----------+
 
-EmployeeUNI table:
+Result 
 +-----------+----------+
 | unique_id | name     |
 +-----------+----------+
@@ -2382,11 +2476,6 @@ EmployeeUNI table:
 | 3         | Winston  |
 | 1         | Jonathan |
 +-----------+----------+
-
-Alice and Bob don't have a unique ID, We will show null instead.
-The unique ID of Meir is 2.
-The unique ID of Winston is 3.
-The unique ID of Jonathan is 1.
 ```
 
 ```mysql
