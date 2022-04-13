@@ -2490,12 +2490,13 @@ ON e.id = u.id
 
 ## [Top Travellers](https://code.dennyzhang.com/top-travellers) *
 
-###### Keyword : `LEFT JOIN`, `ORDER BY ... , ...` 
+### Concept
+-`LEFT JOIN`, `ORDER BY ... ` 
 
 Write an SQL query to report the distance travelled by EACH USER.
 - Return the result table ordered by `travelled_distance` in **descending order**, if two or more users travelled the same distance, order them by their name in ascending order.
 ```diff
-  Users table:
+  Users table( PK : id ) :
   +------+-----------+
   | id   | name      |
   +------+-----------+
@@ -2507,7 +2508,6 @@ Write an SQL query to report the distance travelled by EACH USER.
   | 13   | Jonathan  |
   | 19   | Elvis     |
   +------+-----------+
-- Id is PK
 
   Rides table:
   +------+----------+----------+
@@ -2540,15 +2540,17 @@ Result table:
 
 ```mysql 
 SELECT U.name , IFNULL(distance,0) AS travelled_distance 
-FROM Users as U LEFT JOIN Rides AS R
+FROM Users as U 
+LEFT JOIN Rides AS R
 OB U.Id = R.user_id
 GROUP BY u.name
 ORDER BY travelled_distance ASEC, U.name ASEC 
-
 ```
 
 ## Create a Session Bar Chart **
+
 Write an SQL query to report the (`bin`, `total`) in any order.
+
 ```
   Sessions table:
   +-------------+---------------+
@@ -2570,17 +2572,18 @@ Write an SQL query to report the (`bin`, `total`) in any order.
   | [10-15>      | 0            |
   | 15 or more   | 1            |
   +--------------+--------------+
-- For session_id 1, 2 and 3 have a duration greater or equal than 0 minutes and less than 5 minutes.
-- For session_id 4 has a duration greater or equal than 5 minutes and less than 10 minutes.
-- There are no session with a duration greater or equial than 10 minutes and less than 15 minutes.
-- For session_id 5 has a duration greater or equal than 15 minutes.
 ```
+- For `session_id` 1, 2 and 3 have a duration greater or equal than 0 minutes and less than 5 minutes.
+- For `session_id` 4 has a duration greater or equal than 5 minutes and less than 10 minutes.
+- There are no session with a duration greater or equial than 10 minutes and less than 15 minutes.
+- For `session_id` 5 has a duration greater or equal than 15 minutes.
 
-###### Keyword : `Count(1)` , `UNION`, `New A table`
+#### Concept
+- `Count(1)` , `UNION`, `New A table`
 
 ```mysql
 /**
-  * create attributes
+  * create the new column  
   *    [0-5>
   *    [5-10>
   *    [10-15>
@@ -2617,16 +2620,17 @@ WHERE  duration >= 900;
 SELECT
     t2.BIN,
     COUNT(t1.BIN) AS TOTAL
-FROM (
-SELECT
-    CASE 
-        WHEN duration/60 BETWEEN 0 AND 5 THEN "[0-5>"
-        WHEN duration/60 BETWEEN 5 AND 10 THEN "[5-10>"
-        WHEN duration/60 BETWEEN 10 AND 15 THEN "[10-15>"
-        WHEN duration/60 >= 15 THEN "15 or more" 
-        ELSE NULL END AS BIN
-FROM Sessions
-) t1 
+FROM (SELECT
+          /**
+              Create A Bin Column
+            */
+          CASE 
+              WHEN duration/60 BETWEEN 0 AND 5 THEN "[0-5>"
+              WHEN duration/60 BETWEEN 5 AND 10 THEN "[5-10>"
+              WHEN duration/60 BETWEEN 10 AND 15 THEN "[10-15>"
+              WHEN duration/60 >= 15 THEN "15 or more" 
+              ELSE NULL END AS BIN
+      FROM Sessions) t1 
 RIGHT JOIN(
     SELECT "[0-5>"        AS BIN
     UNION ALL
@@ -2640,11 +2644,13 @@ ON t1.bin = t2.bin
 GROUP BY t2.bin
 ORDER BY NULL;
 ```
-## Group Sold Products By The Date 
+
+## Group Sold Products By The Date **
 
 Write an SQL query to find for each date, the number of distinct products sold and their names.   
+
 The sold-products names for each date should be sorted lexicographically.   
-- Return the result table ordered by sell_date.
+- Return the result table ordered by `sell_date`.
 ```
   Activities table:
   +------------+-------------+
@@ -2667,20 +2673,60 @@ The sold-products names for each date should be sorted lexicographically.
   | 2020-06-01 | 2        | Bible,Pencil                 |
   | 2020-06-02 | 1        | Mask                         |
   +------------+----------+------------------------------+
-For 2020-05-30, Sold items were (Headphone, Basketball, T-shirt), we sort them lexicographically and separate them by comma.
-For 2020-06-01, Sold items were (Pencil, Bible), we sort them lexicographically and separate them by comma.
-For 2020-06-02, Sold item is (Mask), we just return it.
 ```
+- For `2020-05-30`, Sold items were (`Headphone`, `Basketball`, `T-shirt`), we sort them lexicographically and separate them by **comma**.
+- For `2020-06-01`, Sold items were (`Pencil`, `Bible`), we sort them lexicographically and separate them by comma.
+- For `2020-06-02`, Sold item is (`Mask`), we just return it.
 
-###### Keyword : `group_concat( [ATTRIBUTE] [ORDER BY] [SEPARATOR 'STRING'])`
+#### Concept 
+- `group_concat( [ATTRIBUTE] [ORDER BY] [SEPARATOR 'STRING'])`
+
 ```mysql
 # Time:  O(nlogn)
 # Space: O(n)
 
 SELECT sell_date,
        COUNT(DISTINCT(product)) AS num_sold, 
+       
+       /**
+            +------------+-------------+
+            | sell_date  | product     |
+            +------------+-------------+
+            | 2020-05-30 | Headphone   |
+            |            | Basketball  |
+            |            | T-Shirt     |
+            | 2020-06-01 | Pencil      |
+            |            | Bible       |
+            | 2020-06-02 | Mask        |
+            |            | Mask        |
+            +------------+-------------+
+            
+            
+            +------------+-------------------------------+
+            | sell_date  | products                      |
+            +------------+-------------------------------+
+            | 2020-05-30 | Basketball, Headphone, T-Shirt|
+            | 2020-06-01 | Bible, Pencil                 |
+            | 2020-06-02 | Mask                          |
+            +------------+-------------------------------+
+       **/
+       
        GROUP_CONCAT(DISTINCT product ORDER BY product ASC SEPARATOR ',') AS products
 FROM Activities
+/**
+  Activities table:
+  +------------+-------------+
+  | sell_date  | product     |
+  +------------+-------------+
+  | 2020-05-30 | Headphone   |
+  |            | Basketball  |
+  |            | T-Shirt     |
+  | 2020-06-01 | Pencil      |
+  |            | Bible       |
+  | 2020-06-02 | Mask        |
+  |            | Mask        |
+  +------------+-------------+
+*/
 GROUP BY sell_date
 ORDER BY sell_date ASC;
 ```
@@ -2702,7 +2748,7 @@ Write an SQL query to report the distinct titles of the kid-friendly movies stre
   | 2020-07-15 16:00   | 5            | Disney Ch   |
   +--------------------+--------------+-------------+
 
-  Content table:
+  Content(Pk : content_id) table:
   +------------+----------------+---------------+---------------+
   | content_id | title          | Kids_content  | content_type  |
   +------------+----------------+---------------+---------------+
@@ -2712,27 +2758,28 @@ Write an SQL query to report the distinct titles of the kid-friendly movies stre
   | 4          | Aladdin        | Y             | Movies        |
   | 5          | Cinderella     | Y             | Movies        |
   +------------+----------------+---------------+---------------+
-- content_id is PK
+  
   Result table:
   +--------------+
   | title        |
   +--------------+
   | Aladdin      |
   +--------------+
+```
 - "Leetcode Movie" is not a content for kids.
 - "Alg. for Kids" is not a movie.
 - "Database Sols" is not a movie
 - "Alladin" is a movie, content for kids and was streamed in June 2020.
 - "Cinderella" was not streamed in June 2020.
-```
 
 ```mysql
-SELECT DISTINCT c.title FROM Content AS c
+SELECT DISTINCT c.title 
+FROM Content AS c
 JOIN TVProgram AS t
 ON c.content_id = t.content_id
 WHERE c.content_type = 'Movies'
-AND t.Kids_content = 'Y'
-AND LEFT(b.program_date,7) ='2020-06';
+      AND t.Kids_content = 'Y'
+      AND LEFT(b.program_date,7) ='2020-06';
 
 --
 /**
@@ -2752,7 +2799,8 @@ WHERE c.content_id = tv.content_id
 Write an SQL query to report the `customer_id` and of customers who have spent at least `$100` in each month of June and July 2020.
 - Return the result table in any order.
 
-###### Keyword : `EQUI-JOIN THREE TABLES`, `SUM` , `INNER JOIN THREE TABLES`
+#### Concept
+- `EQUI-JOIN THREE TABLES`, `SUM` , `INNER JOIN THREE TABLES`
 
 ```
   Customers
