@@ -3253,7 +3253,7 @@ Result table:
 As we can see, users with IDs `30` and `96` visited the mall one time without making any transactions.   
 Also user id `54` visited the mall twice and did not make any transactions.
 
-```
+```mysql
 /**
  *
    +--------+------------+----------+----------+--------+
@@ -3329,7 +3329,7 @@ Result table:
   +------------+------------+
 ```
 
-```sql
+```mysql
 SELECT U.name, T.sum(amount) 
 FROM User U 
 JOIN Transactions T
@@ -3394,25 +3394,23 @@ Result table:
 - Elizabeth made 2 sales in 2020 and 1 sale in 2019.
 - Frank made 1 sale in 2019 but no sales in 2020.
 
-
-```html
- +------------+--------------+-------------+------------+--------------+-------------+-------------+
- |customer_id | customer_name| order_id    | sale_date  | order_cost   | customer_id | seller_id   |
- +------------+--------------+-------------+------------+--------------+---------------------------+
- | 101        | Alice        |  1          | 2020-03-01 | 1500         | 101         |           1 |
- | 102        | Bob          |  2          | 2020-05-25 | 2400         | 102         |           2 |  
- | 101        | Alice        |  3          | 2019-05-25 | 800          | 101         |           3 |  
- | 103        | Charlie      |  4          | 2020-09-13 | 1000         | 103         |           2 |  
- | 101        | Alice        |  5          | 2019-02-11 | 700          | 101         |           2 |  
- +------------+--------------+-------------+------------+--------------+-------------+-------------+
-```
-
-```sql
+```mysql
 -- Time:  O(nlogm)
 -- Space: O(n + m)
 SELECT seller_name
 FROM seller s
 WHERE NOT EXISTS(
+    /**
+      
+     +------------+--------------+-------------+------------+--------------+-------------+-------------+
+     |customer_id | customer_name| order_id    | sale_date  | order_cost   | customer_id | seller_id   |
+     +------------+--------------+-------------+------------+--------------+---------------------------+
+     | 101        | Alice        |  1          | 2020-03-01 | 1500         | 101         |           1 |
+     | 102        | Bob          |  2          | 2020-05-25 | 2400         | 102         |           2 |  
+     | 103        | Charlie      |  4          | 2020-09-13 | 1000         | 103         |           2 |  
+     +------------+--------------+-------------+------------+--------------+-------------+-------------+
+      
+    */
     SELECT 1
     FROM orders o
     WHERE s.seller_id = o.seller_id 
@@ -3424,7 +3422,7 @@ ORDER BY 1;
 
 Write an SQL query to find all the possible triplets representing the country under the given constraints.
 - `student_id` and `student_name` from different School can not be the same 
-```
+```diff
 SchoolA table:
 +------------+--------------+
 | student_id | student_name |
