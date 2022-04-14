@@ -2802,7 +2802,9 @@ Write an SQL query to report the `customer_id` and of customers who have spent a
 #### Concept
 - `EQUI-JOIN THREE TABLES`, `SUM` , `INNER JOIN THREE TABLES`
 
-```
+```diff
+Three Tables
+
   Customers
   +--------------+-----------+-------------+
   | customer_id  | name      | country     |
@@ -2843,10 +2845,11 @@ Write an SQL query to report the `customer_id` and of customers who have spent a
   +--------------+------------+
   | 1            | Winston    |
   +--------------+------------+ 
-Winston spent $300 (300 * 1) in June and $100 ( 10 * 1 + 45 * 2) in July 2020.
-Jonathan spent $600 (300 * 2) in June and $20 ( 2 * 10) in July 2020.
-Moustafa spent $110 (10 * 2 + 45 * 2) in June and $0 in July 2020.
 ```
+- Winston spent `$300 (300 * 1)` in June and `$100 ( 10 * 1 + 45 * 2)` in July 2020.
+- Jonathan spent `$600 (300 * 2)` in June and `$20 ( 2 * 10)` in July 2020.
+- Moustafa spent `$110 (10 * 2 + 45 * 2)` in June and $0 in July 2020.
+
 
 ALGO
 1. `EQUI-JOIN` Three tables
@@ -2859,15 +2862,15 @@ ALGO
   * Condition : July and June
   * Display : the customer spent total price > 100
   */
-select o.customer_id, c.name
-from Customers c, Product p, Orders o
-where c.customer_id = o.customer_id and p.product_id = o.product_id
-group by o.customer_id
-having 
+SELECT o.customer_id, c.name
+FROM Customers c, Product p, Orders o
+WHERE c.customer_id = o.customer_id
+      AND p.product_id = o.product_id
+GROUP BY o.customer_id
+HAVING
 (
-    sum(case when o.order_date like '2020-06%' then o.quantity*p.price else 0 end) >= 100
-    and
-    sum(case when o.order_date like '2020-07%' then o.quantity*p.price else 0 end) >= 100
+    SUM(CASE WHEN o.order_date LIKE '2020-06%' THEN o.quantity * p.price else 0 END) >= 100
+    AND SUM(CASE WHEN o.order_date LIKE '2020-07%' THEN o.quantity *p.price else 0 END) >= 100
 )
 
 
@@ -2877,19 +2880,15 @@ SELECT a.customer_id, a.name
 FROM Customers AS a
 INNER JOIN (SELECT *
             FROM Orders
-            WHERE order_date BETWEEN "2020-06-01" AND "2020-07-31" ) AS b
+            WHERE order_date BETWEEN "2020-06-01" 
+                             AND "2020-07-31" ) AS b
 ON a.customer_id = b.customer_id
 INNER JOIN Product AS c
 ON b.product_id = c.product_id
 GROUP BY a.customer_id
-HAVING SUM(CASE
-               WHEN LEFT(b.order_date, 7) = "2020-06" THEN c.price * b.quantity
-               ELSE 0
-           END) >= 100
-AND    SUM(CASE
-               WHEN LEFT(b.order_date, 7) = "2020-07" THEN c.price * b.quantity
-               ELSE 0
-           END) >= 100
+-- Caculate total amount of the items that each customer bought
+HAVING SUM(CASE WHEN LEFT(b.order_date, 7) = "2020-06" THEN c.price * b.quantity ELSE 0 END) >= 100
+AND    SUM(CASE WHEN LEFT(b.order_date, 7) = "2020-07" THEN c.price * b.quantity ELSE 0 END) >= 100
 ORDER BY NULL;
 ```
 
@@ -2902,7 +2901,8 @@ A valid e-mail has a prefix name and a domain where:
 - The prefix name must start with a letter.
 - The domain is `@leetcode.com`.
 
-###### Keyword : `regexp`
+#### Concept
+- `regexp`
 
 ```
   Users
@@ -2926,11 +2926,11 @@ A valid e-mail has a prefix name and a domain where:
   | 3       | Annabelle | bella-@leetcode.com     |
   | 4       | Sally     | sally.come@leetcode.com |
   +---------+-----------+-------------------------+
-The mail of user 2 doesn't have a domain.
-The mail of user 5 has # sign which is not allowed.
-The mail of user 6 doesn't have leetcode domain.
-The mail of user 7 starts with a period.
 ```
+- The mail of user 2 doesn't have a domain.
+- The mail of user 5 has `#` sign which is not allowed.
+- The mail of user 6 doesn't have leetcode domain.
+- The mail of user 7 starts with a period.
 
 
 ```sql
@@ -2941,13 +2941,13 @@ WHERE  u.mail REGEXP '^[a-zA-Z][a-zA-Z0-9._-]*@leetcode.com$';
 
 ## Patients With a Condition 
 
-###### Keyword : `LIKE` , `WILDCARD`
+#### Concept
+- `LIKE` , `WILDCARD`
 
-Write an SQL query to report the `patient_id`, `patient_name` all conditions of patients who have Type I Diabetes.   
-Type I Diabetes always starts with `DIAB1` prefix
+Write an SQL query to report the `patient_id`, `patient_name` all conditions of patients who have `Type I` Diabetes.   
 
-Return the result table in any order.
-
+- `Type I Diabetes` always starts with `DIAB1` prefix
+- Return the result table in any order.
 ```
   Patients
   +------------+--------------+--------------+
@@ -2977,17 +2977,19 @@ where conditions like "%DIAB1%"
 
 ## Fix Product Name Format 
 
-###### Keyword : `SUBSTRING()` , `TRIM()` , `LOWER()`, `ORDER BY 1,2` AND `GROUP BY 1,2` 
+#### Concept
+-`SUBSTRING()` , `TRIM()` , `LOWER()`, `ORDER BY 1,2` AND `GROUP BY 1,2` 
 
 Write an SQL query to report
-- `product_name` in lowercase(`LOWER()`) without leading or trailing white spaces.
-- `sale_date` in the format ('YYYY-MM')`LEFT` OR ``SUBSTRING`
-- total the number of times the product(`COUNT`) was sold in this month.
-- Return the result table ordered by `product_name` in ascending order, in case of a tie order it by `sale_date` in ascending order.
+1. `product_name` in lowercase(`LOWER(...)`) without leading or trailing white spaces.
+2. `sale_date` in the format (`'YYYY-MM'`) VIA `LEFT(... , ...)` OR ``SUBSTRING(...)`
+3. Total the number of times the product(`COUNT(...)`) was sold in this month.
+4. Return the result table ordered by `product_name` in ascending order, in case of a tie order it by `sale_date` in ascending order.
 ```diff
+  
   Sales
   +------------+------------------+--------------+
-  | sale_id    | product_name     | sale_date    |
+  | sale_id(PK)| product_name     | sale_date    |
   +------------+------------------+--------------+
   | 1          | LCPHONE          | 2000-01-16   |
   | 2          | LCPhone          | 2000-01-17   |
@@ -3007,30 +3009,62 @@ Write an SQL query to report
   | matryoshka   | 2000-03      | 1        | 
   +--------------+--------------+----------+
 ```
-- In January, 2 LcPhones were sold, 
+- In January , 2 LcPhones were sold, 
 - In Februery, 2 LCKeychains and 1 LCPhone were sold.
 - In March, 1 matryoshka was sold.
-- NOTE that the product names are not case sensitive and may contain spaces.
+- Note that the product names are not case sensitive and may contain spaces.
 
 ```mysql
 /**
+  Def of GROUP BY NUM1, NUM2, ...
     SELECT account_id, open_emp_id
              ^^^^        ^^^^
               1           2
 
     FROM account
-    GROUP BY 1;
-  */
+    GROUP BY 1, 2
+    ORDER BY 1, 2
+*/
+  
 # Time:  O(nlogn)
 # Space: O(n)
 SELECT LOWER(TRIM(product_name)) product_name,
        substring(sale_date, 1, 7) sale_date,
        count(sale_id) total
 FROM Sales
+/**
+
+  +------------+------------------+--------------+
+  | sale_id(PK)| product_name     | sale_date    |
+  +------------+------------------+--------------+
+  | 1          | LCPHONE          | 2000-01-16   |
+  | 2          | LCPhone          | 2000-01-17   |
+  | 3          | LcPhOnE          | 2000-02-18   |
+  | 4          | LCKeyCHAiN       | 2000-02-19   |
+  | 5          | LCKeyChain       | 2000-02-28   |
+  | 6          | Matryoshka       | 2000-03-31   | 
+  +------------+------------------+--------------+
+
+
+  GROUP BY LOWER(TRIM(product_name)) product_name,
+           SUBSTRING(sale_date, 1, 7) sale_date
+  +------------------+--------------+
+  | product_name     | sale_date    |
+  +------------------+--------------+
+  | lcphone          | 2000-01      |
+  | lcphone          | 2000-01      |
+  | lcphone          | 2000-02      |
+  | lckeychain       | 2000-02      |
+  | lckeychain       | 2000-02      |
+  | Matryoshka       | 2000-03      |
+  +------------------+--------------+
+
+*/
 GROUP BY 1, 2
-ORDER BY 1, 2;
+ORDER BY 1, 2
 
 -- SAME AS 
+
 SELECT LOWER(TRIM(product_name)) AS product_name, 
        LEFT(sale_date, 7) AS sale_date, 
        COUNT(*) AS total FROM Sales
@@ -3040,10 +3074,7 @@ ORDER BY product_name, sale_date;
 
 ## Unique Orders and Customers Per Month *
 
-###### Keyword : `LEFT JION`, `GROUP BY 1` 
-
-Write an SQL query to find the number of **unique orders and the number of unique customers(`DISTINCT`)** with `invoices` > `$20` for each different month.
-- Return the result table sorted in any order.
+Write an SQL query to find the number of **unique orders and the number of unique customers(`DISTINCT`)** with `invoices(Abrechnung) > $20` for each different month.
 ```diff
   Orders
   +----------+------------+-------------+------------+
@@ -3072,7 +3103,7 @@ Write an SQL query to find the number of **unique orders and the number of uniqu
   | 2021-01 | 1           | 1              |
   +---------+-------------+----------------+
 ```
-- In September 2020(`2020-09`) we have two orders from 2 different customers with invoices > $20.
+- In September 2020(`2020-09`) we have two orders from 2 different customers with `invoices > $20`.
 - In October 2020(`2020-10`) we have two orders from 1 customer, and only one of the two orders has invoice > $20.
 - In November 2020(`2020-11`) we have two orders from 2 different customers but invoices < $20, so we don't include that month.
 - In December 2020(`2020-12`) we have two orders from 1 customer both with invoices > $20.
@@ -3092,15 +3123,12 @@ ORDER BY NULL;
 
 ## Warehouse Manager 
 
-###### Keyword : `INNER JOIN`
-
-Write an SQL query to report how much cubic feet of volume does the inventory occupy in **each warehouse**.
-- Return the result table in any order.
-
-```
+Write an SQL query to report how much cubic feet of volume does the [inventory](https://dictionary.cambridge.org/zht/%E8%A9%9E%E5%85%B8/%E8%8B%B1%E8%AA%9E-%E6%BC%A2%E8%AA%9E-%E7%B9%81%E9%AB%94/inventory) occupy in **each warehouse**.
+```diff
 Warehouse table:
 +------------+--------------+-------------+
 | name       | product_id   | units       |
+
 +------------+--------------+-------------+
 | LCHouse1   | 1            | 1           |
 | LCHouse1   | 2            | 10          |
@@ -3128,10 +3156,6 @@ Result table:
 | LCHouse2       | 20250      |
 | LCHouse3       | 800        |
 +----------------+------------+
-Volume of product_id = 1 (LC-TV), 5x50x40 = 10000
-Volume of product_id = 2 (LC-KeyChain), 5x5x5 = 125 
-Volume of product_id = 3 (LC-Phone), 2x10x10 = 200
-Volume of product_id = 4 (LC-T-Shirt), 4x10x20 = 800
 ```
 - LCHouse1: 1 unit of LC-TV + 10 units of LC-KeyChain + 5 units of LC-Phone.
   > Total volume: `1*10000 + 10*125  + 5*200 = 12250` cubic feet
@@ -3142,39 +3166,60 @@ Volume of product_id = 4 (LC-T-Shirt), 4x10x20 = 800
 
 
 ```mysql
-SELECT name AS warehouse_name, SUM(units*Width*LENGTH*Height) AS volume
+SELECT name AS warehouse_name, 
+       SUM(units*Width*LENGTH*Height) AS volume
 FROM Warehouse w
-INNER JOIN Products p ON w.product_id = p.product_id
+INNER JOIN Products p 
+ON w.product_id = p.product_id
 GROUP BY name
 ORDER BY NULL;
 
-SELECT name as warehouse_name, sum(units * vol) AS volume
+
+/**  
+  JOIN (SELECT product_id, 
+               Width*Length*Height AS vol
+       FROM Products) p
+  ON w.product_id = p.product_id
+ +------------+--------------+-------------+------------+
+ | name       | product_id   | units       |   vol      |
+ +------------+--------------+-------------+------------+
+ | LCHouse1   | 1            | 1           |  5*50*40   |    
+ | LCHouse1   | 2            | 10          |  5*5*5     |
+ | LCHouse1   | 3            | 5           |  2*10*10   |
+ | LCHouse2   | 1            | 2           |  5*50*40   |   
+ | LCHouse2   | 2            | 2           |  5*5*5     |
+ | LCHouse3   | 4            | 1           |  4*10*20   |
+ +------------+--------------+-------------+------------+
+*/
+SELECT name as warehouse_name, 
+       sum(units * vol) AS volume
 FROM Warehouse w
-JOIN (select product_id, Width*Length*Height AS vol
-     from Products) p
+JOIN (SELECT product_id, 
+             Width*Length*Height AS vol
+      FROM Products) p
 ON w.product_id = p.product_id
 GROUP BY name
 ```
 
-## Customer Who Visited but Did Not Make Any Transactions
+## Customer Who Visited but Did Not Make Any Transactions **
 
-Write an SQL query to find the IDs of the users who visited without making any transactions and the number of times they made these types of visits.
-- Return the result table sorted in any order.
+Write an SQL query to find 
+1. the `ID`s of the users who visited (the mall) without making any transactions 
+2. the number of times they made these types of visits (count of no transaction of visiters).
 
 ```diff
-  Visits
-  +----------+-------------+
-  | visit_id | customer_id |
-  +----------+-------------+
-+ | 1        | 23          |
-+ | 2        | 9           |
-  | 4        | 30          |
-+ | 5        | 54          |
-  | 6        | 96          |
-  | 7        | 54          |
-  | 8        | 54          |
-  +----------+-------------+
-- visit_id is PK
+ Visits table
+  +-------------+-------------+
+  | visit_i(PL) | customer_id |
+  +-------------+-------------+
++ | 1           | 23          |
++ | 2           | 9           |
+  | 4           | 30          |
++ | 5           | 54          |
+  | 6           | 96          |
+  | 7           | 54          |
+  | 8           | 54          |
+  +-------------+-------------+
 
 Transactions
 +----------------+----------+--------+
@@ -3186,7 +3231,16 @@ Transactions
 | 12             | 1        | 910    | -- 23
 | 13             | 2        | 970    | -- 9
 +----------------+----------+--------+
+```
+- Customer with `id 23` visited the mall once and made one transaction during the visit with `id = 12`.
+- Customer with `id 9` visited the mall once and made one transaction during the visit with `id = 13`.
+- Customer with `id 30` visited the mall once and did not make any transactions.
+- Customer with `id 54` visited the mall three times. 
+  > During 2 visits they did not make any transactions, and during one visit they made 3 transactions.
+- Customer with `id : 96` visited the mall once and did not make any transactions.
 
+
+```diff
 Result table:
 +-------------+----------------+
 | customer_id | count_no_trans |
@@ -3196,15 +3250,8 @@ Result table:
 | 96          | 1              | 
 +-------------+----------------+
 ```
-- Customer with id = 23 visited the mall once and made one transaction during the visit with id = 12.
-- Customer with id = 9 visited the mall once and made one transaction during the visit with id = 13.
-- Customer with id = 30 visited the mall once and did not make any transactions.
-- Customer with id = 54 visited the mall three times. 
-  > During 2 visits they did not make any transactions, and during one visit they made 3 transactions.
-- Customer with id = 96 visited the mall once and did not make any transactions.
-
-As we can see, users with IDs 30 and 96 visited the mall one time without making any transactions.   
-Also user 54 visited the mall twice and did not make any transactions.
+As we can see, users with IDs `30` and `96` visited the mall one time without making any transactions.   
+Also user id `54` visited the mall twice and did not make any transactions.
 
 ```
 /**
@@ -3247,8 +3294,6 @@ ORDER BY NULL;
 
 ## Bank Account Summary II
 
-###### Keyword : `INNER JOIN` , `NESTED QUERY`
-
 Write an SQL query to report the `name` and `balance` of users with a balance higher than 10000(`balance > 1000`).   
 - The balance of an account is equal to the sum of the amounts of all transactions involving that account.
 - Return the result table in any order.
@@ -3267,12 +3312,12 @@ Transactions table:
   +------------+------------+------------+---------------+
   | trans_id   | account    | amount     | transacted_on |
   +------------+------------+------------+---------------+
-  | 1          | 900001     | 7000       |  2020-08-01   |
-  | 2          | 900001     | 7000       |  2020-09-01   |
+  | 1          | 900001     |  7000      |  2020-08-01   |
+  | 2          | 900001     |  7000      |  2020-09-01   |
   | 3          | 900001     | -3000      |  2020-09-02   |
-  | 4          | 900002     | 1000       |  2020-09-12   |
-  | 5          | 900003     | 6000       |  2020-08-07   |
-  | 6          | 900003     | 6000       |  2020-09-07   |
+  | 4          | 900002     |  1000      |  2020-09-12   |
+  | 5          | 900003     |  6000      |  2020-08-07   |
+  | 6          | 900003     |  6000      |  2020-09-07   |
   | 7          | 900003     | -4000      |  2020-09-11   |
   +------------+------------+------------+---------------+
 
@@ -3285,49 +3330,39 @@ Result table:
 ```
 
 ```sql
-/**
-  * Condition : Total Transaction > 1000
-  * Join Later
-  * Filter first
-  */
 SELECT U.name, T.sum(amount) 
-FROM User U JOIN Transactions T
+FROM User U 
+JOIN Transactions T
 ON U.account = T.account
 GROUP BY U.name
 HAVING sum(amount) > 1000;
 
-/** 
-  * VIA NESTED QUERY
-  * Filter balance first 
-  * Join Later
-  **/
-SELECT name, balance
-FROM (SELECT account, sum(amount) AS balance
+---
+SELECT u.name, balance
+FROM (SELECT account, 
+             sum(amount) AS balance
       FROM Transactions
       GROUP BY account
       HAVING sum(amount) > 10000) As t
-JOIN Users As u
-on u.account = t.account;
+JOIN Users AS u
+ON u.account = t.account;
 ```
 
 ## Sellers With No Sales **
 
-###### USAGE : `WHERE ... NOT EXISTS ...`
-
 Write an SQL query to report the names of all sellers who did not make any sales in 2020.
-- Return the result table ordered by `seller_name` in ascending order.
+- Return the result table ordered by `seller_name` in **ascending** order.
 
 ```diff
 Customer table:
- +--------------+---------------+
- | customer_id  | customer_name |
- +--------------+---------------+
- | 101          | Alice         |
- | 102          | Bob           |
- | 103          | Charlie       |
- +--------------+---------------+
-- customer_id is PK
- 
+ +----------------+---------------+
+ | customer_id(PK)| customer_name |
+ +----------------+---------------+
+ | 101            | Alice         |
+ | 102            | Bob           |
+ | 103            | Charlie       |
+ +----------------+---------------+
+
 Orders table:
  +-------------+------------+--------------+-------------+-------------+
  | order_id    | sale_date  | order_cost   | customer_id | seller_id   |
@@ -3354,10 +3389,11 @@ Result table:
  +-------------+
  | Frank       |
  +-------------+
-+ Daniel made 1 sale in March 2020.
-+ Elizabeth made 2 sales in 2020 and 1 sale in 2019.
-+ Frank made 1 sale in 2019 but no sales in 2020.
 ```
+- Daniel made 1 sale in March 2020.
+- Elizabeth made 2 sales in 2020 and 1 sale in 2019.
+- Frank made 1 sale in 2019 but no sales in 2020.
+
 
 ```html
  +------------+--------------+-------------+------------+--------------+-------------+-------------+
@@ -3376,20 +3412,18 @@ Result table:
 -- Space: O(n + m)
 SELECT seller_name
 FROM seller s
-WHERE NOT EXISTS
-  (
+WHERE NOT EXISTS(
     SELECT 1
     FROM orders o
-    WHERE s.seller_id = o.seller_id AND o.sale_date >= '2020-01-01'
-  )
+    WHERE s.seller_id = o.seller_id 
+          AND o.sale_date >= '2020-01-01')
 ORDER BY 1;
 ```
 
 ## All Valid Triplets That Can Represent a Country
 
 Write an SQL query to find all the possible triplets representing the country under the given constraints.
-- Return the result table in any order.
-
+- `student_id` and `student_name` from different School can not be the same 
 ```
 SchoolA table:
 +------------+--------------+
@@ -3423,26 +3457,30 @@ Result table:
 | Bob      | Tom      | Alice    |
 +----------+----------+----------+
 ```
-- (Alice, Tom, Tom) --> Rejected because member_B and member_C have the same name and the same ID.
-- (Alice, Tom, Jerry) --> Valid triplet.
-- (Alice, Tom, Alice) --> Rejected because member_A and member_C have the same name.
-- (Bob, Tom, Tom) --> Rejected because member_B and member_C have the same name and the same ID.
-- (Bob, Tom, Jerry) --> Rejected because member_A and member_C have the same ID.
-- (Bob, Tom, Alice) --> Valid triplet.
+- `(Alice, Tom, Tom)`
+  -  Rejected because `member_B` and `member_C` have the same name and the same ID.
+- `(Alice, Tom, Jerry)` --> Valid triplet.
+- `(Alice, Tom, Alice)` 
+  - Rejected because `member_A` and `member_C` have the same name.
+- `(Bob, Tom, Tom)` 
+  - Rejected because `member_B` and `member_C` have the same name and the same ID.
+- `(Bob, Tom, Jerry)` 
+  - Rejected because `member_A` and `member_C` have the same ID.
+- `(Bob, Tom, Alice)` --> Valid triplet.
 
 ```sql
 SELECT a.student_name AS 'member_A',
-b.student_name AS 'member_B',
-c.student_name AS 'member_C'
+       b.student_name AS 'member_B',
+       c.student_name AS 'member_C'
 FROM SchoolA AS a
 JOIN SchoolB AS b
 ON a.student_id <> b.student_id
-AND a.student_name <> b.student_name
+   AND a.student_name <> b.student_name
 JOIN SchoolC AS c
 ON a.student_id <> c.student_id
-AND b.student_id <> c.student_id
-AND a.student_name <> c.student_name
-AND b.student_name <> c.student_name;
+   AND b.student_id <> c.student_id
+   AND a.student_name <> c.student_name
+   AND b.student_name <> c.student_name;
 
 # Time:  O(n^3)
 # Space: O(n^3)
