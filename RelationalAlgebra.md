@@ -103,23 +103,11 @@ THEN
 ![](https://i.imgur.com/IglA41f.png)  
 
 **Join operation is essentially a CARTESIAN PRODUCT followed by a selection criterion.**   
-
-- Relational Algebra : $R ⨝pS$    
+- Relational Algebra : $R ⨝pS$   
 
 ### JOIN TYPES
 
 ![image](https://user-images.githubusercontent.com/68631186/127828038-954c84aa-f5c1-459c-bc87-a8cb8e583997.png)   
-
-
-![](https://i.imgur.com/9v3HGUy.png)  
-- OUTER JOIN TYPES
-  > `I` : LEFT OUTER JOIN  
-  > `III` : RIGHT OUTER JOIN
-  > Full Outer Join
-- INNER JOIN (Condition Join)
-  - `II` 
-    - An inner join, only those tuples that satisfy the matching criteria are included, while the rest are EXCLUDED      
-  - `THETA JOIN`,`EQUI JOIN`, `NATURAL JOIN`
 
 ### NATURAL JOIN
 
@@ -129,20 +117,24 @@ FROM A
 NATURAL JOIN B
 
 -- is equal
+
 FROM A 
 INNER JOIN B
 ON A.c = B.c 
 ```
-- It's recommended Use `INNER JOIN` instead of using `NATURAL JOIN` 
 
+```diff
+- It's recommended Use `INNER JOIN` instead of using `NATURAL JOIN` 
+```
 
 ![](https://i.imgur.com/Y2dDe14.png)  
 
 ### THETA JOIN `θ`
-The GENERAL case of JOIN operation is called a Theta join.
+
+**The GENERAL case of JOIN operation is called a Theta join.**
 
 - Merging two tables with operation `=,＜,≦,＞,≧,≠`
-- `θ` are represented one of these operations
+  - `θ` are represented one of these operations
 
 ```diff
 (A X B) where A.X θ B.Y 
@@ -152,10 +144,9 @@ The GENERAL case of JOIN operation is called a Theta join.
 
 ### EQUI-JOIN
 
-When a theta join uses only equivalence condition, it becomes a equi join.   
-It merges Attributes from table A `=` Attributes from table B to form a desired table
-- A EQUI-JOIN TABLE may have contain duplicates
-
+When a `theta join` uses only equivalence (`=`) condition, it becomes a `equi join`.   
+- It merges `Attributes from table A = Attributes from table B` to form a desired table
+- **A EQUI-JOIN TABLE may have contain duplicates**
 ```sql
 FROM R,S WHERE (R.c == S.c)
 ```
@@ -163,13 +154,12 @@ FROM R,S WHERE (R.c == S.c)
 For example ::   
 ![](https://i.imgur.com/qO74Xdb.png)  
 ![](https://i.imgur.com/WdmmXj7.png)  
-- It contain duplicates columns (two 班級代號)
+- It contain duplicates columns (`學生.班級代號`) instead of `學生.班級代號` and `班級.班級代號`
+
 ### OUTER JOIN
 In an outer join, along with tuples that satisfy the matching criteria, we also include first (left outer join), second (right outer join) or all **tuples that do not match the criteria.**
 
-- **If tuples are not satisfied with the matching criteria , they will be set as `NULL` by default**
-
-The reason for using OUTER JOIN is because we don't want to miss any of information as merging two different tables
+- **If tuples are not satisfied with the matching criteria , the column will be assigned as `NULL` by default**
 
 ```sql
 SELECT *
@@ -187,35 +177,34 @@ FROM 老師資料表 AS A
 LEFT OUTER JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號
 ```
-- IF `老師資料表` can not reference the matching records => set `NULL` by default  
+- IF `老師資料表` can not reference the matching records from `課程資料表`, the colmns of `課程資料表` will be set `NULL` by default  
 
 ![image](https://user-images.githubusercontent.com/68631186/111078928-bff07d00-8532-11eb-9d77-aa6443b9e8f6.png)   
 
-If we want to query for a certain teacher who has no any lectures.    
-We can use `LEFT OUTER JOIN EXCLUDING INNER JOIN`   
+If we want to query for a certain teacher who has no any lectures.  
 ```sql
 SELECT *
 FROM 老師資料表 AS A 
 LEFT OUTER JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號
-WHERE B.老師編號 IS NULL /* Filter the Table that have been "left join" */
+WHERE B.老師編號 IS NULL
 ```
 
 ### RIGHT OUTER JOIN  
 
 ```diff
-  +----+---------+
+A +----+---------+
   | PK | Value   |
   +----+---------+
-- |  1 | both ab |<---+
+  |  1 | both ab |<---+
   |  2 | only a  |    |
   +----+---------+    |
 -                     |    ? return null
-  +----+---------+    |    |
+B +----+---------+    |    |
   | PK | Value   |    |    |
   +----+---------+    |    |
-- |  1 | both ab |----+    |
-- |  3 | only b  |---------+
+  |  1 | both ab |----+    |
+  |  3 | only b  |---------+
   +----+---------+
 
  +------+------+---------+---------+
@@ -227,9 +216,11 @@ WHERE B.老師編號 IS NULL /* Filter the Table that have been "left join" */
 ```
 
 ```sql
-SELECT A.PK, B.PK, A.Value, B.Value
-FROM Table_A RIGHT JOIN Table_B    
-ON A.PK = B.PK;
+SELECT A.PK, 
+       B.PK, A.Value, B.Value
+FROM Table_A 
+RIGHT JOIN Table_B    
+      ON A.PK = B.PK;
 ```
 
 ### FULL OUTER JOIN
@@ -237,12 +228,15 @@ ON A.PK = B.PK;
 ![image](https://user-images.githubusercontent.com/68631186/127832877-ae5fb919-7bff-4ff6-a57a-b5109c922975.png)  
 
 ```sql
-SELECT A.PK AS A_PK, B.PK AS B_PK,
-       A.Value AS A_Value, B.Value AS B_Value
+SELECT A.PK    AS A_PK, 
+       B.PK    AS B_PK,
+       A.Value AS A_Value, 
+       B.Value AS B_Value
 FROM Table_A A
 FULL OUTER JOIN Table_B B
 ON A.PK = B.PK;
 ```
+
 ## Interaction 
 Section belonging to both R and S   
 ![](https://i.imgur.com/gJiMj1e.png)    
@@ -253,7 +247,8 @@ Section belonging to both R and S
 Fro example
 ```sql
 SELECT *
-FROM 老師資料表 AS A RIGHT OUTER JOIN 課程資料表 AS B
+FROM 老師資料表 AS A 
+RIGHT OUTER JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號
 ORDER BY B.課程代碼
 ```
