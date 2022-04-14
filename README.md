@@ -8,7 +8,7 @@
 - **[Normalization](Normalization.md)**
 - **[RelationAlgebra](RelationalAlgebra.md)**
 - [VIEW](VIEW.md)
-- **[Data Base Questions](DataBaseLeetCode\solution.md)**
+- **[Question](DataBaseLeetCode/solution.md)**
 
 
 #### [Data Base Transaction](https://stackoverflow.com/questions/974596/what-is-a-database-transaction)
