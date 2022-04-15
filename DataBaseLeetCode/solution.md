@@ -923,13 +923,7 @@ ON a.x <> b.x;
 
 ## Biggest Single Number **
 
-Can Not use `ORDER BY num DESC LIMIT 1` if there is no such **bigger single number**
-
-```console
-Input: {"headers": {"number": ["num"]}, "rows": {"number": [[8],[1],[8],[3],[4],[3],[1],[4],[5],[5],[6],[6]]}}
-Output: {"headers":["num"],"values":[]}
-Expected: {"headers":["num"],"values":[[null]]}
-```
+Find The Biggest Single Number
 
 ```diff
 +---+
@@ -953,21 +947,46 @@ Expected: {"headers":["num"],"values":[[null]]}
 ```
 
 ```sql
-SELECT MAX(num) AS num FROM
-(
- SELECT num FROM my_numbers
- GROUP BY num
- HAVING COUNT(*) = 1
-) AS x;
+SELECT MAX(num) AS num 
+FROM (
+       /**
+        +---+----+
+        |num| cnt|
+        +---+----+
+        | 8 |  2 |
+        | 3 |  2 |
+        | 1 |  1 |
+        | 4 |  1 |
+        | 5 |  1 |
+        | 6 |  1 |
+        +---+----+
+       */
+       SELECT num 
+       FROM my_numbers
+       GROUP BY num
+       /**
+        +---+----+
+        |num| cnt|
+        +---+----+
+        | 1 |  1 |
+        | 4 |  1 |
+        | 5 |  1 |
+        | 6 |  1 |
+        +---+----+
+       */
+       HAVING COUNT(*) = 1 ) 
 ```
 
 
-## [Not Boring Movies](https://zhuanlan.zhihu.com/p/259714269)
+## [Not Boring Movies](https://zhuanlan.zhihu.com/p/259714269) **
+
+#### Concet
+- `mod(attribute, integer) = q`
 
 Please write a SQL query to output movies with an odd numbered `id` and a description that is not `boring`. 
+- Order the result by rating.
 
-Order the result by rating.
-```
+```diff
 +---------+-----------+--------------+-----------+
 |   id    | movie     |  description |  rating   |
 +---------+-----------+--------------+-----------+
@@ -978,7 +997,6 @@ Order the result by rating.
 |   5     | House card|   Interesting|   9.1     |
 +---------+-----------+--------------+-----------+
 
-
 +---------+-----------+--------------+-----------+
 |   id    | movie     |  description |  rating   |
 +---------+-----------+--------------+-----------+
@@ -987,19 +1005,23 @@ Order the result by rating.
 +---------+-----------+--------------+-----------+
 ```
 
-- via `mod(attribute, integer) = q`
 ```mysql
-SELECT * FROM cinema
-WHERE MOD(id, 2) = 1 AND description <> 'boring'
+SELECT * 
+FROM cinema
+WHERE MOD(id, 2) = 1 
+      AND description <> 'boring'
 ORDER BY rating DESC;
 ```
 
-
 ## [Swap Salary](https://zhuanlan.zhihu.com/p/259763823) **
-###### Keyword : `UPDATE ... SET` , `CASE WHEN THEN` , `IF()`
 
-Swap all `f` and `m` values (i.e. change all `f` values to `m` and vice versa) with a single update statement and no intermed5iate temp table.  
-```
+#### Concept
+- Usage of `CASE WHEN ... THEN ... END`
+ 
+Swap all `f` and `m` values   
+(i.e. change all `f` values to `m` and vice versa) with a single `update` statement and no intermediate temp table.  
+
+```diff
 +----+------+-----+--------+
 | id | name | sex | salary |
 |----|------|-----|--------|
@@ -1009,7 +1031,7 @@ Swap all `f` and `m` values (i.e. change all `f` values to `m` and vice versa) w
 | 4  | D    | f   | 500    |
 +----+------+-----+--------+
 
-After running your query, the above salary table should have the following rows:
+Result
 +----+------+-----+--------+
 | id | name | sex | salary |
 |----|------|-----|--------|
@@ -1019,8 +1041,7 @@ After running your query, the above salary table should have the following rows:
 | 4  | D    | m   | 500    |
 +----+------+-----+--------+
 ```
-
-- **Note that you must write a single update statement, DO NOT write any select statement for this problem.**
+- **Note that you must write a single update statement, DO NOT write any `SELECT` statement for this problem.**
 
 ```sql
 UPDATE salary 
@@ -1029,20 +1050,22 @@ SET sex = CASE sex
           WHEN 'f' THEN 'm' 
           END;    
 
-UPDATE salary SET sex = IF(sex = 'm', 'f', 'm');
+
+-- IF
+UPDATE salary 
+SET sex = IF(sex = 'm', 'f', 'm');
 
 -- XOR
-UPDATE salary SET sex = CHAR(ASCII(sex) ^ (ASCII('m') ^ ASCII('f')));
+UPDATE salary SET 
+sex = CHAR(ASCII(sex) ^ (ASCII('m') ^ ASCII('f')));
 ```
 
 
-## [Actors & Directors Cooperated >= 3 Times](https://zhuanlan.zhihu.com/p/259934531) **
-
-###### Keyword : `Group By two attribute`
+## [Actors & Directors Cooperated `>= 3` Times](https://zhuanlan.zhihu.com/p/259934531) **
 
 Write a SQL query for a report that provides the pairs (`actor_id`, `director_id`) where the actor have cooperated with the director **at least 3 times**.
 
-```html
+```diff
 ActorDirector table:
 +-------------+-------------+-------------+
 | actor_id    | director_id | timestamp   |
@@ -1062,7 +1085,6 @@ Result table:
 +-------------+-------------+
 | 1           | 1           |
 +-------------+-------------+
-The only pair is (1, 1) where they cooperated exactly 3 times.
 ```
 
 ```sql
