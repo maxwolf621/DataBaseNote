@@ -59,8 +59,73 @@ Merge two tables and remove duplicate data
 
 ![](https://i.imgur.com/QK08qqb.png)      
 
-> Relation Algebra : $R \cup S$    
-> : ![](https://i.imgur.com/otdaoWf.png)    
+Relation Algebra : $R \cup S$  
+![](https://i.imgur.com/otdaoWf.png)    
+
+```mysql
+
+Branch A                  Branch B
++---+--------------+      +---+--------------+
+| id| Product_name |      | id| Product_name |
++---+--------------+      +---+--------------+
+| 1 | TV           |      | 1 | PS4          |
++---+--------------+      +---+--------------+
+| 2 | MP4 player   |      | 2 | PSX          |
++---+--------------+      +---+--------------+
+| 3 | PS6          |      | 3 | PS6          |
++---+--------------+      +---+--------------+
+
+SELECT A.product_name 
+  FROM A
+UNION
+SELECT B.product_name 
+  FROM B;
+
++--------------+
+| Product_name |
++--------------+
+| TV           |
++--------------+
+| MP4 player   |
++--------------+
+| PS6          |
++--------------+
+| PS4          |
++--------------+
+| PSX          |
++--------------+
+
+```
+
+### `UNION ALL`
+
+KEEP THE DUPLICATES
+
+```mysql
+SELECT A.product_name 
+  FROM A
+UNION ALL
+SELECT B.product_name 
+  FROM B;
+  
+  
+
++--------------+
+| Product_name |
++--------------+
+| TV           |
++--------------+
+| MP4 player   |
++--------------+
+| PS6          |
++--------------+
+| PS4          |
++--------------+
+| PSX          |
++--------------+
+| PS6          |
++--------------+
+```
 
 ## CARTESIAN PRODUCT `R X S`
 
