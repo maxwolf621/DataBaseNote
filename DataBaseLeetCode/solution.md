@@ -1,37 +1,38 @@
 
-## Reference
+- [QUESTIONS](https://zhuanlan.zhihu.com/p/265354299)     
+- [QUESTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)    
 
-[QUESTION EASY](https://zhuanlan.zhihu.com/p/265354299)     
-[QUESTION SOLUTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)    
-[`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)    
-[`HAVING`](https://www.yiibai.com/mysql/having.html)    
-[`GROUP BY`](https://blog.csdn.net/u014717572/article/details/80687042)    
-[`JOIN` and `INNER JOIN`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)   
-[`union` and `union all`](https://www.fooish.com/sql/union.html)    
-[`JOIN ... WHERE ...`](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)     
-[Sql summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)  
-[`Count`](https://www.fooish.com/sql/count-function.html)
+## REVIEW
+
+- [`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)    
+- [`HAVING`](https://www.yiibai.com/mysql/having.html)    
+- [`JOIN ... WHERE ...` VS `ON` ](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)     
+- [`Count`](https://www.fooish.com/sql/count-function.html)   
+- [`IFNULL( expr , alt_returned_val_if_expr_is_null`](https://www.w3schools.com/sql/func_mysql_ifnull.asp)  
+- [`OUTER JOIN`, `INNER JOIN` and `EQUI JOIN`](https://github.com/maxwolf621/DataBaseNote/blob/main/RelationalAlgebra.md#join)     
+  - [`JOIN` and `INNER JOIN`](https://stackoverflow.com/questions/565620/difference-between-join-and-inner-join)      
+- [`UNION` and `UNION ALL`](https://github.com/maxwolf621/DataBaseNote/blob/main/RelationalAlgebra.md#union)     
+- [Sql Summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)   
 
 ## [Tips](https://github.com/shawlu95/Beyond-LeetCode-SQL)  
 
-- Using the `like` operator and wildcards (flexible search)
-
-- Avoiding the `or` operator, use `in` operator
+1. Using the `like` operator and wildcards (flexible search)
+2. Avoiding the `or` operator, use `in` operator
   - data retrieval is measurably faster by replacing `OR` conditions with the `IN` predicate
-- Avoiding the `HAVING` clause
+3. Avoiding the `HAVING` clause
   1. try to frame the restriction earlier (`where` clause)  
   2. try to keep `HAVING` clause **SIMPLE** (use constant, not function)  
-- Avoiding large SORT operations
+4. Avoiding large SORT operations
   - it is best to schedule queries with large sorts as periodic batch processes during off-peak database usage so that the performance of most user processes is not affected.
 
-- Prefer stored procedure
+5. Prefer stored procedure
   - compiled and permanently stored in the database in an executable format.
-- Disabling indexes during batch loads
+6. Disabling indexes during batch loads
   - When the batch load is complete, you should rebuild the indexes.
   - reduction of fragmentation that is found in the index
-- cost-based optimization
+7. cost-based optimization
   - Check database server manual
-- Use`view`
+8. Use`view`
   - Keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
 
 ## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
@@ -80,15 +81,17 @@ Write an SQL query to find the average selling price for each product.
 ```
 
 ```sql
-SELECT UnitsSold.product_id, round(sum(units*price)/sum(units), 2) AS average_price
+SELECT UnitsSold.product_id, 
+       ROUND(SUM(units*price)/SUM(units), 2) AS average_price
 FROM UnitsSold 
-Inner join Prices
+INNER JOIN Prices
 ON UnitsSold.product_id = Prices.product_id
-AND UnitsSold.purchase_date between Prices.start_date AND Prices.end_date
+AND UnitsSold.purchase_date 
+    BETWEEN Prices.start_date AND Prices.end_date
 GROUP BY UnitsSold.product_id
 ```
 
-## [Sales Analysis I](https://code.dennyzhang.com/sales-analysis-i)    
+## [Sales Analysis I](https://code.dennyzhang.com/sales-analysis-i) **
 
 Write an SQL query that reports the best seller by total sales price, If there is a tie, report them all.  
 ```diff
@@ -124,9 +127,10 @@ Write an SQL query that reports the best seller by total sales price, If there i
 SELECT seller_id
 FROM Sales
 GROUP BY seller_id
+
+--In CASE of a tie using HAVING SUM(price) = 2800
 HAVING SUM(price) = SELECT SUM(price)
                     FROM Sales
-                    /** Find The Best Seller **/
                     GROUP BY seller_id
                     ORDER BY SUM(price) DESC
                     LIMIT 1
@@ -165,18 +169,24 @@ Result table:
 +--------------+-------+-------+
 ```
 ```sql
-SELECT S.product_name, S.year, S.price
+SELECT S.product_name, 
+       S.year, 
+       S.price
 FROM Sales AS S
 LEFT JOIN Product AS P
 ON S.product_id = P.product_id
 ```
-## [Second Highest Salary](https://zhuanlan.zhihu.com/p/250015043)
+## [Second Highest Salary](https://zhuanlan.zhihu.com/p/250015043) **
 
-- Concept : `LIMIT ... OFFSET ...`
+#### Concept 
+- `LIMIT ... OFFSET ...`
+- `IFNULL( ... , ..)`
 
 Write a SQL query to get the second highest salary from the Employee Table.    
+- If there is no second highest salary, then the query should return `null`.
 
-For example, given the above `Employee` table, the query should return `200` as the second highest salary.  
+- THINK : a tie existing ?
+
 ```diff
 +----+--------+
 | Id | Salary |
@@ -191,13 +201,15 @@ For example, given the above `Employee` table, the query should return `200` as 
 +---------------------+
 | 200                 |
 +---------------------+
-- If there is no second highest salary, then the query should return null.
 ```
 
 ```mysql
-select ifnull((
-       select Salary from Employee
-       group by Salary order by Salary desc limit 1,1), null) as SecondHighestSalary
+SELECT IFNULL(
+      (SELECT Salary 
+       FROM Employee
+       GROUP BY Salary 
+       ORDER BY Salary DESC LIMIT 1,1), NULL) 
+AS SecondHighestSalary
 
 SELECT
  (SELECT DISTINCT Salary
@@ -227,18 +239,30 @@ Person Table :
 ```
 
 ```sql
-SELECT Email FROM
-  -- Showing Total count of Each E-Mail
- (SELECT Email, COUNT(id) AS num 
-  FROM Person GROUP BY Email) AS tmp
+
+/**
+--------------+------+
+|  Email      | num  |
+--------------+------+
+| a@b.com     | 2    |
+| c@d.com     | 1    |
++-------------+------+
+**/
+SELECT Email 
+-- Showing Total count of Each E-Mail
+FROM (SELECT Email,
+             COUNT(id) AS num 
+      FROM Person 
+      GROUP BY Email) AS tmp
 WHERE num > 1;
 ```
 
 ```sql
-SELECT DISTINCT p.Email FROM Person AS p
+SELECT DISTINCT p.Email
+FROM Person AS p
 JOIN Person AS p2
 ON p.Email = p2.Email
-   AND p.Id <> p2.Id;
+AND p.Id <> p2.Id;
 ```
 
 ## [Customers Who Never Order](https://zhuanlan.zhihu.com/p/251983949)
@@ -263,11 +287,12 @@ Write an SQL query to find all dates' id with higher temperature compared to its
 
 - [lag Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-lag-function/)  
 
-## [Delete Duplicate Emails](https://zhuanlan.zhihu.com/p/252243481)   
+## [Delete Duplicate Emails](https://zhuanlan.zhihu.com/p/252243481)  **
 
 Write a SQL query to `DELETE` all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id.  
 For example, after running your query, the above Person table should have the following rows:  
-```
+
+```diff
 +----+------------------+
 | Id | Email            |
 +----+------------------+
@@ -287,18 +312,13 @@ Result
 
 Concept   
 Zwei Tabellen vergleichen via
-1. `DELETE FROM ... WHERE ... NOT IN (NESTED QUERY) ` 
-2. `DELETE FROM ... WHERE ... AND ...`
+1. `DELETE FROM table WHERE table.column NOT IN (NESTED QUERY) ` 
+2. `DELETE FROM table WHERE ... AND ...`
 
-```diff
-TABLE B
-+----+------------------+
-| Id | Email            |
-+----+------------------+
-| 1  | john@example.com |
-| 2  | bob@example.com  |
-+----+------------------+
-
+```sql
+DELETE FROM Person AS P
+WHERE Id NOT IN
+/**
 TMP      P
 +----+   +----+
 |Id  |   | Id | 
@@ -307,11 +327,7 @@ TMP      P
 | 2  |   | 2  | 
 +----+   | 3  | 
          +----+
-```
-
-```sql
-DELETE FROM Person AS P
-WHERE Id NOT IN
+*/
 (SELECT MinId -- Table with no duplicate emails
  FROM (SELECT Email, 
               MIN(Id) AS MinId
@@ -319,7 +335,8 @@ WHERE Id NOT IN
        GROUP BY Email) AS TMP)
 ```
 
-```diff
+```mysql
+/**
 TABLE P
 +----+------------------+
 | Id | Email            |
@@ -337,16 +354,14 @@ TABLE TMP                    |
 | 2  | bob@example.com  |
 | 3  | john@example.com |
 +----+------------------+
-```
-```sql
+*/
 DELETE P 
 FROM Person P, Person TMP
 WHERE P.Id > TMP.Id 
       AND P.Email = TMP.Email
 ```
 
-## [Game Play Analysis I](https://zhuanlan.zhihu.com/p/254355214)
-
+## [Game Play Analysis I](https://zhuanlan.zhihu.com/p/254355214) 
 
 Write an SQL query that reports the first login date for each player.
 
@@ -376,9 +391,9 @@ Result table:                                            |   |     |
 +-----------+-------------+
 ```
 
-```diff
-
-- Group By player_id
+```sql
+/**
+Group By player_id
 +-----------+-----------+------------+--------------+
 | player_id | device_id | event_date | games_played |
 +-----------+-----------+------------+--------------+
@@ -399,9 +414,7 @@ Result table:                                            |   |     |
 | 2         | 2017-06-25      |
 | 3         | 2016-03-02      |
 +-----------+-----------------+
-```
-
-```sql
+*/
 SELECT player_id, 
        min(event_date) AS first_login
 FROM activity 
@@ -433,30 +446,30 @@ Result table:
 | 3         | 1         |
 +-----------+-----------+
 ```
-
-```diff
-Table Result
-+-----------+-----------+------------+--------------+
-| player_id | device_id | event_date | games_played |
-+-----------+-----------+------------+--------------+
-| 1         | 2         | 2016-03-01 | 5            |
-| 1         | 2         | 2016-05-02 | 6            |----------+
-| 2         | 3         | 2017-06-25 | 1            |----+     |
-| 3         | 1         | 2016-03-02 | 0            |--+  |    |  
-| 3         | 4         | 2018-07-03 | 5            |  |  |    |
-+-----------+-----------+------------+--------------+  |  |    |
-                                                       |  |    |
-TMP                                                    |  |    |
-+-----------+-----------+------------+--------------+  |  |    |
-| player_id | device_id | event_date | games_played |  |  |    |
-+-----------+-----------+------------+--------------+  |  |    |
-| 1         | 2         | 2016-03-01 | 5            |<-|--|----+    
-| 2         | 3         | 2017-06-25 | 1            |<-|--+
-| 3         | 1         | 2016-03-02 | 0            |<-+
-+-----------+-----------+------------+--------------+
-```
 ```sql
-SELECT player_id, device_id 
+/**
+  Table Result
+  +-----------+-----------+------------+--------------+
+  | player_id | device_id | event_date | games_played |
+  +-----------+-----------+------------+--------------+
+  | 1         | 2         | 2016-03-01 | 5            |
+  | 1         | 2         | 2016-05-02 | 6            |----------+
+  | 2         | 3         | 2017-06-25 | 1            |----+     |
+  | 3         | 1         | 2016-03-02 | 0            |--+  |    |  
+  | 3         | 4         | 2018-07-03 | 5            |  |  |    |
+  +-----------+-----------+------------+--------------+  |  |    |
+                                                         |  |    |
+  TMP                                                    |  |    |
+  +-----------+-----------+------------+--------------+  |  |    |
+  | player_id | device_id | event_date | games_played |  |  |    |
+  +-----------+-----------+------------+--------------+  |  |    |
+  | 1         | 2         | 2016-03-01 | 5            |<-|--|----+    
+  | 2         | 3         | 2017-06-25 | 1            |<-|--+
+  | 3         | 1         | 2016-03-02 | 0            |<-+
+  +-----------+-----------+------------+--------------+
+*/
+SELECT player_id, 
+       device_id 
 FROM Activity AS Result
 WHERE player_id 
 IN (SELECT player_id, 
@@ -509,8 +522,11 @@ USING (empId)
 WHERE IFNULL(bonus, 0) < 1000　　
 ```
 
-```
-JOIN TABLE
+
+```sql
+SELECT a.name, b.bonus
+FROM Employee AS a
+/**
 +-------+--------+-----------+--------+-------+-------+
 | empId |  name  | supervisor| salary | empId | bonus |
 +-------+--------+-----------+--------+-------+-------+
@@ -519,18 +535,14 @@ JOIN TABLE
 |   3   | Brad   |  null     | 4000   |  NA   |  NA   |
 |   4   | Thomas |  3        | 4000   |  4    | 2000  |
 +-------+--------+-----------+--------+-------+-------+
-```
-
-```sql
-SELECT a.name, b.bonus
-FROM Employee AS a
+**/
 LEFT JOIN Bonus AS b
 ON a.empId = b.empId
 WHERE b.bonus < 1000 
       OR b.bonus IS NULL;
 ```
 
-## [Customer Placing the Largest Number of Orders](https://zhuanlan.zhihu.com/p/258700620)
+## [Customer Placing the Largest Number of Orders](https://zhuanlan.zhihu.com/p/258700620) **
 
 Query the `customer_number` from the orders table for the customer who has placed the largest number of orders.
 - It is guaranteed that exactly one customer will have placed more orders than any other customer.
@@ -555,14 +567,15 @@ Sample Output
 ```
 
 ```sql
--- +--------------+-----------------+
--- | COUNT(*)     | customer_number |
--- |--------------|-----------------|
--- | 2            | 3               |
--- | 1            | 2               |
--- | 1            | 1               |
--- +--------------+-----------------+
-
+/**
+  +--------------+-----------------+ 
+  |COUNT(*)      | customer_number |
+  |--------------|-----------------|
+  | 2            | 3               |
+  | 1            | 2               |
+  | 1            | 1               |
+  +--------------+-----------------+
+*/
 SELECT customer_number 
 FROM orders
 GROUP BY customer_number 
@@ -581,7 +594,7 @@ HAVING COUNT(customer_number) >= ALL(SELECT COUNT(customer_number)
 
 ## [Find Customer Referee](https://zhuanlan.zhihu.com/p/258694894)
 
-Write a query to return the list of customers NOT referred by the person with id '2'.
+Write a query to return the list of customers NOT referred by the person with id `2`.
 Given a table customer holding customers information and the referee.
 
 ```diff
@@ -606,9 +619,6 @@ Given a table customer holding customers information and the referee.
 +------+
 ```
 
-- using `NOT IN`
-- using `IS NULL`
-- using `IFNULL()`
 ```sql
 SELECT name 
 FROM customer 
@@ -616,8 +626,9 @@ WHERE referee_id <> 2 OR referee_id IS NULL;
 
 -- NOT IN
 SELECT name FROM customer WHERE
-id NOT IN
-(SELECT id FROM customer WHERE referee_id = 2);
+id NOT IN (SELECT id 
+           FROM customer W
+           HERE referee_id = 2);
 
 -- IFNULL
 SELECT name FROM customer
@@ -626,7 +637,9 @@ WHERE IFNULL(referee_id, 0) <> 2;
 
 ## [Classes More Than 5 Students](https://zhuanlan.zhihu.com/p/258705251)
 
-Please list out all classes which have more than or equal to 5 students.
+Please list out all classes which have more than or equal to `5` students.
+
+Question : is `[student,class]` PK? 
 
 ```
 Courses 
@@ -664,8 +677,7 @@ WHERE num >= 5;
 ## [Consecutive Available Seats](https://zhuanlan.zhihu.com/p/259420594) **
 
 Query all the consecutive available seats order by the `seat_id` using the following cinema table
-- The `seat_id` is an auto increment `int`, and free is bool 
-  - `1` means free, and `0` means occupied.
+- The `seat_id` is an auto increment `int`, and free is bool `1` means free, and `0` means occupied.
 - Consecutive available seats are **more than 2(inclusive) seats consecutively available.**
 
 ```diff
@@ -676,16 +688,6 @@ Query all the consecutive available seats order by the `seat_id` using the follo
 | 2       | 0    |
 | 3       | 1    |
 | 4       | 1    |
-| 5       | 1    |
-+---------+------+
-
-+---------+------+
-| seat_id | free |
-|---------|------|
-| 1       | 1    |
-| 2       | 0    |
-| 3       | 1    |
-| 4       | 1    | 
 | 5       | 1    |
 +---------+------+
 
@@ -703,9 +705,21 @@ first find
 2. check free 
 
 ```sql
+/**
+ 
++---------+------+
+| seat_id | free |
+|---------|------|
+| 1       | 1    |
+| 2       | 0    |
+| 3       | 1    |
+| 4       | 1    | 
+| 5       | 1    |
++---------+------+     
+*/
 SELECT DISTINCT a.seat_id             
-FROM
-    cinema a JOIN cinema b ON
+FROM cinema a 
+JOIN cinema b ON
     /**
       * Consecutive seats
       */
@@ -713,19 +727,21 @@ FROM
     /**
       * a.free = TRUE AND b.free = TRUE
       */
-    a.free = 1 AND 
-    b.free = 1
+    a.free = 1 AND b.free = 1
 ORDER BY a.seat_id
 
-SELECT DISTINCT c1.seat_id from cinema c1, cinema c2 
+
+SELECT DISTINCT c1.seat_id 
+FROM cinema c1, cinema c2 
 WHERE (c1.seat_id + 1 = c2.seat_id or c1.seat_id-1 = c2.seat_id) -- consecutive seats
-AND(c1.free=TRUE and c2.free=TRUE)
+       AND (c1.free=TRUE and c2.free=TRUE)
 ORDER BY a.seat_id;
 ```
 
 ## [Friend Requests I: Overall Acceptance Rate](https://zhuanlan.zhihu.com/p/258790804) **
 
 Write a query to find the overall acceptance rate of requests rounded to 2 decimals, which is the number of acceptance divides the number of requests.
+
 ```diff
 friend_request
 +-----------+------------+------------+
@@ -763,29 +779,29 @@ RESULT
 SELECT
 ROUND(
     IFNULL(
-    (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM request_accepted) AS r)/
-    (SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM friend_request) AS a),
-    0)
+    (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM request_accepted) AS r)
+     /(SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM friend_request) AS a), 0)
 , 2) AS accept_rate;
-```
 
 
-```sql
-select coalesce(
-       round(count(distinct requester_id, accepter_id)/
-       count(distinct sender_id, send_to_id),2),
-       0) 
-       as accept_rate
-from friend_request, request_accepted
-```
+SELECT coalesce(
+       ROUND(count(distinct requester_id, accepter_id)/
+       COUNT(distinct sender_id, send_to_id),2), 0) 
+       AS accept_rate
+FROM friend_request, request_accepted
 
-```sql
-/** concat **/
+
+/** 
+ concat( ... , ..) 
+**/
 SELECT 
-round(ifnull((SELECT count(distinct(concat(requester_id,',', accepter_id))) 
-from request_accepted) /
-(SELECT count(distinct(concat(sender_id,',', send_to_id))) 
-from friend_request), 0),2) as accept_rate
+
+-- ROUND( IFNULL( expr, nu
+ROUND(IFNULL(
+         (SELECT COUNT(DISTINCT(CONCAT(requester_id, ',' , accepter_id))) FROM request_accepted) / 
+         (SELECT COUNT(DISTINCT(CONCAT(sender_id,',', send_to_id))) FROM friend_request)
+         , 0) , 2) 
+AS accept_rate
 ```
 
 ## [Sales Person](https://zhuanlan.zhihu.com/p/259424830) **
