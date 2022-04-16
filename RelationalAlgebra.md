@@ -174,18 +174,17 @@ THEN
 
 ![image](https://user-images.githubusercontent.com/68631186/127828038-954c84aa-f5c1-459c-bc87-a8cb8e583997.png)   
 
-### NATURAL JOIN
+### NATURAL JOIN/ INNER JOIN/ JOIN
 
 ```sql
 -- SYNTAX
-FROM A 
-NATURAL JOIN B
+FROM R 
+NATURAL JOIN C
 
 -- is equal
-
-FROM A 
-INNER JOIN B
-ON A.c = B.c 
+FROM R
+INNER JOIN S
+ON R.c = S.c 
 ```
 
 ```diff
@@ -193,6 +192,7 @@ ON A.c = B.c
 ```
 
 ![](https://i.imgur.com/Y2dDe14.png)  
+- No Duplicates For Matching Column of Both R and C 
 
 ### THETA JOIN `θ`
 
@@ -229,7 +229,7 @@ In an outer join, along with tuples that satisfy the matching criteria, we also 
 ```sql
 SELECT *
 FROM TableA 
-[RIGHT|LEFT] [OUTER JOIN] TableB
+[RIGHT|LEFT] [OUTER] JOIN TableB
 ON TableA.PK = TableB.FK
 ```
 
@@ -250,7 +250,7 @@ If we want to query for a certain teacher who has no any lectures.
 ```sql
 SELECT *
 FROM 老師資料表 AS A 
-LEFT OUTER JOIN 課程資料表 AS B
+LEFT JOIN 課程資料表 AS B
 ON A.老師編號 = B.老師編號
 WHERE B.老師編號 IS NULL
 ```
@@ -258,34 +258,22 @@ WHERE B.老師編號 IS NULL
 ### RIGHT OUTER JOIN  
 
 ```diff
-A +----+---------+
-  | PK | Value   |
-  +----+---------+
-  |  1 | both ab |<---+
-  |  2 | only a  |    |
-  +----+---------+    |
--                     |    ? return null
-B +----+---------+    |    |
-  | PK | Value   |    |    |
-  +----+---------+    |    |
-  |  1 | both ab |----+    |
-  |  3 | only b  |---------+
-  +----+---------+
-
- +------+------+---------+---------+
- | A_PK | B_PK | A_Value | B_Value |
- +------+------+---------+---------+
- |    1 |    1 | both ab | both ba |
- | NULL |    3 | NULL    | only b  |
- +------+------+---------+---------+
+  A                   B                    Result
+  +----+---------+    +----+---------+     +------+------+---------+---------+        
+  | PK | A_VAL   |    | PK | B_VAL   |     | A_PK | B_PK | A_VAL   | B_VAL   |        
+  +----+---------+    +----+---------+     +------+------+---------+---------+        
+  |  1 | x       |    |  1 | y       |     |    1 |    1 | x       | y       |        
+  |  2 | xx      |    |  3 | yy      |     | NULL |    3 | xx      | yy      |            
+  +----+---------+    +----+---------+     +------+------+---------+---------+        
 ```
-
 ```sql
 SELECT A.PK, 
-       B.PK, A.Value, B.Value
+       B.PK, 
+       A.A_VAL, 
+       B.B_VAL
 FROM Table_A 
 RIGHT JOIN Table_B    
-      ON A.PK = B.PK;
+ON A.PK = B.PK;
 ```
 
 ### FULL OUTER JOIN
