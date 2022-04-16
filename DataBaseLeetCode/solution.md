@@ -1076,8 +1076,8 @@ UPDATE salary SET
 sex = CHAR(ASCII(sex) ^ (ASCII('m') ^ ASCII('f')));
 ```
 
-
-## [Actors & Directors Cooperated `>= 3` Times](https://zhuanlan.zhihu.com/p/259934531) **
+## Actors & Directors Cooperated `>= 3` Times**
+- [solution](https://zhuanlan.zhihu.com/p/259934531) 
 
 Write a SQL query for a report that provides the pairs (`actor_id`, `director_id`) where the actor have cooperated with the director **at least 3 times**.
 
@@ -1104,100 +1104,51 @@ Result table:
 ```
 
 ```sql
-SELECT actor_id, director_id FROM ActorDirector
+/**
+    +-------------+-------------+-------------+
+    | actor_id    | director_id | timestamp   |
+    +-------------+-------------+-------------+
+    | 1           | 1           | 0           |
+    |             |             | 1           |
+    |             |             | 2           |
+    |-----------------------------------------|
+    | 1           | 2           | 3           |
+    | 1           | 2           | 4           |
+    |-----------------------------------------|
+    | 2           | 1           | 5           |
+    | 2           | 1           | 6           |
+    +-------------+-------------+-------------+
+*/
+SELECT actor_id, 
+       director_id 
+FROM ActorDirector
 GROUP BY actor_id, director_id
 HAVING COUNT(timestamp) >= 3;
 ```
 
-## [Product Sales Analysis I](https://zhuanlan.zhihu.com/p/259935444)
-
-Write an SQL query that reports all product names of the products in the Sales table along with their selling year and price.
-
-```diff
-Sales table
-  +---------+------------+------+----------+-------+
-- | sale_id | product_id | year | quantity | price |
-  +---------+------------+------+----------+-------+ 
-  | 1       | 100        | 2008 | 10       | 5000  |
-  | 2       | 100        | 2009 | 12       | 5000  |
-  | 7       | 200        | 2011 | 15       | 9000  |
-  +---------+------------+------+----------+-------+
-
-Product table:
-  +------------+--------------+
-- | product_id | product_name |
-  +------------+--------------+
-  | 100        | Nokia        |
-  | 200        | Apple        |
-  | 300        | Samsung      |
-  +------------+--------------+
-
-Result table:
-  +--------------+-------+-------+
-- | product_name | year  | price |
-  +--------------+-------+-------+
-  | Nokia        | 2008  | 5000  |
-  | Nokia        | 2009  | 5000  |
-  | Apple        | 2011  | 9000  |
-  +--------------+-------+-------+
-```
-
-```sql
-SELECT P.product_name, S.year,  S.price
-FROM Sales AS S
-LEFT JOIN Product AS P
-ON S.product_id = P.product_id;
-```
-
-## [Product Sales Analysis II](https://zhuanlan.zhihu.com/p/259937061)
-
-Write an SQL query that reports the total quantity sold for every product id.
-
-```sql
-SELECT product_id, SUM(quantity) AS total_quantity
-FROM Sales
-GROUP BY product_id;
-```
-
 ## [Project Employees I](https://zhuanlan.zhihu.com/p/259948436)
-###### Keyword : `INNER JOIN`
 
 Write an SQL query that reports **the average experience years of all the employees for each project**, rounded to 2 digits.
 ```diff
-Project table:
+  Project                          Employee
+  +-------------+-------------+    +-------------+--------+------------------+
+  | project_id  | employee_id |    | employee_id | name   | experience_years |
+  +-------------+-------------+    +-------------+--------+------------------+
+  | 1           | 1           |    | 1           | Khaled | 3                |
+  | 1           | 2           |    | 2           | Ali    | 2                |
+  | 1           | 3           |    | 3           | John   | 1                |
+  | 2           | 1           |    | 4           | Doe    | 2                |
+  | 2           | 4           |    +-------------+--------+------------------+
   +-------------+-------------+
-- | project_id  | employee_id |
-  +-------------+-------------+
-  | 1           | 1           |
-  | 1           | 2           |
-  | 1           | 3           |
-  | 2           | 1           |
-  | 2           | 4           |
-  +-------------+-------------+
-
-Employee table:
-  +-------------+--------+------------------+
-- | employee_id | name   | experience_years |
-  +-------------+--------+------------------+
-  | 1           | Khaled | 3                |
-  | 2           | Ali    | 2                |
-  | 3           | John   | 1                |
-  | 4           | Doe    | 2                |
-  +-------------+--------+------------------+ 
   
 Result table:
   +-------------+---------------+
-- | project_id  | average_years |
+  | project_id  | average_years |
   +-------------+---------------+
   | 1           | 2.00          |
   | 2           | 2.50          |
   +-------------+---------------+
-
-+ The average experience years 
-  for the first project is (3 + 2 + 1) / 3 = 2.00 and 
-  for the second project is (3 + 2) / 2 = 2.50
 ```
-
 
 ```sql
 -- +-------------+--------+-------------------------------+
@@ -1215,14 +1166,18 @@ Result table:
 SELECT P.project_id, 
        ROUND(AVG(E.experience_years),2) AS average_years 
 FROM Project AS P
-     [INNER] JOIN Employee AS E
+     JOIN Employee AS E
      ON P.employee_id = E.employee_id
-GROUP BY P.project_id;
+GROUP BY P.project_id
+-- SQL Server also treats NULL values as smaller than any non-NULL values. 
 ORDER BY NULL 
 ```
 ## Project Employees II
 
 Write an SQL query that reports **all the projects** that have the most employees.
+
+- !! may have a tie situation
+
 ```diff
   Project table:
   +-------------+-------------+
@@ -1234,7 +1189,6 @@ Write an SQL query that reports **all the projects** that have the most employee
   | 2           | 1           |
   | 2           | 4           |
   +-------------+-------------+
-
 
   Result table:
   +-------------+
@@ -1248,9 +1202,8 @@ Write an SQL query that reports **all the projects** that have the most employee
 -- Time:  O(n)
 -- Space: O(n)
 
-/**
-  FIND THE MAX (MAY CONTAINS TWO SAME MAXIMUMS)
-
+/** 
+  -- IF THERE IS NO TIE IN THE TABLE
   SELECT project_id 
   FROM   project 
   GROUP  BY project_id 
@@ -1279,7 +1232,7 @@ Write an SQL query that reports **all the projects** that have the most employee
 */
 ```
 
-```
+```mysql 
 SELECT project_id 
 FROM   project 
 GROUP  BY project_id 
@@ -1319,7 +1272,7 @@ Write an SQL query that reports the best seller by total sales price, If there i
   | 3          | iPhone       | 1400       |
   +------------+--------------+------------+
 
-  Sales table:
+  Sales table(This table has no primary key, it can have repeated rows.)
   +-----------+------------+----------+------------+----------+-------+
   | seller_id | product_id | buyer_id | sale_date  | quantity | price |
   +-----------+------------+----------+------------+----------+-------+
@@ -1328,7 +1281,6 @@ Write an SQL query that reports the best seller by total sales price, If there i
   | 2         | 2          | 3        | 2019-06-02 | 1        | 800   |
   | 3         | 3          | 4        | 2019-05-13 | 2        | 2800  |
   +-----------+------------+----------+------------+----------+-------+
-+ This table has no primary key, it can have repeated rows.
 
   Result table:
   +-------------+
@@ -1337,8 +1289,9 @@ Write an SQL query that reports the best seller by total sales price, If there i
   | 1           |
   | 3           |
   +-------------+
-+ Both sellers with id 1 and 3 sold products with the most total price of 2800.
 ```
+- Both sellers with id `1 `and `3` sold products with the most total price of `2800`.
+
 
 ```sql
 WITH tmp AS (
@@ -1361,16 +1314,15 @@ WHERE rnk = 1;
   | 3         | 3          | 4        | 2019-05-13 | 2        | 2800  |
   +-----------+------------+----------+------------+----------+-------+
 
-select seller_id
-from Sales
-group by seller_id
+SELECT seller_id
+FROM Sales
+GROUP by seller_id
 HAVING sum(price) = (
-    SELECT sum(price)
-    FROM Sales
-    GROUP BY seller_id
-    ORDER BY sum(price) desc
-    LIMIT 1
-    )
+        SELECT sum(price)
+        FROM Sales
+        GROUP BY seller_id
+        ORDER BY sum(price) desc
+        LIMIT 1)
 ```
 
 ## Sales Analysis II **
@@ -1385,8 +1337,6 @@ Write an SQL query that reports the buyers who have bought `S8` but not `iPhone`
   +-------------+
   | 1           |
   +-------------+
-- The buyer with id 1 bought an S8 but didn't buy an iPhone.
-- The buyer with id 3 bought both.
 ```
 
 ```sql
@@ -1397,9 +1347,14 @@ WITH tmp AS (
   ON a.product_id = b.product_id
 )
 
-SELECT DISTINCT buyer_id FROM tmp
-WHERE buyer_id NOT IN (SELECT buyer_id FROM tmp WHERE product_name = 'iPhone')
-AND buyer_id IN (SELECT buyer_id FROM tmp WHERE product_name = 'S8');
+SELECT DISTINCT buyer_id 
+FROM tmp
+WHERE buyer_id NOT IN ( SELECT buyer_id 
+                        FROM tmp 
+                        WHERE product_name = 'iPhone')
+                        AND buyer_id IN ( SELECT buyer_id 
+                                          FROM tmp 
+                                          WHERE product_name = 'S8');
 
 /** nested query with JOIN **/
 SELECT distinct buyer_id
@@ -1407,16 +1362,16 @@ FROM Sales
 INNER JOIN Product
 WHERE Sales.product_id = Product.product_id 
       AND Product_name = 'S8'
-      AND buyer_id NOT IN
-      /** Buyer who bought Iphone**/
-      (SELECT distinct buyer_id
-       FROM Sales 
-       INNER JION Product
-       WHERE Sales.product_id = Product.product_id
-             AND product_name = 'iPhone')
+      AND buyer_id NOT IN (SELECT distinct buyer_id
+                            FROM Sales 
+                            INNER JION Product
+                            WHERE Sales.product_id = Product.product_id
+                            AND product_name = 'iPhone')
 ```
 
 ## Sales Analysis III **
+
+
 Write an SQL query that selects the `product_id`, `year`, `quantity`, and `price` for the first year of every product sold.
 ```diff
   Sales table:
@@ -1483,12 +1438,14 @@ That is, between `2019-01-01` and `2019-03-31` inclusive.
   +-----------+------------+----------+------------+----------+-------+
   
 SELECT DISTINCT a.product_id, 
-       b.product_name FROM Sales AS a
+       b.product_name 
+FROM Sales AS a
 JOIN Product AS b
 ON a.product_id = b.product_id
 WHERE a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date < '2019-01-01')
 AND a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date > '2019-03-31');
 
+-- Withou JOIN
 SELECT product_id, 
        product_name 
 FROM   product 
@@ -1498,7 +1455,7 @@ WHERE  product_id NOT IN (SELECT product_id
                                  '2019-01-01' AND '2019-03-31'); 
 ```
 
-## Reported Posts --
+## Reported Posts **
 
 Assume today is `2019-07-05`.  
 Write an SQL query that reports the number of posts reported yesterday for each report reason.  
