@@ -1556,12 +1556,10 @@ HAVING Datediff("2019-07-27", activity_date) < 30
 ORDER  BY NULL 
 ```
 
-## [User Activity for the Past 30 Days II](https://zhuanlan.zhihu.com/p/260558715)
+## [User Activity for the Past 30 Days II](https://zhuanlan.zhihu.com/p/260558715) **
 
-###### Keyword : `AVG` , `DISTINCT`, `DATEDIFF`
-
-Write an SQL query to find the **average number of sessions per user for a period of 30 days ending 2019-07-27 inclusively**, rounded to 2 decimal places.  
-The sessions we want to count for a user are those with at least one activity in that time period.
+Write an SQL query to find the **average number of sessions per user for a period of 30 days ending `2019-07-27` inclusively**, rounded to 2 decimal places.  
+- The sessions we want to count for a user are those with at least one activity in that time period.
 
 ```
 Activity table:
@@ -1590,26 +1588,23 @@ Result table:
 +---------------------------+ 
 | 1.33                      |
 +---------------------------+ 
-User 1 and 2 each had 1 session in the past 30 days while user 3 had 2 sessions 
-so the average  is (1 + 1 + 2) / 3 = 1.33. 
 ```
+- User `1` and `2` each had 1 session in the past 30 days while user 3 had 2 sessions so the average  is `(1 + 1 + 2) / 3 = 1.33.` 
+
 
 ```mysql
 # Time:  O(n)
 # Space: O(n)
-SELECT Round(Ifnull(Count(DISTINCT session_id) / Count(DISTINCT user_id), 0), 2) 
-       AS 
-       average_sessions_per_user 
+SELECT Round(Ifnull(Count(DISTINCT session_id) / 
+              Count(DISTINCT user_id), 0), 2) 
+       AS average_sessions_per_user 
 FROM   activity 
 WHERE  Datediff("2019-07-27", activity_date) < 30 
 ```
 
 ## [Article Views I](https://zhuanlan.zhihu.com/p/260564257)
 
-#### Concept 
-- `SELECT DISTINCT`
-
-Write an SQL query to find all the authors that viewed at least one of their own articles, sorted in ascending order by their id.
+Write an SQL query to find all the authors that viewed at least one of their own articles, **sorted in ascending order by their id**.
 - Note that equal `author_id` and `viewer_id` indicate the same person.
 ```diff
   Views TABLE 
@@ -1633,6 +1628,7 @@ Write an SQL query to find all the authors that viewed at least one of their own
   | 7    |
   +------+
 ```
+
 ```mysql
 SELECT DISTINCT author_id AS id 
 /**
@@ -1650,7 +1646,7 @@ WHERE author_id = viewer_id
 ORDER BY id;
 ```
 
-## Immediate Food Delivery I --
+## Immediate Food Delivery I **
 
 ##### Concept
 -`SUM(SELECT COUNT(*) FROM ... WHERE ...)`
@@ -1676,8 +1672,10 @@ Write an SQL query to find the percentage of `immediate` orders in the table, ro
   +----------------------+
   | 33.33                |
   +----------------------+
-- The orders with delivery id 2 and 3 are immediate while the others are scheduled.
 ```
+- The orders with delivery id `2` and `3` are immediate while the others are scheduled.
+
+
 
 ```mysql
 # Time:  O(n)
@@ -1685,6 +1683,15 @@ Write an SQL query to find the percentage of `immediate` orders in the table, ro
 SELECT Round(100 * Sum(order_date = customer_pref_delivery_date) / Count(*), 2) 
        AS immediate_percentage 
 FROM  delivery;
+
+
+-- Same as 
+SELECT ROUND(100 * o.immediate_order / count(d.delivery_id) , 2) AS immediate_percentage 
+FROM Delivery AS d,
+     SELECT COUNT(order_date) AS immediate_order
+     FROM Delivery
+     WHERE order_date = customer_pref_delivery_date AS o
+    
 ```
 
 ## Reformat Department Table **
