@@ -2805,8 +2805,6 @@ Write an SQL query to report the `customer_id` and of customers who have spent a
 - `EQUI-JOIN THREE TABLES`, `SUM` , `INNER JOIN THREE TABLES`
 
 ```diff
-Three Tables
-
   Customers
   +--------------+-----------+-------------+
   | customer_id  | name      | country     |
@@ -2853,33 +2851,32 @@ Three Tables
 - Moustafa spent `$110 (10 * 2 + 45 * 2)` in June and $0 in July 2020.
 
 
-ALGO
+#### ALGO
 1. `EQUI-JOIN` Three tables
 2. `GROUP BY` CUSTOMER ID
 3. `CASE WHEN ... LIKE ... THEN ... ELSE ... END` to find the month off June and July 2020
-   > Or we can use `CASE WHEN LEFT = ... THEN ... ELSE ... END`  
+   > Or `CASE WHEN LEFT = ... THEN ... ELSE ... END`  
 
 ```mysql
-/**
-  * Condition : July and June
-  * Display : the customer spent total price > 100
-  */
-SELECT o.customer_id, c.name
-FROM Customers c, Product p, Orders o
-WHERE c.customer_id = o.customer_id
-      AND p.product_id = o.product_id
-GROUP BY o.customer_id
-HAVING
-(
-    SUM(CASE WHEN o.order_date LIKE '2020-06%' THEN o.quantity * p.price else 0 END) >= 100
-    AND SUM(CASE WHEN o.order_date LIKE '2020-07%' THEN o.quantity *p.price else 0 END) >= 100
-)
-
-
 # Time:  O(n)
 # Space: O(n)
 SELECT a.customer_id, a.name
 FROM Customers AS a
+/**
++--------------+-------------+-------------+-------------+-----------+-----------+-------------+-------------+-------------+
+| order_id     | customer_id | product_id  | order_date  | quantity  | name      | country     | description | price       |
++--------------+-------------+-------------+-------------+-----------+-----------+-------------+-------------+-------------+
+| 1            | 1           | 10          | 2020-06-10  | 1         | Winston   | USA         | LC Phone    | 300         |
+| 1            | 1           | 10          | 2020-06-10  | 1         | Winston   | USA         | LC Phone    | 300         |
+| 2            | 1           | 20          | 2020-07-01  | 1         | Winston   | USA         | LC T-Shirt  | 10          |
+| 3            | 1           | 30          | 2020-07-08  | 2         | Winston   | USA         | LC Book     | 45          |
+| 4            | 2           | 10          | 2020-06-15  | 2         | Jonathan  | Peru        | LC Phone    | 300         |    
+| 4            | 2           | 10          | 2020-06-15  | 2         | Jonathan  | Peru        | LC Phone    | 300         |
+| 5            | 2           | 40          | 2020-07-01  | 10        | Jonathan  | Peru        | LC Keychain | 2           |
+| 6            | 3           | 20          | 2020-06-24  | 2         | Moustafa  | Egypt       | LC T-Shirt  | 10          |
+| 7            | 3           | 30          | 2020-06-25  | 2         | Moustafa  | Egypt       | LC Book     | 45          |
++--------------+-------------+-------------+-------------+-----------+-----------+-------------+-------------+-------------+
+*/
 INNER JOIN (SELECT *
             FROM Orders
             WHERE order_date BETWEEN "2020-06-01" 
@@ -2892,9 +2889,18 @@ GROUP BY a.customer_id
 HAVING SUM(CASE WHEN LEFT(b.order_date, 7) = "2020-06" THEN c.price * b.quantity ELSE 0 END) >= 100
 AND    SUM(CASE WHEN LEFT(b.order_date, 7) = "2020-07" THEN c.price * b.quantity ELSE 0 END) >= 100
 ORDER BY NULL;
+
+SELECT o.customer_id, c.name
+FROM Customers c, Product p, Orders o
+WHERE c.customer_id = o.customer_id AND p.product_id = o.product_id
+GROUP BY o.customer_id
+      HAVING(SUM(CASE WHEN o.order_date LIKE '2020-06%' THEN o.quantity * p.price ELSE 0 END) >= 100
+             AND SUM(CASE WHEN o.order_date LIKE '2020-07%' THEN o.quantity *p.price ELSE 0 END) >= 100)
+
 ```
 
 ## [Find Users With Valid E-Mails](https://cloud.tencent.com/developer/article/1787722)
+
 Write an SQL query to find the users who have valid emails.
 Return the result table in any order.
 
@@ -2904,7 +2910,7 @@ A valid e-mail has a prefix name and a domain where:
 - The domain is `@leetcode.com`.
 
 #### Concept
-- `regexp`
+- [`regexp`](https://www.geeksforgeeks.org/mysql-regular-expressions-regexp/)
 
 ```
   Users
@@ -2938,6 +2944,7 @@ A valid e-mail has a prefix name and a domain where:
 ```sql
 SELECT * 
 FROM   users AS u   
+-- ^ : beginning , $ : tail 
 WHERE  u.mail REGEXP '^[a-zA-Z][a-zA-Z0-9._-]*@leetcode.com$'; 
 ```
 
