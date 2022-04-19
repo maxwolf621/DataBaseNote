@@ -1,9 +1,7 @@
-
-- [QUESTIONS](https://zhuanlan.zhihu.com/p/265354299)     
-- [QUESTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)    
+[QUESTIONS](https://zhuanlan.zhihu.com/p/265354299)  
+[QUESTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)  
 
 ## REVIEW
-
 - [`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)    
 - [`HAVING`](https://www.yiibai.com/mysql/having.html)    
 - [`JOIN ... WHERE ...` VS `ON` ](https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause)     
@@ -14,8 +12,8 @@
 - [`UNION` and `UNION ALL`](https://github.com/maxwolf621/DataBaseNote/blob/main/RelationalAlgebra.md#union)     
 - [Sql Summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)   
 
-## [Tips](https://github.com/shawlu95/Beyond-LeetCode-SQL)  
-
+## Tips
+- [Ref]((https://github.com/shawlu95/Beyond-LeetCode-SQL)
 1. Using the `like` operator and wildcards (flexible search)
 2. Avoiding the `or` operator, use `in` operator
   - data retrieval is measurably faster by replacing `OR` conditions with the `IN` predicate
@@ -35,7 +33,7 @@
 8. Use`view`
   - Keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
 
-## [Average Selling Price](https://code.dennyzhang.com/average-selling-price)
+## Average Selling Price **
 
 Write an SQL query to find the average selling price for each product.  
 - `average_price` should be rounded to 2 decimal places.  
@@ -52,7 +50,7 @@ Write an SQL query to find the average selling price for each product.
   +------------+------------+------------+--------+
 ```
 - `(product_id, start_date, end_date)` is the primary key for this table.
-- For each product_id there will be no two overlapping periods. That means there will be no two intersecting periods for the same product_id.
+- there will be no two intersecting periods for the same `product_id`.
 
 ```diff
   UnitsSold table:
@@ -65,7 +63,7 @@ Write an SQL query to find the average selling price for each product.
   | 2          | 2019-03-22    | 30    |
   +------------+---------------+-------+
 ```
-- There is no primary key for this table, it may contain duplicates.
+- There is no primary key for this table
 
 ```diff
   Result table:
@@ -75,15 +73,23 @@ Write an SQL query to find the average selling price for each product.
   | 1          | 6.96          |
   | 2          | 16.96         |
   +------------+---------------+
-- Average selling price = Total Price of Product / Number of products sold.
-- Average selling price for product 1 = ((100 * 5) + (15 * 20)) / 115 = 6.96
-- Average selling price for product 2 = ((200 * 15) + (30 * 30)) / 230 = 16.96
 ```
+- Average selling price = `Total Price of Product / Number of products sold`.
 
 ```sql
 SELECT UnitsSold.product_id, 
        ROUND(SUM(units*price)/SUM(units), 2) AS average_price
 FROM UnitsSold 
+/**
+  +------------+------------+------------+--------+---------------+-------+
+  | product_id | start_date | end_date   | price  | purchase_date | units |
+  +------------+------------+------------+--------+---------------+-------+
+  | 1          | 2019-02-17 | 2019-02-28 | 5      | 2019-02-25    | 100   |
+  | 1          | 2019-03-01 | 2019-03-22 | 20     | 2019-03-01    | 15    |
+  | 2          | 2019-02-01 | 2019-02-20 | 15     | 2019-02-10    | 200   |
+  | 2          | 2019-02-21 | 2019-03-31 | 30     | 2019-03-22    | 30    |
+  +------------+------------+------------+--------+---------------+-------+
+*/
 INNER JOIN Prices
 ON UnitsSold.product_id = Prices.product_id
 AND UnitsSold.purchase_date 
@@ -91,7 +97,7 @@ AND UnitsSold.purchase_date
 GROUP BY UnitsSold.product_id
 ```
 
-## [Sales Analysis I](https://code.dennyzhang.com/sales-analysis-i) **
+## Sales Analysis I**
 
 Write an SQL query that reports the best seller by total sales price, If there is a tie, report them all.  
 ```diff
@@ -136,28 +142,19 @@ HAVING SUM(price) = SELECT SUM(price)
                     LIMIT 1
 ```
 
-## [Product Sales Analysis I](https://zhuanlan.zhihu.com/p/259935444)
+## Product Sales Analysis I
 
-Write an SQL query that reports all product names of the products in the Sales table along with their selling year and price.
+Write an SQL query that reports **all** product names of the products in the Sales table along with their selling year and price.
 
 ```diff
-Sales table:
-+---------+------------+------+----------+-------+
-| sale_id | product_id | year | quantity | price |
-+---------+------------+------+----------+-------+ 
-| 1       | 100        | 2008 | 10       | 5000  |
-| 2       | 100        | 2009 | 12       | 5000  |
-| 7       | 200        | 2011 | 15       | 9000  |
-+---------+------------+------+----------+-------+
-
-Product table:
-+------------+--------------+
-| product_id | product_name |
-+------------+--------------+
-| 100        | Nokia        |
-| 200        | Apple        |
-| 300        | Samsung      |
-+------------+--------------+
+Sales table:                                        Product table:
++---------+------------+------+----------+-------+  +------------+--------------+
+| sale_id | product_id | year | quantity | price |  | product_id | product_name |
++---------+------------+------+----------+-------+  +------------+--------------+
+| 1       | 100        | 2008 | 10       | 5000  |  | 100        | Nokia        |
+| 2       | 100        | 2009 | 12       | 5000  |  | 200        | Apple        |
+| 7       | 200        | 2011 | 15       | 9000  |  | 300        | Samsung      |
++---------+------------+------+----------+-------+  +------------+--------------+
 
 Result table:
 +--------------+-------+-------+
@@ -173,14 +170,11 @@ SELECT S.product_name,
        S.year, 
        S.price
 FROM Sales AS S
+-- query All Products
 LEFT JOIN Product AS P
 ON S.product_id = P.product_id
 ```
-## [Second Highest Salary](https://zhuanlan.zhihu.com/p/250015043) **
-
-#### Concept 
-- `LIMIT ... OFFSET ...`
-- `IFNULL( ... , ..)`
+## Second Highest Salary**
 
 Write a SQL query to get the second highest salary from the Employee Table.    
 - If there is no second highest salary, then the query should return `null`.
@@ -204,6 +198,7 @@ Write a SQL query to get the second highest salary from the Employee Table.
 ```
 
 ```mysql
+-- return null if there are no second highest salary
 SELECT IFNULL(
       (SELECT Salary 
        FROM Employee
@@ -219,13 +214,10 @@ SELECT
 AS SecondHighestSalary;
 ```
 
-## [Duplicate Emails](https://zhuanlan.zhihu.com/p/251960784)
+## Duplicate Emails
 
-Write a SQL query to find all duplicate emails.
+Write a SQL query to find **all** duplicate emails.
 
-#### Concept
-- `Select .... From (Select ...)`
-- `Left Join ... ON .. AND` , `<>` 
 
 ```diff
 Person Table :
@@ -239,7 +231,6 @@ Person Table :
 ```
 
 ```sql
-
 /**
 --------------+------+
 |  Email      | num  |
@@ -262,7 +253,7 @@ SELECT DISTINCT p.Email
 FROM Person AS p
 JOIN Person AS p2
 ON p.Email = p2.Email
-AND p.Id <> p2.Id;
+   AND p.Id <> p2.Id;
 ```
 
 ## [Customers Who Never Order](https://zhuanlan.zhihu.com/p/251983949)
@@ -287,7 +278,7 @@ Write an SQL query to find all dates' id with higher temperature compared to its
 
 - [lag Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-lag-function/)  
 
-## [Delete Duplicate Emails](https://zhuanlan.zhihu.com/p/252243481)  **
+## Delete Duplicate Emails**
 
 Write a SQL query to `DELETE` all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id.  
 For example, after running your query, the above Person table should have the following rows:  
@@ -320,18 +311,18 @@ DELETE FROM Person AS P
 WHERE Id NOT IN
 /**
 TMP      P
-+----+   +----+
-|Id  |   | Id | 
-+----+   +----+
-| 1  |   | 1  | 
-| 2  |   | 2  | 
-+----+   | 3  | 
++------+ +----+
+|MinId | | Id | 
++------+ +----+
+| 1    | | 1  | 
+| 2    | | 2  | 
++------+ | 3  | 
          +----+
 */
-(SELECT MinId -- Table with no duplicate emails
+(SELECT MinId 
  FROM (SELECT Email, 
               MIN(Id) AS MinId
-       FROM Person AS B 
+       FROM Person 
        GROUP BY Email) AS TMP)
 ```
 
@@ -361,15 +352,11 @@ WHERE P.Id > TMP.Id
       AND P.Email = TMP.Email
 ```
 
-## [Game Play Analysis I](https://zhuanlan.zhihu.com/p/254355214) 
+## Game Play Analysis I
 
 Write an SQL query that reports the first login date for each player.
 
-#### Concept
-- `MIN(...)`
-
 ```diff
-
 Activity table:
 +-----------+-----------+------------+--------------+
 | player_id | device_id | event_date | games_played |
@@ -422,7 +409,7 @@ GROUP BY player_id
 ORDER BY player_id;
 ```
 
-## [Game Play Analysis II](https://zhuanlan.zhihu.com/p/254370126)
+## Game Play Analysis II
 
 Write a SQL query that reports the **DEVICE that is first logged in for EACH player.**
 ```diff
@@ -448,58 +435,38 @@ Result table:
 ```
 ```sql
 /**
-  Table Result
-  +-----------+-----------+------------+--------------+
-  | player_id | device_id | event_date | games_played |
-  +-----------+-----------+------------+--------------+
-  | 1         | 2         | 2016-03-01 | 5            |
-  | 1         | 2         | 2016-05-02 | 6            |----------+
-  | 2         | 3         | 2017-06-25 | 1            |----+     |
-  | 3         | 1         | 2016-03-02 | 0            |--+  |    |  
-  | 3         | 4         | 2018-07-03 | 5            |  |  |    |
-  +-----------+-----------+------------+--------------+  |  |    |
-                                                         |  |    |
-  TMP                                                    |  |    |
-  +-----------+-----------+------------+--------------+  |  |    |
-  | player_id | device_id | event_date | games_played |  |  |    |
-  +-----------+-----------+------------+--------------+  |  |    |
-  | 1         | 2         | 2016-03-01 | 5            |<-|--|----+    
-  | 2         | 3         | 2017-06-25 | 1            |<-|--+
-  | 3         | 1         | 2016-03-02 | 0            |<-+
-  +-----------+-----------+------------+--------------+
++-----------+-----------+------------+--------------+
+| player_id | device_id | event_date | games_played |
++-----------+-----------+------------+--------------+
+| 1         | 2         | 2016-03-01 | 5            |
+| 2         | 3         | 2017-06-25 | 1            |
+| 3         | 1         | 2016-03-02 | 0            |
++-----------+-----------+------------+--------------+
 */
 SELECT player_id, 
        device_id 
 FROM Activity AS Result
-WHERE player_id 
-IN (SELECT player_id, 
-           min(event_date) 
-    FROM Activity AS TMP 
-    GROUP BY player_id )
+WHERE player_id IN (SELECT player_id, 
+                    min(event_date) 
+                    FROM Activity AS TMP 
+                    GROUP BY player_id )
 ```
 
-## [Employee Bonus](https://zhuanlan.zhihu.com/p/258318063)
+## Employee Bonus
 
-Select all employee's name and bonus whose bonus is `< 1000 (or NULL)`.
+Select **all** employee's name and bonus whose bonus is `< 1000 (or NULL)`.
 
 ```diff
-Employee
-+-------+--------+-----------+--------+
-| empId |  name  | supervisor| salary |
-+-------+--------+-----------+--------+
-|   1   | John   |  3        | 1000   |
-|   2   | Dan    |  3        | 2000   |
-|   3   | Brad   |  null     | 4000   |
+Employee                                  Bonus
++-------+--------+-----------+--------+   +-------+-------+
+| empId |  name  | supervisor| salary |   | empId | bonus |
++-------+--------+-----------+--------+   +-------+-------+
+|   1   | John   |  3        | 1000   |   | 2     | 500   |
+|   2   | Dan    |  3        | 2000   |   | 4     | 2000  |
+|   3   | Brad   |  null     | 4000   |   +-------+-------+
 |   4   | Thomas |  3        | 4000   |
 +-------+--------+-----------+--------+
 
-Bonus
-+-------+-------+
-| empId | bonus |
-+-------+-------+
-| 2     | 500   |
-| 4     | 2000  |
-+-------+-------+
 
 Result
 +-------+-------+
@@ -509,17 +476,6 @@ Result
 | Dan   | 500   |
 | Brad  | null  |
 +-------+-------+
-```
-
-- using `IFNULL()`
-- using `WHERE ... OR ...`
-
-```sql
-SELECT name, bonus
-FROM Employee
-LEFT JOIN Bonus 
-USING (empId)
-WHERE IFNULL(bonus, 0) < 1000　　
 ```
 
 
@@ -540,23 +496,29 @@ LEFT JOIN Bonus AS b
 ON a.empId = b.empId
 WHERE b.bonus < 1000 
       OR b.bonus IS NULL;
+
+SELECT name, bonus
+FROM Employee
+LEFT JOIN Bonus 
+USING (empId)
+WHERE IFNULL(bonus, 0) < 1000　　
 ```
 
-## [Customer Placing the Largest Number of Orders](https://zhuanlan.zhihu.com/p/258700620) **
+## Customer Placing the Largest Number of Orders**
 
 Query the `customer_number` from the orders table for the customer who has placed the largest number of orders.
 - It is guaranteed that exactly one customer will have placed more orders than any other customer.
 
 ```diff
 Order table : 
-+--------------+-----------------+------------+---------------+--------------+--------+---------+
-| order_number | customer_number | order_date | required_date | shipped_date | status | comment |
-|--------------|-----------------|------------|---------------|--------------|--------|---------|
-| 1            | 1               | 2017-04-09 | 2017-04-13    | 2017-04-12   | Closed |         |
-| 2            | 2               | 2017-04-15 | 2017-04-20    | 2017-04-18   | Closed |         |
-| 3            | 3               | 2017-04-16 | 2017-04-25    | 2017-04-20   | Closed |         |
-| 4            | 3               | 2017-04-18 | 2017-04-28    | 2017-04-25   | Closed |         |
-+--------------+-----------------+------------+---------------+--------------+--------+---------+
++--------------+-----------------+------------+---------------+--------------+--------+
+| order_number | customer_number | order_date | required_date | shipped_date | status |
+|--------------|-----------------|------------|---------------|--------------|--------|
+| 1            | 1               | 2017-04-09 | 2017-04-13    | 2017-04-12   | Closed |         
+| 2            | 2               | 2017-04-15 | 2017-04-20    | 2017-04-18   | Closed |         
+| 3            | 3               | 2017-04-16 | 2017-04-25    | 2017-04-20   | Closed |         
+| 4            | 3               | 2017-04-18 | 2017-04-28    | 2017-04-25   | Closed |         
++--------------+-----------------+------------+---------------+--------------+--------+
 
 Sample Output
 +-----------------+
@@ -592,7 +554,7 @@ HAVING COUNT(customer_number) >= ALL(SELECT COUNT(customer_number)
        GROUP BY customer_number
 ```
 
-## [Find Customer Referee](https://zhuanlan.zhihu.com/p/258694894)
+## Find Customer Referee
 
 Write a query to return the list of customers NOT referred by the person with id `2`.
 Given a table customer holding customers information and the referee.
@@ -635,7 +597,7 @@ SELECT name FROM customer
 WHERE IFNULL(referee_id, 0) <> 2;
 ```
 
-## [Classes More Than 5 Students](https://zhuanlan.zhihu.com/p/258705251)
+## Classes More Than 5 Students
 
 Please list out all classes which have more than or equal to `5` students.
 
@@ -674,7 +636,7 @@ SELECT class FROM
 WHERE num >= 5;
 ```
 
-## [Consecutive Available Seats](https://zhuanlan.zhihu.com/p/259420594) **
+## Consecutive Available Seats**
 
 Query all the consecutive available seats order by the `seat_id` using the following cinema table
 - The `seat_id` is an auto increment `int`, and free is bool `1` means free, and `0` means occupied.
@@ -706,7 +668,6 @@ first find
 
 ```sql
 /**
- 
 +---------+------+
 | seat_id | free |
 |---------|------|
@@ -738,7 +699,7 @@ WHERE (c1.seat_id + 1 = c2.seat_id or c1.seat_id-1 = c2.seat_id) -- consecutive 
 ORDER BY a.seat_id;
 ```
 
-## [Friend Requests I: Overall Acceptance Rate](https://zhuanlan.zhihu.com/p/258790804) **
+## Friend Requests I: Overall Acceptance Rate**
 
 Write a query to find the overall acceptance rate of requests rounded to 2 decimals, which is the number of acceptance divides the number of requests.
 
@@ -804,9 +765,10 @@ ROUND(IFNULL(
 AS accept_rate
 ```
 
-## [Sales Person](https://zhuanlan.zhihu.com/p/259424830) **
+## Sales Person**
 
-Output all the names in the table salesperson, who didn’t have sales to company `RED`.
+Output **all** the names in the table salesperson, who didn’t have sales to company `RED`.
+
 ```
 Salesperson table
 +----------+------+--------+-----------------+-----------+
@@ -852,6 +814,7 @@ Output
 ```
 
 ```sql
+-- Nested Quer
 SELECT name 
 from salesperson 
 WHERE (SELECT sales_id From orders WHERE com_id NOT IN 
@@ -860,25 +823,37 @@ GROUP BY sales_id);
 
 -- INNER JOIN
 SELECT name FROM salesperson
-WHERE sales_id NOT IN (
-SELECT b.sales_id FROM company AS a
-INNER JOIN orders AS b
-ON a.com_id = b.com_id
-WHERE a.name = 'RED'
-);
+WHERE sales_id NOT IN ( SELECT b.sales_id 
+                        FROM company      AS a
+                        INNER JOIN orders AS b
+                        ON a.com_id = b.com_id
+                        WHERE a.name = 'RED');
 
 -- LEFT JOIN 
+
 SELECT name
 FROM salesperson
 WHERE sales_id NOT IN (SELECT o.sales_id 
-                       FROM orders o LEFT JOIN company c ON o.com_id = c.com_id
+                       FROM orders o 
+                       /**
+                          +----------+------------+---------+----------+--------+---------+--------+------------+     
+                          | order_id | order_date | com_id  | sales_id | amount | com_id  |  name  |    city    |     
+                          +----------+------------+---------+----------+--------+---------+--------+------------+  
+                          | 1        |   1/1/2014 |    3    |    4     | 100000 |   3     | YELLOW |   Boston   | 
+                          | 2        |   2/1/2014 |    4    |    5     | 5000   |   4     | GREEN  |   Austin   | 
+                          | 3        |   3/1/2014 |    1    |    1     | 50000  |   1     |  RED   |   Boston   |
+                          | 4        |   4/1/2014 |    1    |    4     | 25000  |   1     |  RED   |   Boston   |
+                          | NULL     |   NULL     |  NULL   |  NULL    |  NULL  |   4     | GREEN  |   Austin   |   
+                          +----------+------------+---------+----------+--------+---------+--------+------------+ 
+                          **/
+                       LEFT JOIN company c 
+                       ON o.com_id = c.com_id
                        WHERE c.name = 'RED'
                        GROUP BY o.sales_id);
 ```
 
-## [Triangle Judgement](https://zhuanlan.zhihu.com/p/259435481)  
+## Triangle Judgement**
 
-For the sample data above, your query should return the follow result:
 ```diff
 +----+----+----+
 | x  | y  | z  |
@@ -897,9 +872,8 @@ For the sample data above, your query should return the follow result:
 
 
 ```sql
-CASE WHEN
-(x + y > z) AND (x + z > y) AND (y + z > x) THEN 'Yes'
-ELSE 'No' END AS triangle
+CASE WHEN (x + y > z) AND (x + z > y) AND (y + z > x) THEN 'Yes'
+          ELSE 'No' END AS triangle
 FROM triangle
 
 select *, 
@@ -908,7 +882,7 @@ select *,
 ```
 
 
-## Shortest Distance in a Line
+## Shortest Distance in a Line**
 Table point holds the x coordinate of some points on x-axis in a plane, which are all integers.
 
 Write a query to find the shortest distance between two points in these points.
@@ -937,7 +911,7 @@ JOIN point AS b
 ON a.x <> b.x;
 ```
 
-## Biggest Single Number **
+## Biggest Single Number**
 
 Find The Biggest Single Number
 
@@ -994,7 +968,7 @@ FROM (
 ```
 
 
-## [Not Boring Movies](https://zhuanlan.zhihu.com/p/259714269) **
+## Not Boring Movies**
 
 #### Concet
 - `mod(attribute, integer) = q`
@@ -1029,7 +1003,7 @@ WHERE MOD(id, 2) = 1
 ORDER BY rating DESC;
 ```
 
-## [Swap Salary](https://zhuanlan.zhihu.com/p/259763823) **
+## Swap Salary**
 
 #### Concept
 - Usage of `CASE WHEN ... THEN ... END`
@@ -1065,8 +1039,7 @@ SET sex = CASE sex
           WHEN 'm' THEN 'f' 
           WHEN 'f' THEN 'm' 
           END;    
-
-
+          
 -- IF
 UPDATE salary 
 SET sex = IF(sex = 'm', 'f', 'm');
@@ -1113,10 +1086,10 @@ Result table:
     |             |             | 2           |
     |-----------------------------------------|
     | 1           | 2           | 3           |
-    | 1           | 2           | 4           |
+    |             |             | 4           |
     |-----------------------------------------|
     | 2           | 1           | 5           |
-    | 2           | 1           | 6           |
+    |             |             | 6           |
     +-------------+-------------+-------------+
 */
 SELECT actor_id, 
@@ -1126,7 +1099,7 @@ GROUP BY actor_id, director_id
 HAVING COUNT(timestamp) >= 3;
 ```
 
-## [Project Employees I](https://zhuanlan.zhihu.com/p/259948436)
+## Project Employees I
 
 Write an SQL query that reports **the average experience years of all the employees for each project**, rounded to 2 digits.
 ```diff
@@ -1166,8 +1139,8 @@ Result table:
 SELECT P.project_id, 
        ROUND(AVG(E.experience_years),2) AS average_years 
 FROM Project AS P
-     JOIN Employee AS E
-     ON P.employee_id = E.employee_id
+JOIN Employee AS E
+ON P.employee_id = E.employee_id
 GROUP BY P.project_id
 -- SQL Server also treats NULL values as smaller than any non-NULL values. 
 ORDER BY NULL 
