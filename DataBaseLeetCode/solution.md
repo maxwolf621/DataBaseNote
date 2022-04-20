@@ -1971,7 +1971,7 @@ ORDER  BY a.student_id,
           b.subject_name;
 ```
 
-## Weather Type in Each Country *
+## Weather Type in Each Country**
 
 Write an SQL query to find the type of weather in each country for `November 2019(2019-11)`.
 - The type of weather is 
@@ -2026,26 +2026,15 @@ Return result table in any order.
   | China        | Warm         |
   | Morocco      | Hot          |
   +--------------+--------------+
-- Average weather_state in USA in November is (15) / 1 = 15 so weather type is Cold.
-- Average weather_state in Austraila in November is (-2 + 0 + 3) / 3 = 0.333 so weather type is Cold.
-- Average weather_state in Peru in November is (25) / 1 = 25 so weather type is Hot.
-- Average weather_state in China in November is (16 + 18 + 21) / 3 = 18.333 so weather type is Warm.
-- Average weather_state in Morocco in November is (25 + 27 + 31) / 3 = 27.667 so weather type is Hot.
-- We know nothing about average weather_state in Spain in November so we don't include it in the result table. 
 ```
-
-###### Keyword : `case when ... then`
+- Average weather_state in USA in November is `(15) / 1 = 15` so weather type is Cold.
+- Average weather_state in Austraila in November is `(-2 + 0 + 3) / 3 = 0.333` so weather type is Cold.
+- Average weather_state in Peru in November is `(25) / 1 = 25` so weather type is Hot.
+- Average weather_state in China in November is `(16 + 18 + 21) / 3 = 18.333` so weather type is Warm.
+- Average weather_state in Morocco in November is `(25 + 27 + 31) / 3 = 27.667` so weather type is Hot.
+- We know nothing about average `weather_state` in `Spain` in November so we don't include it in the result table. 
 
 ```mysql
-SELECT country_name, case when avg(weather_state) <= 15 then "Cold"
-                          when avg(weather_state) >= 25 then "Hot"
-                          else "Warm" end as weather_type
-FROM Countries INNER JOIN Weather
-ON Countries.country_id = Weather.country_id
-WHERE LEFT(day, 7) = '2019-11'
-GROUP BY country_name
-
-/** USING BETWEEN ... AND ... **/
 SELECT c.country_name,
        CASE
            WHEN AVG(w.weather_state * 1.0) <= 15.0 THEN 'Cold'
@@ -2053,11 +2042,53 @@ SELECT c.country_name,
            ELSE 'Warm'
        END AS weather_type
 FROM Countries AS c
-INNER JOIN Weather AS w ON c.country_id = w.country_id
-WHERE w.day BETWEEN '2019-11-01' AND '2019-11-30'
+/**
+  +--------------+------------+---------------+------------+
+  | country_name | country_id | weather_state | day        |
+  +--------------+------------+---------------+------------+
++ | USA          | 2          | 15            | 2019-11-01 |
+  | USA          | 2          | 12            | 2019-10-28 |
+  | USA          | 2          | 12            | 2019-10-27 |
++ | Australia    | 3          | -2            | 2019-11-10 |
++ | Australia    | 3          | 0             | 2019-11-11 |
++ | Australia    | 3          | 3             | 2019-11-12 |
++ | China        | 5          | 16            | 2019-11-07 |
++ | China        | 5          | 18            | 2019-11-09 |
++ | China        | 5          | 21            | 2019-11-23 |
++ | Peru         | 7          | 25            | 2019-11-28 |
+  | Peru         | 7          | 22            | 2019-12-01 |
+  | Peru         | 7          | 20            | 2019-12-02 |
++ | Morocco      | 8          | 25            | 2019-11-05 |
++ | Morocco      | 8          | 27            | 2019-11-15 |
++ | Morocco      | 8          | 31            | 2019-11-25 |
+  | Spain        | 9          | 7             | 2019-10-23 |
+  | Spain        | 9          | 3             | 2019-12-23 |
+  +--------------+------------+---------------+------------+
+  
+  +------------+--------------+---------------+------------+
+  | country_id | country_name | weather_state | day        |
+  +------------+--------------+---------------+------------+
+  | 2          | USA          | 15            | 2019-11-01 |
+  | 3          | Australia    | -2            | 2019-11-10 |
+  |            | Australia    | 0             | 2019-11-11 |
+  |            | Australia    | 3             | 2019-11-12 |
+  | 5          | China        | 16            | 2019-11-07 |
+  |            | China        | 18            | 2019-11-09 |
+  |            | China        | 21            | 2019-11-23 |
+  | 7          | Peru         | 25            | 2019-11-28 |
+  | 8          | Morocco      | 25            | 2019-11-05 |
+  |            | Morocco      | 27            | 2019-11-15 |
+  |            | Morocco      | 31            | 2019-11-25 |
+  +------------+--------------+---------------+------------+
+*/
+INNER JOIN Weather AS w 
+ON c.country_id = w.country_id
+-- WHERE w.day BETWEEN '2019-11-01' AND '2019-11-30'
+WHERE LEFT(day, 7) = '2019-11'
 GROUP BY c.country_id;
 ```
-## Find the Team Size  
+
+## Find the Team Size**
 
 Write an SQL query to find the team size of each of the employees.
 - Return result table in any order.
@@ -2066,12 +2097,12 @@ Write an SQL query to find the team size of each of the employees.
   +-------------+------------+
   | employee_id | team_id    |
   +-------------+------------+
-- |     1       |     8      |
-- |     2       |     8      |
-- |     3       |     8      |
-! |     4       |     7      |
-+ |     5       |     9      |
-+ |     6       |     9      |
+  |     1       |     8      |
+  |     2       |     8      |
+  |     3       |     8      |
+  |     4       |     7      |
+  |     5       |     9      |
+  |     6       |     9      |
   +-------------+------------+
   Result table:
   +-------------+------------+
@@ -2084,14 +2115,12 @@ Write an SQL query to find the team size of each of the employees.
   |     5       |     2      |
   |     6       |     2      |
   +-------------+------------+
-- Employees with Id 1,2,3 are part of a team with team_id = 8.
-- Employees with Id 4 is part of a team with team_id = 7.
-- Employees with Id 5,6 are part of a team with team_id = 9.
 ```
 
 ```mysql
-/** THINK WHY IT NOT WORKING **/
-select employee_id , count(team_id)  team_size
+- THINK WHY IT NOT WORKING 
+select employee_id , 
+       count(team_id) as team_size
 from Employee
 group by team_id;
 ```
@@ -2099,20 +2128,31 @@ group by team_id;
 ```mysql
 # Time:  O(n)
 # Space: O(n)
-SELECT employee_id, 
-       team_size 
-FROM   employee AS e 
-       LEFT JOIN (SELECT team_id, 
-                         Count(1) AS team_size 
-                  FROM   employee 
-                  GROUP  BY team_id) AS teams 
-       ON e.team_id = teams.team_id 
 
----
-
-SELECT t1.employee_id, t2.team_size
+SELECT t1.employee_id, 
+       t2.team_size
 FROM Employee as t1
-INNER JOIN (SELECT team_id, 
+INNER JOIN (/**
+                  +------------+-------------+
+                  | team_id    | employee_id |
+                  +------------+-------------+
+                  |     8      |     1       |
+                  |            |     2       |
+                  |            |     3       |
+                  |     7      |     4       |
+                  |     9      |     5       |
+                  |            |     6       |
+                  +------------+-------------+
+
+                  +------------+-------------+
+                  | team_id    |  team_size  |
+                  +------------+-------------+
+                  |     8      |     3       |
+                  |     7      |     1       |
+                  |     9      |     2       |
+                  +------------+-------------+
+             */
+            SELECT team_id, 
             COUNT(1) AS team_size
             FROM Employee
             GROUP BY team_id) as t2
@@ -2135,26 +2175,27 @@ Write an SQL query to find the ctr of each Ad.
   +-------+---------+---------+
   | ad_id | user_id | action  |
   +-------+---------+---------+ 
-  | 1     | 1       | Clicked | 1
-  | 2     | 2       | Clicked | 2
-  | 3     | 3       | Viewed  | 3
+  | 1     | 1       | Clicked | 
+  | 2     | 2       | Clicked | 
+  | 3     | 3       | Viewed  | 
   | 5     | 5       | Ignored | 
   | 1     | 7       | Ignored | 
-  | 2     | 7       | Viewed  | 2
-  | 3     | 5       | Clicked | 3
-  | 1     | 4       | Viewed  | 1 
-  | 2     | 11      | Viewed  | 2
-  | 1     | 2       | Clicked | 1
+  | 2     | 7       | Viewed  | 
+  | 3     | 5       | Clicked | 
+  | 1     | 4       | Viewed  |  
+  | 2     | 11      | Viewed  | 
+  | 1     | 2       | Clicked | 
   +-------+---------+---------+
 ```
-- for `crt = round( clicks / (clicks+views) * 100, 2) ` 
+- For `crt = round( clicks / (clicks+views) * 100, 2) ` 
   - `ad_id = 1, ctr = (2/(2+1)) * 100 = 66.67`
   - `ad_id = 2, ctr = (1/(1+2)) * 100 = 33.33`
   - `ad_id = 3, ctr = (1/(1+1)) * 100 = 50.00`
   - `ad_id = 5, ctr = 0.00.` 
-- Note that ad_id has no clicks or views.
+- Note that `ad_id` has no clicks or views.
 - Note that we don't care about `Ignored` Ads.
-- Result table is ordered by the ctr. in case of a tie we order them by `ad_id`
+- Result table is ordered by the `ctr`. 
+- In case of a tie we order them by `ad_id`
 
 
 ```mysql
