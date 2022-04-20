@@ -1884,11 +1884,10 @@ GROUP  BY COMMENTS.sub_id
 ORDER  BY NULL 
 ```
 
-## Students and Examinations ***
+## Students and Examinations**
 
 Write an SQL query to find the number of times each student attended each exam.   
 Order the result table by `student_id` and `subject_name`.   
-
 
 ```diff
   Students table:
@@ -1926,6 +1925,7 @@ Order the result table by `student_id` and `subject_name`.
   | 2          | Math         |
   | 1          | Math         |
   +------------+--------------+
+  
 
   Result table:
   +------------+--------------+--------------+----------------+
@@ -1960,11 +1960,73 @@ SELECT a.student_id,
        a.student_name, 
        b.subject_name, 
        Count(c.subject_name) AS attended_exams 
-FROM   students AS a 
-       CROSS JOIN subjects AS b 
+FROM   students AS a                  
+       CROSS JOIN subjects AS b  -- EACH STUDENT TAKES ALL COURSES
+       /**
+          +------------+--------------+----------------+
+          | student_id | student_name |   subject_name |
+          +------------+--------------+----------------+
+          | 1          | Alice        |   Math         |
+          | 1          | Alice        |   Physics      |
+          | 1          | Alice        |   Programming  |
+          | 2          | Bob          |   Math         |  
+          | 2          | Bob          |   Physics      |
+          | 2          | Bob          |   Programming  |
+          | 13         | John         |   Math         |
+          | 13         | John         |   Physics      |
+          | 13         | John         |   Programming  |
+          | 6          | Alex         |   Math         |
+          | 6          | Alex         |   Physics      |
+          | 6          | Alex         |   Programming  |
+          +------------+--------------+----------------+
+          
+          
+          +------------+--------------+----------------+------------+--------------+
+          |a.student_id|a.student_name| b.subject_name |c.student_id|c.subject_name|
+          +------------+--------------+----------------+------------+--------------+
+          | 1          | Alice        |   Math         | 1          | Math         |
+          | 1          | Alice        |   Math         | 1          | Math         |
+          | 1          | Alice        |   Math         | 1          | Math         |
+          | 1          | Alice        |   Physics      | 1          | Physics      |
+          | 1          | Alice        |   Physics      | 1          | Physics      |
+          | 1          | Alice        |   Programming  | 1          | Programming  |
+          | 2          | Bob          |   Math         | 2          | Math         |
+          | 2          | Bob          |   Physics      | NULL       | NULL         |
+          | 2          | Bob          |   Programming  | 2          | Programming  |
+          | 13         | John         |   Math         | 13         | Math         |
+          | 13         | John         |   Physics      | 13         | Programming  |
+          | 13         | John         |   Programming  | 13         | Physics      |
+          | 6          | Alex         |   Math         | NULL       | NULL         |
+          | 6          | Alex         |   Physics      | NULL       | NULL         |
+          | 6          | Alex         |   Programming  | NULL       | NULL         |
+          +------------+--------------+----------------+------------+--------------+
+
+       
+       **/
        LEFT JOIN examinations AS c 
-              ON a.student_id = c.student_id 
-                 AND b.subject_name = c.subject_name 
+              ON  a.student_id   = c.student_id 
+              AND b.subject_name = c.subject_name 
+/**
+  +------------+--------------+----------------+------------+--------------+
+  |a.student_id|a.student_name| b.subject_name | student_id | subject_name |
+  +------------+--------------+----------------+------------+--------------+
+  | 1          | Alice        |   Math         | 1          | Math         |
+  |            |              |   Math         | 1          | Math         |
+  |            |              |   Math         | 1          | Math         |
+  | 1          | Alice        |   Physics      | 1          | Physics      |
+  |            |              |   Physics      | 1          | Physics      |
+  | 1          | Alice        |   Programming  | 1          | Programming  |
+  | 2          | Bob          |   Math         | 2          | Math         |
+  | 2          | Bob          |   Physics      | NULL       | NULL         |
+  | 2          | Bob          |   Programming  | 2          | Programming  |
+  | 13         | John         |   Math         | 13         | Math         |
+  | 13         | John         |   Physics      | 13         | Programming  |
+  | 13         | John         |   Programming  | 13         | Physics      |
+  | 6          | Alex         |   Math         | NULL       | NULL         |
+  | 6          | Alex         |   Physics      | NULL       | NULL         |
+  | 6          | Alex         |   Programming  | NULL       | NULL         |
+  +------------+--------------+----------------+------------+--------------+
+*/
 GROUP  BY a.student_id, 
           b.subject_name
 ORDER  BY a.student_id, 
@@ -2016,6 +2078,7 @@ Return result table in any order.
   | 9          | 7             | 2019-10-23 |
   | 9          | 3             | 2019-12-23 |
   +------------+---------------+------------+
+  
   Result table:
   +--------------+--------------+
   | country_name | weather_type |
@@ -2504,10 +2567,7 @@ ON e.id = u.id
 ```
 
 
-## [Top Travellers](https://code.dennyzhang.com/top-travellers) *
-
-### Concept
--`LEFT JOIN`, `ORDER BY ... ` 
+## Top Travellers**
 
 Write an SQL query to report the distance travelled by EACH USER.
 - Return the result table ordered by `travelled_distance` in **descending order**, if two or more users travelled the same distance, order them by their name in ascending order.
@@ -2540,24 +2600,41 @@ Write an SQL query to report the distance travelled by EACH USER.
   | 9    | 7        | 230      |
   +------+----------+----------+
 
-Result table:
-+----------+--------------------+
-| name     | travelled_distance |
-+----------+--------------------+
-| Elvis    | 450                |
-| Lee      | 450                |
-| Bob      | 317                |
-| Jonathan | 312                |
-| Alex     | 222                |
-| Alice    | 120                |
-| Donald   | 0                  |
-+----------+--------------------+
+  Result table:
+  +----------+--------------------+
+  | name     | travelled_distance |
+  +----------+--------------------+
+  | Elvis    | 450                |
+  | Lee      | 450                |
+  | Bob      | 317                |
+  | Jonathan | 312                |
+  | Alex     | 222                |
+  | Alice    | 120                |
+  | Donald   | 0                  |
+  +----------+--------------------+
 ```
 
 ```mysql 
-SELECT U.name , IFNULL(distance,0) AS travelled_distance 
-FROM Users as U 
-LEFT JOIN Rides AS R
+SELECT U.name , 
+       IFNULL(distance,0) AS travelled_distance 
+/**
+  +------+-----------+------+----------+----------+
+  | id   | name      | id   | user_id  | distance |
+  +------+-----------+------+----------+----------+
+  | 1    | Alice     | 1    | 1        | 120      |
+  | 2    | Bob       | 2    | 2        | 317      |
+  | 3    | Alex      | 3    | 3        | 222      |
+  | 4    | Donald    | NULL | NULL     | NULL     |
+  | 7    | Lee       | 4    | 7        | 100      |
+  | 7    | Lee       | 7    | 7        | 120      |
+  | 7    | Lee       | 9    | 7        | 230      |
+  | 13   | Jonathan  | 5    | 13       | 312      |
+  | 19   | Elvis     | 8    | 19       | 400      |
+  +------+-----------+------+----------+----------+
+*/
+FROM Users AS U 
+LEFT JOIN 
+Rides AS R
 OB U.Id = R.user_id
 GROUP BY u.name
 ORDER BY travelled_distance ASEC, U.name ASEC 
@@ -2567,7 +2644,7 @@ ORDER BY travelled_distance ASEC, U.name ASEC
 
 Write an SQL query to report the (`bin`, `total`) in any order.
 
-```
+```diff
   Sessions table:
   +-------------+---------------+
   | session_id  | duration      |
@@ -2594,18 +2671,8 @@ Write an SQL query to report the (`bin`, `total`) in any order.
 - There are no session with a duration greater or equial than 10 minutes and less than 15 minutes.
 - For `session_id` 5 has a duration greater or equal than 15 minutes.
 
-#### Concept
-- `Count(1)` , `UNION`, `New A table`
 
 ```mysql
-/**
-  * create the new column  
-  *    [0-5>
-  *    [5-10>
-  *    [10-15>
-  *    15 or more
-  */
-
 # Time:  O(n)
 # Space: O(1)
 SELECT '[0-5>'  AS bin, 
@@ -2637,9 +2704,7 @@ SELECT
     t2.BIN,
     COUNT(t1.BIN) AS TOTAL
 FROM (SELECT
-          /**
-              Create A Bin Column
-            */
+          -- Create A Bin Column
           CASE 
               WHEN duration/60 BETWEEN 0 AND 5 THEN "[0-5>"
               WHEN duration/60 BETWEEN 5 AND 10 THEN "[5-10>"
@@ -2661,7 +2726,7 @@ GROUP BY t2.bin
 ORDER BY NULL;
 ```
 
-## Group Sold Products By The Date **
+## Group Sold Products By The Date**
 
 Write an SQL query to find for each date, the number of distinct products sold and their names.   
 
@@ -2700,24 +2765,9 @@ The sold-products names for each date should be sorted lexicographically.
 ```mysql
 # Time:  O(nlogn)
 # Space: O(n)
-
 SELECT sell_date,
-       COUNT(DISTINCT(product)) AS num_sold, 
-       
+       COUNT(DISTINCT(product)) AS num_sold,        
        /**
-            +------------+-------------+
-            | sell_date  | product     |
-            +------------+-------------+
-            | 2020-05-30 | Headphone   |
-            |            | Basketball  |
-            |            | T-Shirt     |
-            | 2020-06-01 | Pencil      |
-            |            | Bible       |
-            | 2020-06-02 | Mask        |
-            |            | Mask        |
-            +------------+-------------+
-            
-            
             +------------+-------------------------------+
             | sell_date  | products                      |
             +------------+-------------------------------+
@@ -2730,7 +2780,6 @@ SELECT sell_date,
        GROUP_CONCAT(DISTINCT product ORDER BY product ASC SEPARATOR ',') AS products
 FROM Activities
 /**
-  Activities table:
   +------------+-------------+
   | sell_date  | product     |
   +------------+-------------+
@@ -2751,6 +2800,7 @@ ORDER BY sell_date ASC;
 
 Write an SQL query to report the distinct titles of the kid-friendly movies streamed in `June 2020`.
 - Return the result table in any order.
+
 ```
   TVProgram table:
   +--------------------+--------------+-------------+
@@ -2782,11 +2832,6 @@ Write an SQL query to report the distinct titles of the kid-friendly movies stre
   | Aladdin      |
   +--------------+
 ```
-- "Leetcode Movie" is not a content for kids.
-- "Alg. for Kids" is not a movie.
-- "Database Sols" is not a movie
-- "Alladin" is a movie, content for kids and was streamed in June 2020.
-- "Cinderella" was not streamed in June 2020.
 
 ```mysql
 SELECT DISTINCT c.title 
@@ -2797,7 +2842,6 @@ WHERE c.content_type = 'Movies'
       AND t.Kids_content = 'Y'
       AND LEFT(b.program_date,7) ='2020-06';
 
---
 /**
   * JOIN The tables implicitly 
   * using FROM multiple tables
