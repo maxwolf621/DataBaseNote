@@ -1,6 +1,68 @@
 [QUESTIONS](https://zhuanlan.zhihu.com/p/265354299)  
 [QUESTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)  
 
+- [REVIEW](#review)
+- [Tips](#tips)
+- [!Average Selling Price](#-average-selling-price)
+- [!Sales Analysis I](#-sales-analysis-i)
+- [Product Sales Analysis I](#product-sales-analysis-i)
+- [!Second Highest Salary](#-second-highest-salary)
+- [Duplicate Emails](#duplicate-emails)
+- [Customers Who Never Order](#customers-who-never-order)
+- [Rising Temperature](#rising-temperature)
+- [!Delete Duplicate Emails](#-delete-duplicate-emails)
+- [Game Play Analysis I](#game-play-analysis-i)
+- [Game Play Analysis II](#game-play-analysis-ii)
+- [Employee Bonus](#employee-bonus)
+- [!Customer Placing the Largest Number of Orders](#-customer-placing-the-largest-number-of-orders)
+- [Find Customer Referee](#find-customer-referee)
+- [Classes More Than 5 Students](#classes-more-than-5-students)
+- [!Consecutive Available Seats](#-consecutive-available-seats)
+- [!Friend Requests I: Overall Acceptance Rate](#-friend-requests-i--overall-acceptance-rate)
+- [!Sales Person](#-sales-person)
+- [!Triangle Judgement](#-triangle-judgement)
+- [!Shortest Distance in a Line](#-shortest-distance-in-a-line)
+- [!Biggest Single Number](#-biggest-single-number)
+- [!Not Boring Movies](#-not-boring-movies)
+- [!Swap Salary](#-swap-salary)
+- [!Actors & Directors Cooperated `>= 3` Times](#-actors---directors-cooperated-----3--times)
+- [Project Employees I](#project-employees-i)
+- [Project Employees II](#project-employees-ii)
+- [Sales Analysis I](#sales-analysis-i)
+- [!Sales Analysis II](#-sales-analysis-ii)
+- [!ales Analysis III](#-ales-analysis-iii)
+- [!Reported Posts](#-reported-posts)
+- [User Activity for the Past 30 Days I](#user-activity-for-the-past-30-days-i)
+- [User Activity for the Past 30 Days II](#user-activity-for-the-past-30-days-ii)
+- [Article Views I](#article-views-i)
+- [!Immediate Food Delivery I](#-immediate-food-delivery-i)
+- [!Reformat Department Table](#-reformat-department-table)
+- [!Queries Quality and Percentage](#-queries-quality-and-percentage)
+- [!Number of Comments per Post](#-number-of-comments-per-post)
+- [!Students and Examinations](#-students-and-examinations)
+- [!Weather Type in Each Country](#-weather-type-in-each-country)
+- [!Find the Team Size](#-find-the-team-size)
+- [Ads Performance](#ads-performance)
+- [!List the Products Ordered in a Period](#-list-the-products-ordered-in-a-period)
+- [Students With Invalid Departments](#students-with-invalid-departments)
+- [Replace Employee ID with The Unique Identifier](#replace-employee-id-with-the-unique-identifier)
+- [!Top Travellers](#-top-travellers)
+- [!Create a Session Bar Chart](#-create-a-session-bar-chart)
+- [!Group Sold Products By The Date](#-group-sold-products-by-the-date)
+- [Friendly Movies Streamed Last Month](#friendly-movies-streamed-last-month)
+- [!Customer Order Frequency](#-customer-order-frequency)
+- [Find Users With Valid E-Mails](#find-users-with-valid-e-mails)
+- [Patients With a Condition](#patients-with-a-condition)
+- [!Fix Product Name Format](#-fix-product-name-format)
+- [!Unique Orders and Customers Per Month](#-unique-orders-and-customers-per-month)
+- [Warehouse Manager](#warehouse-manager)
+- [!Customer Who Visited but Did Not Make Any Transactions](#-customer-who-visited-but-did-not-make-any-transactions)
+- [Bank Account Summary II](#bank-account-summary-ii)
+- [!Sellers With No Sales](#-sellers-with-no-sales)
+- [All Valid Triplets That Can Represent a Country](#all-valid-triplets-that-can-represent-a-country)
+
+
+
 ## REVIEW
 - [`RANK OVER()`](https://www.begtut.com/mysql/mysql-rank-function.html)    
 - [`HAVING`](https://www.yiibai.com/mysql/having.html)    
@@ -33,7 +95,7 @@
 8. Use`view`
   - Keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
 
-## Average Selling Price **
+## !Average Selling Price
 
 Write an SQL query to find the average selling price for each product.  
 - `average_price` should be rounded to 2 decimal places.  
@@ -97,7 +159,7 @@ AND UnitsSold.purchase_date
 GROUP BY UnitsSold.product_id
 ```
 
-## Sales Analysis I**
+## !Sales Analysis I
 
 Write an SQL query that reports the best seller by total sales price, If there is a tie, report them all.  
 ```diff
@@ -174,7 +236,7 @@ FROM Sales AS S
 LEFT JOIN Product AS P
 ON S.product_id = P.product_id
 ```
-## Second Highest Salary**
+## !Second Highest Salary
 
 Write a SQL query to get the second highest salary from the Employee Table.    
 - If there is no second highest salary, then the query should return `null`.
@@ -218,7 +280,6 @@ AS SecondHighestSalary;
 
 Write a SQL query to find **all** duplicate emails.
 
-
 ```diff
 Person Table :
 +----+-------------+
@@ -256,19 +317,14 @@ ON p.Email = p2.Email
    AND p.Id <> p2.Id;
 ```
 
-## [Customers Who Never Order](https://zhuanlan.zhihu.com/p/251983949)
+## Customers Who Never Order
 
-Write a SQL query to find all customers who never order anything.  
+[Write a SQL query to find all customers who never order anything.](https://zhuanlan.zhihu.com/p/251983949)
 
-#### Concept 
-1. using `LEFT JOIN` 
-2. using nested query with `where ... not in (nested query)`
+## Rising Temperature
 
-## [Rising Temperature](https://zhuanlan.zhihu.com/p/252403796)  
-
-Write an SQL query to find all dates' id with higher temperature compared to its previous dates (yesterday).
-
-![圖 1](../images/13d5336fb86e49f8198caa1de7d51e4c058cfe61ba2b420f958fea486e270bcb.png)  
+[Write an SQL query to find all dates' id with higher temperature compared to its previous dates (yesterday).](https://zhuanlan.zhihu.com/p/252403796)  
+- [lag Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-lag-function/)  
 
 1. using `JOIN` to compare two same table via function
    > `DATEDIFF(date1, date2) = Difference`   
@@ -276,9 +332,7 @@ Write an SQL query to find all dates' id with higher temperature compared to its
    > `DATE_ADD`   
    > `SUB_DATE`    
 
-- [lag Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-lag-function/)  
-
-## Delete Duplicate Emails**
+## !Delete Duplicate Emails
 
 Write a SQL query to `DELETE` all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id.  
 For example, after running your query, the above Person table should have the following rows:  
@@ -324,9 +378,6 @@ TMP      P
               MIN(Id) AS MinId
        FROM Person 
        GROUP BY Email) AS TMP)
-```
-
-```mysql
 /**
 TABLE P
 +----+------------------+
@@ -504,7 +555,7 @@ USING (empId)
 WHERE IFNULL(bonus, 0) < 1000　　
 ```
 
-## Customer Placing the Largest Number of Orders**
+## !Customer Placing the Largest Number of Orders
 
 Query the `customer_number` from the orders table for the customer who has placed the largest number of orders.
 - It is guaranteed that exactly one customer will have placed more orders than any other customer.
@@ -636,7 +687,7 @@ SELECT class FROM
 WHERE num >= 5;
 ```
 
-## Consecutive Available Seats**
+## !Consecutive Available Seats
 
 Query all the consecutive available seats order by the `seat_id` using the following cinema table
 - The `seat_id` is an auto increment `int`, and free is bool `1` means free, and `0` means occupied.
@@ -699,7 +750,7 @@ WHERE (c1.seat_id + 1 = c2.seat_id or c1.seat_id-1 = c2.seat_id) -- consecutive 
 ORDER BY a.seat_id;
 ```
 
-## Friend Requests I: Overall Acceptance Rate**
+## !Friend Requests I: Overall Acceptance Rate
 
 Write a query to find the overall acceptance rate of requests rounded to 2 decimals, which is the number of acceptance divides the number of requests.
 
@@ -765,7 +816,7 @@ ROUND(IFNULL(
 AS accept_rate
 ```
 
-## Sales Person**
+## !Sales Person
 
 Output **all** the names in the table salesperson, who didn’t have sales to company `RED`.
 
@@ -852,7 +903,7 @@ WHERE sales_id NOT IN (SELECT o.sales_id
                        GROUP BY o.sales_id);
 ```
 
-## Triangle Judgement**
+## !Triangle Judgement
 
 ```diff
 +----+----+----+
@@ -882,7 +933,8 @@ select *,
 ```
 
 
-## Shortest Distance in a Line**
+## !Shortest Distance in a Line
+
 Table point holds the x coordinate of some points on x-axis in a plane, which are all integers.
 
 Write a query to find the shortest distance between two points in these points.
@@ -911,7 +963,7 @@ JOIN point AS b
 ON a.x <> b.x;
 ```
 
-## Biggest Single Number**
+## !Biggest Single Number
 
 Find The Biggest Single Number
 
@@ -968,10 +1020,9 @@ FROM (
 ```
 
 
-## Not Boring Movies**
+## !Not Boring Movies
 
-#### Concet
-- `mod(attribute, integer) = q`
+Concept `mod(attribute, integer) = q`
 
 Please write a SQL query to output movies with an odd numbered `id` and a description that is not `boring`. 
 - Order the result by rating.
@@ -987,6 +1038,7 @@ Please write a SQL query to output movies with an odd numbered `id` and a descri
 |   5     | House card|   Interesting|   9.1     |
 +---------+-----------+--------------+-----------+
 
+result
 +---------+-----------+--------------+-----------+
 |   id    | movie     |  description |  rating   |
 +---------+-----------+--------------+-----------+
@@ -1049,9 +1101,7 @@ UPDATE salary SET
 sex = CHAR(ASCII(sex) ^ (ASCII('m') ^ ASCII('f')));
 ```
 
-## Actors & Directors Cooperated `>= 3` Times**
-- [solution](https://zhuanlan.zhihu.com/p/259934531) 
-
+## !Actors & Directors Cooperated `>= 3` Times
 Write a SQL query for a report that provides the pairs (`actor_id`, `director_id`) where the actor have cooperated with the director **at least 3 times**.
 
 ```diff
@@ -1298,7 +1348,7 @@ HAVING sum(price) = (
         LIMIT 1)
 ```
 
-## Sales Analysis II **
+## !Sales Analysis II
 
 Write an SQL query that reports the buyers who have bought `S8` but not `iPhone`. 
 - Note that S8 and iPhone are products present in the Product table.
@@ -1328,22 +1378,21 @@ WHERE buyer_id NOT IN ( SELECT buyer_id
                         AND buyer_id IN ( SELECT buyer_id 
                                           FROM tmp 
                                           WHERE product_name = 'S8');
-
 /** nested query with JOIN **/
 SELECT distinct buyer_id
 FROM Sales 
-INNER JOIN Product
+INNER JOIN Product/
 WHERE Sales.product_id = Product.product_id 
       AND Product_name = 'S8'
+      -- Buyer that bought no Iphone
       AND buyer_id NOT IN (SELECT distinct buyer_id
-                            FROM Sales 
-                            INNER JION Product
-                            WHERE Sales.product_id = Product.product_id
-                            AND product_name = 'iPhone')
+                           FROM Sales 
+                           INNER JION Product
+                           WHERE Sales.product_id = Product.product_id
+                                 AND product_name = 'iPhone')
 ```
 
-## Sales Analysis III **
-
+## !ales Analysis III
 
 Write an SQL query that selects the `product_id`, `year`, `quantity`, and `price` for the first year of every product sold.
 ```diff
@@ -1428,7 +1477,7 @@ WHERE  product_id NOT IN (SELECT product_id
                                  '2019-01-01' AND '2019-03-31'); 
 ```
 
-## Reported Posts **
+## !Reported Posts
 
 Assume today is `2019-07-05`.  
 Write an SQL query that reports the number of posts reported yesterday for each report reason.  
@@ -1471,7 +1520,7 @@ GROUP BY extra;
 
 ## User Activity for the Past 30 Days I   
 
-###### Keyword : `DATEDIFF`
+- Keyword : `DATEDIFF`
 
 Write an SQL query to find the daily active user count for a period of 30 days ending `2019-07-27` inclusively.  
 - A user was active on some day if he/she made at least one activity on that day.
@@ -1529,7 +1578,7 @@ HAVING Datediff("2019-07-27", activity_date) < 30
 ORDER  BY NULL 
 ```
 
-## [User Activity for the Past 30 Days II](https://zhuanlan.zhihu.com/p/260558715) **
+## User Activity for the Past 30 Days II
 
 Write an SQL query to find the **average number of sessions per user for a period of 30 days ending `2019-07-27` inclusively**, rounded to 2 decimal places.  
 - The sessions we want to count for a user are those with at least one activity in that time period.
@@ -1575,7 +1624,7 @@ FROM   activity
 WHERE  Datediff("2019-07-27", activity_date) < 30 
 ```
 
-## [Article Views I](https://zhuanlan.zhihu.com/p/260564257)
+## Article Views I
 
 Write an SQL query to find all the authors that viewed at least one of their own articles, **sorted in ascending order by their id**.
 - Note that equal `author_id` and `viewer_id` indicate the same person.
@@ -1619,10 +1668,9 @@ WHERE author_id = viewer_id
 ORDER BY id;
 ```
 
-## Immediate Food Delivery I **
+## !Immediate Food Delivery I
 
-##### Concept
--`SUM(SELECT COUNT(*) FROM ... WHERE ...)`
+Concept : `FROM table1, table2  ...`
 
 Write an SQL query to find the percentage of `immediate` orders in the table, rounded to 2 decimal places.  
 - **If the preferred delivery date of the customer is the same as the order date then the order is called `immediate` otherwise it’s called scheduled.**
@@ -1662,12 +1710,12 @@ FROM  delivery;
 SELECT ROUND(100 * o.immediate_order / count(d.delivery_id) , 2) AS immediate_percentage 
 FROM Delivery AS d,
      SELECT COUNT(order_date) AS immediate_order
-     FROM Delivery
-     WHERE order_date = customer_pref_delivery_date AS o
+      FROM Delivery
+      WHERE order_date = customer_pref_delivery_date AS o
     
 ```
 
-## Reformat Department Table **
+## !Reformat Department Table
 
 #### Concept
 -`CASE WHEN ...`, `IF`
@@ -1686,6 +1734,9 @@ Write an SQL query to reformat the table such that there is a department id colu
   +------+---------+-------+
 - The month has values in ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].
 
+```
+
+```diff
   Result table:
   +------+-------------+-------------+-------------+-----+-------------+
   | id   | Jan_Revenue | Feb_Revenue | Mar_Revenue | ... | Dec_Revenue |
@@ -1698,19 +1749,32 @@ Write an SQL query to reformat the table such that there is a department id colu
 ```
 
 ```mysql
+/**
+  Department table:
+  +------+---------+-------+
+  | id   | revenue | month |
+  +------+---------+-------+
+  | 1    | 8000    | Jan   |
+  |      | 7000    | Feb   |
+  |      | 6000    | Mar   |
+  | 2    | 9000    | Jan   |
+  | 3    | 10000   | Feb   |
+  +------+---------+-------+
+
+*/
 SELECT id,
-SUM(CASE WHEN month = 'Jan' THEN revenue ELSE NULL END) AS Jan_Revenue,
-SUM(CASE WHEN month = 'Feb' THEN revenue ELSE NULL END) AS Feb_Revenue,
-SUM(CASE WHEN month = 'Mar' THEN revenue ELSE NULL END) AS Mar_Revenue,
-SUM(CASE WHEN month = 'Apr' THEN revenue ELSE NULL END) AS Apr_Revenue,
-SUM(CASE WHEN month = 'May' THEN revenue ELSE NULL END) AS May_Revenue,
-SUM(CASE WHEN month = 'Jun' THEN revenue ELSE NULL END) AS Jun_Revenue,
-SUM(CASE WHEN month = 'Jul' THEN revenue ELSE NULL END) AS Jul_Revenue,
-SUM(CASE WHEN month = 'Aug' THEN revenue ELSE NULL END) AS Aug_Revenue,
-SUM(CASE WHEN month = 'Sep' THEN revenue ELSE NULL END) AS Sep_Revenue,
-SUM(CASE WHEN month = 'Oct' THEN revenue ELSE NULL END) AS Oct_Revenue,
-SUM(CASE WHEN month = 'Nov' THEN revenue ELSE NULL END) AS Nov_Revenue,
-SUM(CASE WHEN month = 'Dec' THEN revenue ELSE NULL END) AS Dec_Revenue
+  SUM(CASE WHEN month = 'Jan' THEN revenue ELSE NULL END) AS Jan_Revenue,
+  SUM(CASE WHEN month = 'Feb' THEN revenue ELSE NULL END) AS Feb_Revenue,
+  SUM(CASE WHEN month = 'Mar' THEN revenue ELSE NULL END) AS Mar_Revenue,
+  SUM(CASE WHEN month = 'Apr' THEN revenue ELSE NULL END) AS Apr_Revenue,
+  SUM(CASE WHEN month = 'May' THEN revenue ELSE NULL END) AS May_Revenue,
+  SUM(CASE WHEN month = 'Jun' THEN revenue ELSE NULL END) AS Jun_Revenue,
+  SUM(CASE WHEN month = 'Jul' THEN revenue ELSE NULL END) AS Jul_Revenue,
+  SUM(CASE WHEN month = 'Aug' THEN revenue ELSE NULL END) AS Aug_Revenue,
+  SUM(CASE WHEN month = 'Sep' THEN revenue ELSE NULL END) AS Sep_Revenue,
+  SUM(CASE WHEN month = 'Oct' THEN revenue ELSE NULL END) AS Oct_Revenue,
+  SUM(CASE WHEN month = 'Nov' THEN revenue ELSE NULL END) AS Nov_Revenue,
+  SUM(CASE WHEN month = 'Dec' THEN revenue ELSE NULL END) AS Dec_Revenue
 FROM Department
 GROUP BY id;
 
@@ -1733,10 +1797,10 @@ FROM   department
 GROUP  BY id;
 ```
 
-## [Queries Quality and Percentage](https://zhuanlan.zhihu.com/p/260937964) --
+## !Queries Quality and Percentage
 
-###### Concept
-- Aggregation function with query : `(round(avg(...), ...)`,`CASE WHEN( IF ... THEN ... ELSE ... END )`
+Concept 
+  - Aggregation function with query : `(round(avg(...), ...)`,`CASE WHEN( IF ... THEN ... ELSE ... END )`
 
 Write an SQL query to find each `query_name`, the `quality` and `poor_query_percentage`. 
 - Both `quality` and `poor_query_percentage` should be rounded to 2 decimal places.
@@ -1794,7 +1858,7 @@ FROM Queries
 GROUP BY query_name
 ```
 
-## Number of Comments per Post ++
+## !Number of Comments per Post
 
 Write an SQL query to find number of comments per each post.  
 - Result table should contain `post_id` and its corresponding number of comments, and must be sorted by `post_id` in ascending order.
@@ -1884,7 +1948,7 @@ GROUP  BY COMMENTS.sub_id
 ORDER  BY NULL 
 ```
 
-## Students and Examinations**
+## !Students and Examinations
 
 Write an SQL query to find the number of times each student attended each exam.   
 Order the result table by `student_id` and `subject_name`.   
@@ -2033,7 +2097,7 @@ ORDER  BY a.student_id,
           b.subject_name;
 ```
 
-## Weather Type in Each Country**
+## !Weather Type in Each Country
 
 Write an SQL query to find the type of weather in each country for `November 2019(2019-11)`.
 - The type of weather is 
@@ -2151,7 +2215,7 @@ WHERE LEFT(day, 7) = '2019-11'
 GROUP BY c.country_id;
 ```
 
-## Find the Team Size**
+## !Find the Team Size
 
 Write an SQL query to find the team size of each of the employees.
 - Return result table in any order.
@@ -2317,7 +2381,7 @@ ORDER BY ctr DESC,
          ad_id ASC
 ```
 
-## List the Products Ordered in a Period **
+## !List the Products Ordered in a Period
 
 Write an SQL query to get the names of products with greater than or equal to 100 units(` >= 100`) ordered in `February 2020` and their amount.
 
@@ -2567,7 +2631,7 @@ ON e.id = u.id
 ```
 
 
-## Top Travellers**
+## !Top Travellers
 
 Write an SQL query to report the distance travelled by EACH USER.
 - Return the result table ordered by `travelled_distance` in **descending order**, if two or more users travelled the same distance, order them by their name in ascending order.
@@ -2640,7 +2704,7 @@ GROUP BY u.name
 ORDER BY travelled_distance ASEC, U.name ASEC 
 ```
 
-## Create a Session Bar Chart **
+## !Create a Session Bar Chart
 
 Write an SQL query to report the (`bin`, `total`) in any order.
 
@@ -2726,7 +2790,7 @@ GROUP BY t2.bin
 ORDER BY NULL;
 ```
 
-## Group Sold Products By The Date**
+## !Group Sold Products By The Date
 
 Write an SQL query to find for each date, the number of distinct products sold and their names.   
 
@@ -2854,7 +2918,7 @@ WHERE c.content_id = tv.content_id
         and program_date between '2020-06-01' and '2020-06-30'
 ```
 
-## Customer Order Frequency **
+## !Customer Order Frequency 
 
 Write an SQL query to report the `customer_id` and of customers who have spent at least `$100` in each month of June and July 2020.
 - Return the result table in any order.
@@ -2957,7 +3021,7 @@ GROUP BY o.customer_id
 
 ```
 
-## [Find Users With Valid E-Mails](https://cloud.tencent.com/developer/article/1787722)
+## Find Users With Valid E-Mails
 
 Write an SQL query to find the users who have valid emails.
 Return the result table in any order.
@@ -3042,7 +3106,7 @@ from Patients
 where conditions like "%DIAB1%"
 ```
 
-## Fix Product Name Format 
+## !Fix Product Name Format 
 
 #### Concept
 -`SUBSTRING()` , `TRIM()` , `LOWER()`, `ORDER BY 1,2` AND `GROUP BY 1,2` 
@@ -3139,7 +3203,7 @@ GROUP BY LOWER(TRIM(product_name)), LEFT(sale_date, 7)
 ORDER BY product_name, sale_date;
 ```
 
-## Unique Orders and Customers Per Month *
+## !Unique Orders and Customers Per Month 
 
 Write an SQL query to find the number of **unique orders and the number of unique customers(`DISTINCT`)** with `invoices(Abrechnung) > $20` for each different month.
 ```diff
@@ -3171,10 +3235,10 @@ Write an SQL query to find the number of **unique orders and the number of uniqu
   +---------+-------------+----------------+
 ```
 - In September 2020(`2020-09`) we have two orders from 2 different customers with `invoices > $20`.
-- In October 2020(`2020-10`) we have two orders from 1 customer, and only one of the two orders has invoice > $20.
-- In November 2020(`2020-11`) we have two orders from 2 different customers but invoices < $20, so we don't include that month.
-- In December 2020(`2020-12`) we have two orders from 1 customer both with invoices > $20.
-- In January 2021(`2021-1`) we have two orders from 2 different customers, but only one of them with invoice > $20.
+- In October 2020(`2020-10`) we have two orders from 1 customer, and only one of the two orders has `invoice > $20`.
+- In November 2020(`2020-11`) we have two orders from 2 different customers but `invoices < $20`, so we don't include that month.
+- In December 2020(`2020-12`) we have two orders from 1 customer both with `invoices > $20`.
+- In January 2021(`2021-1`) we have two orders from 2 different customers, but only one of them with `invoice > $20`.
 
 ```mysql
 # Time:  O(n)
@@ -3268,11 +3332,13 @@ ON w.product_id = p.product_id
 GROUP BY name
 ```
 
-## Customer Who Visited but Did Not Make Any Transactions **
+## !Customer Who Visited but Did Not Make Any Transactions 
 
 Write an SQL query to find 
 1. the `ID`s of the users who visited (the mall) without making any transactions 
 2. the number of times they made these types of visits (count of no transaction of visiters).
+
+- tips :  `left join Transactions` 
 
 ```diff
  Visits table
@@ -3415,7 +3481,7 @@ JOIN Users AS u
 ON u.account = t.account;
 ```
 
-## Sellers With No Sales **
+## !Sellers With No Sales
 
 Write an SQL query to report the names of all sellers who did not make any sales in 2020.
 - Return the result table ordered by `seller_name` in **ascending** order.
