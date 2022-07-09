@@ -1,65 +1,79 @@
+# DataBase Question
+
 [QUESTIONS](https://zhuanlan.zhihu.com/p/265354299)  
 [QUESTIONS](https://github.com/kamyu104/LeetCode-Solutions/blob/master/MySQL)  
 
-- [REVIEW](#review)
-- [Tips](#tips)
-- [!Average Selling Price](#-average-selling-price)
-- [!Sales Analysis I](#-sales-analysis-i)
-- [Product Sales Analysis I](#product-sales-analysis-i)
-- [!Second Highest Salary](#-second-highest-salary)
-- [Duplicate Emails](#duplicate-emails)
-- [Customers Who Never Order](#customers-who-never-order)
-- [Rising Temperature](#rising-temperature)
-- [!Delete Duplicate Emails](#-delete-duplicate-emails)
-- [Game Play Analysis I](#game-play-analysis-i)
-- [Game Play Analysis II](#game-play-analysis-ii)
-- [Employee Bonus](#employee-bonus)
-- [!Customer Placing the Largest Number of Orders](#-customer-placing-the-largest-number-of-orders)
-- [Find Customer Referee](#find-customer-referee)
-- [Classes More Than 5 Students](#classes-more-than-5-students)
-- [!Consecutive Available Seats](#-consecutive-available-seats)
-- [!Friend Requests I: Overall Acceptance Rate](#-friend-requests-i--overall-acceptance-rate)
-- [!Sales Person](#-sales-person)
-- [!Triangle Judgement](#-triangle-judgement)
-- [!Shortest Distance in a Line](#-shortest-distance-in-a-line)
-- [!Biggest Single Number](#-biggest-single-number)
-- [!Not Boring Movies](#-not-boring-movies)
-- [!Swap Salary](#-swap-salary)
-- [!Actors & Directors Cooperated `>= 3` Times](#-actors---directors-cooperated-----3--times)
-- [Project Employees I](#project-employees-i)
-- [Project Employees II](#project-employees-ii)
-- [Sales Analysis I](#sales-analysis-i)
-- [!Sales Analysis II](#-sales-analysis-ii)
-- [!ales Analysis III](#-ales-analysis-iii)
-- [!Reported Posts](#-reported-posts)
-- [User Activity for the Past 30 Days I](#user-activity-for-the-past-30-days-i)
-- [User Activity for the Past 30 Days II](#user-activity-for-the-past-30-days-ii)
-- [Article Views I](#article-views-i)
-- [!Immediate Food Delivery I](#-immediate-food-delivery-i)
-- [!Reformat Department Table](#-reformat-department-table)
-- [!Queries Quality and Percentage](#-queries-quality-and-percentage)
-- [!Number of Comments per Post](#-number-of-comments-per-post)
-- [!Students and Examinations](#-students-and-examinations)
-- [!Weather Type in Each Country](#-weather-type-in-each-country)
-- [!Find the Team Size](#-find-the-team-size)
-- [Ads Performance](#ads-performance)
-- [!List the Products Ordered in a Period](#-list-the-products-ordered-in-a-period)
-- [Students With Invalid Departments](#students-with-invalid-departments)
-- [Replace Employee ID with The Unique Identifier](#replace-employee-id-with-the-unique-identifier)
-- [!Top Travellers](#-top-travellers)
-- [!Create a Session Bar Chart](#-create-a-session-bar-chart)
-- [!Group Sold Products By The Date](#-group-sold-products-by-the-date)
-- [Friendly Movies Streamed Last Month](#friendly-movies-streamed-last-month)
-- [!Customer Order Frequency](#-customer-order-frequency)
-- [Find Users With Valid E-Mails](#find-users-with-valid-e-mails)
-- [Patients With a Condition](#patients-with-a-condition)
-- [!Fix Product Name Format](#-fix-product-name-format)
-- [!Unique Orders and Customers Per Month](#-unique-orders-and-customers-per-month)
-- [Warehouse Manager](#warehouse-manager)
-- [!Customer Who Visited but Did Not Make Any Transactions](#-customer-who-visited-but-did-not-make-any-transactions)
-- [Bank Account Summary II](#bank-account-summary-ii)
-- [!Sellers With No Sales](#-sellers-with-no-sales)
-- [All Valid Triplets That Can Represent a Country](#all-valid-triplets-that-can-represent-a-country)
+- [DataBase Question](#database-question)
+  - [REVIEW](#review)
+  - [Tips](#tips)
+  - [!Average Selling Price](#average-selling-price)
+  - [!Sales Analysis I](#sales-analysis-i)
+  - [Product Sales Analysis I](#product-sales-analysis-i)
+  - [!Second Highest Salary](#second-highest-salary)
+  - [!Duplicate Emails](#duplicate-emails)
+  - [Customers Who Never Order](#customers-who-never-order)
+  - [Rising Temperature](#rising-temperature)
+  - [!Delete Duplicate Emails](#delete-duplicate-emails)
+  - [Game Play Analysis I](#game-play-analysis-i)
+  - [Game Play Analysis II](#game-play-analysis-ii)
+  - [Employee Bonus](#employee-bonus)
+  - [!Customer Placing the Largest Number of Orders](#customer-placing-the-largest-number-of-orders)
+  - [Find Customer Referee](#find-customer-referee)
+  - [Classes More Than 5 Students](#classes-more-than-5-students)
+  - [!Consecutive Available Seats](#consecutive-available-seats)
+  - [!Friend Requests I: Overall Acceptance Rate](#friend-requests-i-overall-acceptance-rate)
+  - [!Sales Person](#sales-person)
+  - [!Triangle Judgement](#triangle-judgement)
+  - [!Shortest Distance in a Line](#shortest-distance-in-a-line)
+  - [!Biggest Single Number](#biggest-single-number)
+  - [!Not Boring Movies](#not-boring-movies)
+  - [Swap Salary**](#swap-salary)
+      - [Concept](#concept)
+  - [!Actors & Directors Cooperated `>= 3` Times](#actors--directors-cooperated--3-times)
+  - [Project Employees I](#project-employees-i)
+  - [Project Employees II](#project-employees-ii)
+  - [Sales Analysis I](#sales-analysis-i-1)
+  - [!Sales Analysis II](#sales-analysis-ii)
+  - [!ales Analysis III](#ales-analysis-iii)
+      - [Concept](#concept-1)
+  - [!Reported Posts](#reported-posts)
+  - [User Activity for the Past 30 Days I](#user-activity-for-the-past-30-days-i)
+  - [User Activity for the Past 30 Days II](#user-activity-for-the-past-30-days-ii)
+  - [Article Views I](#article-views-i)
+  - [!Immediate Food Delivery I](#immediate-food-delivery-i)
+  - [!Reformat Department Table](#reformat-department-table)
+      - [Concept](#concept-2)
+  - [!Queries Quality and Percentage](#queries-quality-and-percentage)
+  - [!Number of Comments per Post](#number-of-comments-per-post)
+  - [!Students and Examinations](#students-and-examinations)
+  - [!Weather Type in Each Country](#weather-type-in-each-country)
+  - [!Find the Team Size](#find-the-team-size)
+  - [Ads Performance](#ads-performance)
+  - [!List the Products Ordered in a Period](#list-the-products-ordered-in-a-period)
+      - [Concept](#concept-3)
+  - [Students With Invalid Departments](#students-with-invalid-departments)
+      - [Concept](#concept-4)
+  - [Replace Employee ID with The Unique Identifier](#replace-employee-id-with-the-unique-identifier)
+  - [!Top Travellers](#top-travellers)
+  - [!Create a Session Bar Chart](#create-a-session-bar-chart)
+  - [!Group Sold Products By The Date](#group-sold-products-by-the-date)
+      - [Concept](#concept-5)
+  - [Friendly Movies Streamed Last Month](#friendly-movies-streamed-last-month)
+  - [!Customer Order Frequency](#customer-order-frequency)
+      - [Concept](#concept-6)
+      - [ALGO](#algo)
+  - [Find Users With Valid E-Mails](#find-users-with-valid-e-mails)
+      - [Concept](#concept-7)
+  - [Patients With a Condition](#patients-with-a-condition)
+      - [Concept](#concept-8)
+  - [!Fix Product Name Format](#fix-product-name-format)
+      - [Concept](#concept-9)
+  - [!Unique Orders and Customers Per Month](#unique-orders-and-customers-per-month)
+  - [Warehouse Manager](#warehouse-manager)
+  - [!Customer Who Visited but Did Not Make Any Transactions](#customer-who-visited-but-did-not-make-any-transactions)
+  - [Bank Account Summary II](#bank-account-summary-ii)
+  - [!Sellers With No Sales](#sellers-with-no-sales)
+  - [All Valid Triplets That Can Represent a Country](#all-valid-triplets-that-can-represent-a-country)
 
 
 
@@ -75,25 +89,27 @@
 - [Sql Summary](https://towardsdatascience.com/sql-questions-summary-df90bfe4c9c)   
 
 ## Tips
-- [Ref]((https://github.com/shawlu95/Beyond-LeetCode-SQL)
+- [Ref](https://github.com/shawlu95/Beyond-LeetCode-SQL)
 1. Using the `like` operator and wildcards (flexible search)
 2. Avoiding the `or` operator, use `in` operator
-  - data retrieval is measurably faster by replacing `OR` conditions with the `IN` predicate
+   - data retrieval is measurably faster by replacing `OR` conditions with the `IN` predicate
 3. Avoiding the `HAVING` clause
-  1. try to frame the restriction earlier (`where` clause)  
-  2. try to keep `HAVING` clause **SIMPLE** (use constant, not function)  
+   1. Try to frame the restriction earlier 
+      > `where` clause  
+   2. Try to keep `HAVING` clause **SIMPLE** 
+      > use constant, not Function  
 4. Avoiding large SORT operations
-  - it is best to schedule queries with large sorts as periodic batch processes during off-peak database usage so that the performance of most user processes is not affected.
+   - It is best to schedule queries with large sorts as periodic batch processes during off-peak database usage so that the performance of most user processes is not affected.
 
-5. Prefer stored procedure
-  - compiled and permanently stored in the database in an executable format.
+5. Prefer stored procedure  
+   - Compiled and permanently stored in the database in an executable format.
 6. Disabling indexes during batch loads
-  - When the batch load is complete, you should rebuild the indexes.
-  - reduction of fragmentation that is found in the index
-7. cost-based optimization
-  - Check database server manual
+   - When the batch load is complete, you should rebuild the indexes.
+   - Reduction of fragmentation that is found in the index
+7. Cost-based optimization 
+   - Check database server manual
 8. Use`view`
-  - Keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
+   - Keep the levels of code in your query as flat as possible and to test and tune the statements that make up your views
 
 ## !Average Selling Price
 
@@ -114,6 +130,8 @@ Write an SQL query to find the average selling price for each product.
 - `(product_id, start_date, end_date)` is the primary key for this table.
 - there will be no two intersecting periods for the same `product_id`.
 
+---
+
 ```diff
   UnitsSold table:
   +------------+---------------+-------+
@@ -126,6 +144,8 @@ Write an SQL query to find the average selling price for each product.
   +------------+---------------+-------+
 ```
 - There is no primary key for this table
+
+---
 
 ```diff
   Result table:
@@ -231,16 +251,16 @@ Result table:
 SELECT S.product_name, 
        S.year, 
        S.price
-FROM Sales AS S
+FROM Sales 
+
 -- query All Products
-LEFT JOIN Product AS P
+LEFT JOIN Product 
 ON S.product_id = P.product_id
 ```
 ## !Second Highest Salary
 
 Write a SQL query to get the second highest salary from the Employee Table.    
 - If there is no second highest salary, then the query should return `null`.
-
 - THINK : a tie existing ?
 
 ```diff
@@ -276,7 +296,7 @@ SELECT
 AS SecondHighestSalary;
 ```
 
-## Duplicate Emails
+## !Duplicate Emails
 
 Write a SQL query to find **all** duplicate emails.
 
@@ -307,9 +327,8 @@ FROM (SELECT Email,
       FROM Person 
       GROUP BY Email) AS tmp
 WHERE num > 1;
-```
 
-```sql
+
 SELECT DISTINCT p.Email
 FROM Person AS p
 JOIN Person AS p2
@@ -374,8 +393,7 @@ TMP      P
          +----+
 */
 (SELECT MinId 
- FROM (SELECT Email, 
-              MIN(Id) AS MinId
+ FROM (SELECT MIN(Id) AS MinId
        FROM Person 
        GROUP BY Email) AS TMP)
 /**
@@ -498,7 +516,7 @@ SELECT player_id,
        device_id 
 FROM Activity AS Result
 WHERE player_id IN (SELECT player_id, 
-                    min(event_date) 
+                           min(event_date) 
                     FROM Activity AS TMP 
                     GROUP BY player_id )
 ```
@@ -517,7 +535,6 @@ Employee                                  Bonus
 |   3   | Brad   |  null     | 4000   |   +-------+-------+
 |   4   | Thomas |  3        | 4000   |
 +-------+--------+-----------+--------+
-
 
 Result
 +-------+-------+
@@ -556,9 +573,8 @@ WHERE IFNULL(bonus, 0) < 1000　　
 ```
 
 ## !Customer Placing the Largest Number of Orders
-
 Query the `customer_number` from the orders table for the customer who has placed the largest number of orders.
-- It is guaranteed that exactly one customer will have placed more orders than any other customer.
+- It is guaranteed that exactly one customer will have placed more orders than any other customer. (No Tie)
 
 ```diff
 Order table : 
@@ -654,7 +670,7 @@ Please list out all classes which have more than or equal to `5` students.
 
 Question : is `[student,class]` PK? 
 
-```
+```sql
 Courses 
 +---------+------------+
 | student | class      |
@@ -670,20 +686,32 @@ Courses
 | I       | Math       |
 +---------+------------+
 
-Should output:
+Result
 +---------+
 | class   |
 +---------+
 | Math    |
 +---------+
-```
 
-```sql
-SELECT class FROM
-(SELECT class, 
-        COUNT(DISTINCT student) AS num
- FROM courses
- GROUP BY class) AS TMP
+
+SELECT class 
++---------+------------+
+| student | class      |
++---------+------------+
+| A       | Math       |
+| C       |            |
+| E       |            |
+| G       |            |
+| H       |            |
+| I       |            |
+| F       | Computer   |
+| D       | Biology    |
+| B       | English    |
++---------+------------+
+FROM (SELECT class, 
+             COUNT(DISTINCT student) AS num
+      FROM courses
+      GROUP BY class) AS TMP
 WHERE num >= 5;
 ```
 
@@ -713,7 +741,7 @@ Query all the consecutive available seats order by the `seat_id` using the follo
 +---------+
 ```
 
-first find 
+Find firstly 
 1. consecutive seats
 2. check free 
 
@@ -732,16 +760,11 @@ first find
 SELECT DISTINCT a.seat_id             
 FROM cinema a 
 JOIN cinema b ON
-    /**
-      * Consecutive seats
-      */
+    -- Consecutive seats
     ABS(a.seat_id - b.seat_id) = 1 AND
-    /**
-      * a.free = TRUE AND b.free = TRUE
-      */
+    -- a.free = TRUE AND b.free = TRUE
     a.free = 1 AND b.free = 1
 ORDER BY a.seat_id
-
 
 SELECT DISTINCT c1.seat_id 
 FROM cinema c1, cinema c2 
@@ -754,7 +777,7 @@ ORDER BY a.seat_id;
 
 Write a query to find the overall acceptance rate of requests rounded to 2 decimals, which is the number of acceptance divides the number of requests.
 
-```diff
+```sql
 friend_request
 +-----------+------------+------------+
 | sender_id | send_to_id |request_date|
@@ -783,17 +806,16 @@ RESULT
 |-----------|
 |       0.80|
 +-----------+
-```
 
-```sql
 -- Time:  O(rlogr + aloga)
 -- Space: O(r + a)
 SELECT
 ROUND(
     IFNULL(
     (SELECT COUNT(*) FROM (SELECT DISTINCT requester_id, accepter_id FROM request_accepted) AS r)
-     /(SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM friend_request) AS a), 0)
-, 2) AS accept_rate;
+    / 
+    (SELECT COUNT(*) FROM (SELECT DISTINCT sender_id, send_to_id FROM friend_request) AS a), 0), 2) 
+AS accept_rate;
 
 
 SELECT coalesce(
@@ -807,7 +829,6 @@ FROM friend_request, request_accepted
  concat( ... , ..) 
 **/
 SELECT 
-
 -- ROUND( IFNULL( expr, nu
 ROUND(IFNULL(
          (SELECT COUNT(DISTINCT(CONCAT(requester_id, ',' , accepter_id))) FROM request_accepted) / 
@@ -820,7 +841,7 @@ AS accept_rate
 
 Output **all** the names in the table salesperson, who didn’t have sales to company `RED`.
 
-```
+```sql 
 Salesperson table
 +----------+------+--------+-----------------+-----------+
 | sales_id | name | salary | commission_rate | hire_date |
@@ -843,16 +864,14 @@ Company table                         |
 +---------+--------+------------+     |
                               ^       |
 Orders Table                  |       |
-+----------+------------+---------+----------+--------+
-| order_id | order_date | com_id  | sales_id | amount |
-+----------+------------+---------+----------+--------+
-| 1        |   1/1/2014 |    3    |    4     | 100000 |
-| 2        |   2/1/2014 |    4    |    5     | 5000   |
-| 3        |   3/1/2014 |    1    |    1     | 50000  |
-| 4        |   4/1/2014 |    1    |    4     | 25000  |
-+----------+------------+---------+----------+--------+
-- order_id is PK
-
++--------------+------------+---------+----------+--------+
+| (PK)order_id | order_date | com_id  | sales_id | amount |
++--------------+------------+---------+----------+--------+
+| 1            |   1/1/2014 |    3    |    4     | 100000 |
+| 2            |   2/1/2014 |    4    |    5     | 5000   |
+| 3            |   3/1/2014 |    1    |    1     | 50000  |
+| 4            |   4/1/2014 |    1    |    4     | 25000  |
++--------------+------------+---------+----------+--------+
 
 Output
 +------+
@@ -862,14 +881,12 @@ Output
 | Mark | 
 | Alex |
 +------+
-```
 
-```sql
--- Nested Quer
+-- Nested Query
 SELECT name 
 from salesperson 
 WHERE (SELECT sales_id From orders WHERE com_id NOT IN 
-        (SELECT com_id FROM company WHERE CITY = 'RED')
+      (SELECT com_id FROM company WHERE CITY = 'RED')
 GROUP BY sales_id);
 
 -- INNER JOIN
@@ -881,7 +898,6 @@ WHERE sales_id NOT IN ( SELECT b.sales_id
                         WHERE a.name = 'RED');
 
 -- LEFT JOIN 
-
 SELECT name
 FROM salesperson
 WHERE sales_id NOT IN (SELECT o.sales_id 
@@ -905,7 +921,7 @@ WHERE sales_id NOT IN (SELECT o.sales_id
 
 ## !Triangle Judgement
 
-```diff
+```sql
 +----+----+----+
 | x  | y  | z  |
 |----|----|----|
@@ -919,10 +935,7 @@ WHERE sales_id NOT IN (SELECT o.sales_id
 | 13 | 15 | 30 | No       |
 | 10 | 20 | 15 | Yes      |
 +----+----+----+----------+
-```
 
-
-```sql
 CASE WHEN (x + y > z) AND (x + z > y) AND (y + z > x) THEN 'Yes'
           ELSE 'No' END AS triangle
 FROM triangle
@@ -940,7 +953,7 @@ Table point holds the x coordinate of some points on x-axis in a plane, which ar
 Write a query to find the shortest distance between two points in these points.
 - The shortest distance is '1' obviously, which is from point '-1' to '0'. So the output is as below:
 
-```diff
+```sql
 +-----+
 | x   |
 |-----|
@@ -968,6 +981,7 @@ ON a.x <> b.x;
 Find The Biggest Single Number
 
 ```diff
+
 +---+
 |num|
 +---+
@@ -1027,13 +1041,13 @@ Concept `mod(attribute, integer) = q`
 Please write a SQL query to output movies with an odd numbered `id` and a description that is not `boring`. 
 - Order the result by rating.
 
-```diff
+```sql
 +---------+-----------+--------------+-----------+
 |   id    | movie     |  description |  rating   |
 +---------+-----------+--------------+-----------+
 |   1     | War       |   great 3D   |   8.9     |
 |   2     | Science   |   fiction    |   8.5     |
-|   3     | irish     |   boring     |   6.2     |
+|   3     | Irish     |   boring     |   6.2     |
 |   4     | Ice song  |   Fantasy    |   8.6     |
 |   5     | House card|   Interesting|   9.1     |
 +---------+-----------+--------------+-----------+
@@ -1045,9 +1059,8 @@ result
 |   5     | House card|   Interesting|   9.1     |
 |   1     | War       |   great 3D   |   8.9     |
 +---------+-----------+--------------+-----------+
-```
 
-```mysql
+
 SELECT * 
 FROM cinema
 WHERE MOD(id, 2) = 1 
@@ -1058,7 +1071,7 @@ ORDER BY rating DESC;
 ## Swap Salary**
 
 #### Concept
-- Usage of `CASE WHEN ... THEN ... END`
+- Usage of `CASE WHEN exp THEN ... END`
  
 Swap all `f` and `m` values   
 (i.e. change all `f` values to `m` and vice versa) with a single `update` statement and no intermediate temp table.  
@@ -1096,9 +1109,6 @@ SET sex = CASE sex
 UPDATE salary 
 SET sex = IF(sex = 'm', 'f', 'm');
 
--- XOR
-UPDATE salary SET 
-sex = CHAR(ASCII(sex) ^ (ASCII('m') ^ ASCII('f')));
 ```
 
 ## !Actors & Directors Cooperated `>= 3` Times
@@ -1153,7 +1163,7 @@ HAVING COUNT(timestamp) >= 3;
 
 Write an SQL query that reports **the average experience years of all the employees for each project**, rounded to 2 digits.
 ```diff
-  Project                          Employee
+  Project                          Employee (employee_id : PK)
   +-------------+-------------+    +-------------+--------+------------------+
   | project_id  | employee_id |    | employee_id | name   | experience_years |
   +-------------+-------------+    +-------------+--------+------------------+
@@ -1163,7 +1173,8 @@ Write an SQL query that reports **the average experience years of all the employ
   | 2           | 1           |    | 4           | Doe    | 2                |
   | 2           | 4           |    +-------------+--------+------------------+
   +-------------+-------------+
-  
+
+
 Result table:
   +-------------+---------------+
   | project_id  | average_years |
@@ -1195,11 +1206,10 @@ GROUP BY P.project_id
 -- SQL Server also treats NULL values as smaller than any non-NULL values. 
 ORDER BY NULL 
 ```
-## Project Employees II
+## Project Employees II 
 
 Write an SQL query that reports **all the projects** that have the most employees.
-
-- !! may have a tie situation
+- may have a tie situation
 
 ```diff
   Project table:
@@ -1226,7 +1236,7 @@ Write an SQL query that reports **all the projects** that have the most employee
 -- Space: O(n)
 
 /** 
-  -- IF THERE IS NO TIE IN THE TABLE
+  IF THERE IS NO TIE IN THE TABLE
   SELECT project_id 
   FROM   project 
   GROUP  BY project_id 
@@ -1467,7 +1477,7 @@ ON a.product_id = b.product_id
 WHERE a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date < '2019-01-01')
 AND a.product_id NOT IN (SELECT product_id FROM Sales WHERE sale_date > '2019-03-31');
 
--- Withou JOIN
+-- Without JOIN
 SELECT product_id, 
        product_name 
 FROM   product 
@@ -1480,7 +1490,8 @@ WHERE  product_id NOT IN (SELECT product_id
 ## !Reported Posts
 
 Assume today is `2019-07-05`.  
-Write an SQL query that reports the number of posts reported yesterday for each report reason.  
+- Write an SQL query that reports the number of posts reported yesterday for each report reason.  
+
 ```diff
  Actions table:
   +---------+---------+-------------+--------+--------+
@@ -1509,8 +1520,9 @@ Write an SQL query that reports the number of posts reported yesterday for each 
   +---------------+--------------+
 ```
 
-```mysql
-SELECT extra AS report_reason, COUNT(DISTINCT post_id) AS report_count
+```sql
+SELECT extra AS report_reason, 
+       COUNT(DISTINCT post_id) AS report_count
 FROM Actions
 WHERE extra IS NOT NULL 
 AND action = 'report'
@@ -1523,7 +1535,8 @@ GROUP BY extra;
 - Keyword : `DATEDIFF`
 
 Write an SQL query to find the daily active user count for a period of 30 days ending `2019-07-27` inclusively.  
-- A user was active on some day if he/she made at least one activity on that day.
+
+A user was active on some day if he/she made at least one activity on that day.
 ```
 Activity table:
 +---------+------------+---------------+---------------+
@@ -1541,9 +1554,12 @@ Activity table:
 | 4       | 3          | 2019-06-25    | open_session  |
 | 4       | 3          | 2019-06-25    | end_session   |
 +---------+------------+---------------+---------------+
-There is no primary key for this table, it may have duplicate rows. 
-The activity_type column is an ENUM of type ('open_session', 'end_session', 'scroll_down', 'send_message').
+```
+- There is no primary key for this table, it may have duplicate rows. 
+- The `activity_type` column is an ENUM of type (`'open_session', 'end_session', 'scroll_down', 'send_message'`).
 
+
+```sql
 Result table:
 +------------+--------------+ 
 | day        | active_users |
@@ -1551,10 +1567,11 @@ Result table:
 | 2019-07-20 | 2            |
 | 2019-07-21 | 2            |
 +------------+--------------+ 
-Note that we do not care about days with zero active users.
 ```
+- Note that we do not care about days with zero active users.
 
-```mysql
+
+```sql
 /**
 +---------+------------+---------------+---------------+
 | user_id | session_id | activity_date | activity_type |
@@ -1583,7 +1600,7 @@ ORDER  BY NULL
 Write an SQL query to find the **average number of sessions per user for a period of 30 days ending `2019-07-27` inclusively**, rounded to 2 decimal places.  
 - The sessions we want to count for a user are those with at least one activity in that time period.
 
-```
+```sql
 Activity table:
 +---------+------------+---------------+---------------+
 | user_id | session_id | activity_date | activity_type |
@@ -1614,7 +1631,7 @@ Result table:
 - User `1` and `2` each had 1 session in the past 30 days while user 3 had 2 sessions so the average  is `(1 + 1 + 2) / 3 = 1.33.` 
 
 
-```mysql
+```sql
 # Time:  O(n)
 # Space: O(n)
 SELECT Round(Ifnull(Count(DISTINCT session_id) / 
@@ -1628,7 +1645,8 @@ WHERE  Datediff("2019-07-27", activity_date) < 30
 
 Write an SQL query to find all the authors that viewed at least one of their own articles, **sorted in ascending order by their id**.
 - Note that equal `author_id` and `viewer_id` indicate the same person.
-```diff
+
+```sql
   Views TABLE 
   +------------+-----------+-----------+------------+
   | article_id | author_id | viewer_id | view_date  |
